@@ -12,7 +12,8 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
             
             # Now check recursively
             for (i in seq_along(expr)) {
-                test_pattern_rec(escape, expr[[i]], test_expr[[i + 1]], eval_env, match_env)
+                test_pattern_rec(escape, expr[[i]], test_expr[[i + 1]], eval_env, 
+                  match_env)
             }
             
             # If we get here, the matching was successfull

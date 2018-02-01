@@ -62,6 +62,39 @@ test_pattern <- function(expr, test_expr, eval_env) {
     callCC(tester)
 }
 
+#' Dispatches from an expression to a matching pattern
+#'
+#' Given an expression of a type defined by the \code{\link{:=}} operator, \code{cases}
+#' matches it against patterns until it find one that has the same structure as \code{expr}.
+#' When it does, it evalutes the expression the pattern is associated with. During matching,
+#' any symbol that is not quasi-quoted will be considered a variable, and matching
+#' values will be bound to such variables and be available when an expression is evaluated.
+#'
+#' @param expr The value the patterns will be matched against.
+#' @param ...  A list of \code{pattern -> expression} statements.
+#' @return The value of the expression associated with the first matching pattern.
+#'
+#' @seealso \code{\link{:=}}
+#'
+#' @examples
+#' linked_list := NIL | CONS(car, cdr : linked_list)
+#' lst <- CONS(1, CONS(2, CONS(3, NIL)))
+#' len <- function(lst, acc = 0) {
+#'     cases(lst,
+#'           NIL -> acc,
+#'           CONS(car,cdr) -> len(cdr, acc + 1))
+#' }
+#' len(lst)
+#'
+#' list_sum <- function(lst, acc = 0) {
+#'     cases(lst,
+#'           NIL -> acc,
+#'           CONS(car,cdr) -> list_sum(cdr, acc + car))
+#' }
+#' list_sum(lst)
+#'
+#' @importFrom rlang eval_tidy
+#' @export
 cases <- function(expr, ...) {
     matchings <- rlang::quos(...)
     matchings[[1]]

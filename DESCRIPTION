@@ -9,6 +9,6 @@ Description: This package implements Haskell- or SML-like type constructions and
     the structure of objects of such types to program data structure transformations more succinctly.
 License: GPL-3
 Encoding: UTF-8
-Depends: tibble, rlang, dplyr
+Depends: tibble, rlang, dplyr, purrr
 Suggests: testthat, lintr
 RoxygenNote: 6.0.1

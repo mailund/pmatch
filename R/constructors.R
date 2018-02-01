@@ -5,6 +5,9 @@ make_args_list <- function(args) {
     as.pairlist(res)
 }
 
+#' @importFrom dplyr bind_rows
+#' @importFrom tibble tibble
+#' @importFrom purrr map
 process_arguments <- function(constructor_arguments) {
     process_arg <- function(argument) {
         if (rlang::is_lang(argument)) {
@@ -102,6 +105,80 @@ construction_printer <- function(x, ...) {
     cat(deparse_construction(x), "\n")
 }
 
+#' Define a new data type from a sequence of constructors.
+#'
+#' This assignment operator introduces a domain-specific language for specifying
+#' new types. Types are defined by the ways they can be constructed. This is provided
+#' as a sequence of \code{|}-separated constructors, where a constructor is either
+#' a constant, i.e., a bare symbol, or a function.
+#'
+#' We can construct an enumeration like this:
+#'
+#' \code{
+#' numbers := ONE | TWO | THREE
+#' }
+#'
+#' This will create the type \code{numbers} and three constants, \code{ONE}, \code{TWO},
+#' and \code{THREE} that can be matched against using the \code{\link{cases}} function
+#'
+#' \code{
+#' x <- TWO
+#' cases(x,
+#'       ONE -> 1,
+#'       TWO -> 2,
+#'       THREE -> 3)
+#' }
+#'
+#' Evaluating the \code{\link{cases}} function will compare the value in \code{x} against the three
+#' patterns and recognize that \code{x} holds the constant \code{TWO} and it will then return
+#' \code{2}.
+#'
+#' With function constructors we can create more interesting data types. For example, we can create
+#' a linked list like this
+#'
+#' \code{linked_list := NIL | CONS(car, cdr : linked_list)}
+#'
+#' This expression defines constant \code{NIL} and function \code{CONS}. The function takes
+#' two argumetns, \code{car} and \code{cdr}, and requires that \code{cdr} has type
+#' \code{linked_list}. We can create a list with three elements, 1, 2, and 3, by writing
+#'
+#' \code{CONS(1, CONS(2, CONS(3, NIL)))}
+#'
+#' and we can, e.g., test if a list is empty using
+#'
+#'
+#' \code{cases(lst, NIL -> TRUE, CONS(car,cdr) -> FALSE)}
+#'
+#' A special pattern, \code{otherwise},can be used to capture all patterns, so the
+#' emptiness test can also be written
+#'
+#' \code{cases(lst, NIL -> TRUE, otherwise -> FALSE)}
+#'
+#' Arguments to a constructor function can be typed. To specify typed variables,
+#' we use the \code{:}-operator. The syntax is then \code{var : type}. The type
+#' will be checked when you construct a value using the constructor.
+#'
+#' @param data_type The name of the new data type. Should be given as a bare symbol.
+#' @param constructors A list of \code{|}-separated constructor specifications.
+#'
+#' @examples
+#' linked_list := NIL | CONS(car, cdr : linked_list)
+#' lst <- CONS(1, CONS(2, CONS(3, NIL)))
+#' len <- function(lst, acc = 0) {
+#'     cases(lst,
+#'           NIL -> acc,
+#'           CONS(car,cdr) -> len(cdr, acc + 1))
+#' }
+#' len(lst)
+#'
+#' list_sum <- function(lst, acc = 0) {
+#'     cases(lst,
+#'           NIL -> acc,
+#'           CONS(car,cdr) -> list_sum(cdr, acc + car))
+#' }
+#' list_sum(lst)
+#'
+#' @export
 `:=` <- function(data_type, constructors) {
     data_type <- rlang::enquo(data_type)
     constructors <- rlang::enexpr(constructors)
@@ -109,7 +186,6 @@ construction_printer <- function(x, ...) {
     stopifnot(rlang::quo_is_symbol(data_type))
     data_type_name <- rlang::quo_name(data_type)
     
-    c(data_type_name, constructors)
     process_alternatives(constructors, data_type_name, rlang::get_env(data_type))
     assign(paste0("print.", data_type_name), construction_printer, envir = rlang::get_env(data_type))
 }

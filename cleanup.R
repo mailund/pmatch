@@ -1,2 +1,2 @@
 formatR::tidy_dir("R")
-#lintr::lint_package()
+lintr::lint_package()

@@ -15,18 +15,18 @@ test_that("We can create match on function constructors", {
 
     f <- function(lst) {
         cases(lst,
-              NIL                         -> 0,
-              CONS(x,NIL)                 -> 1,
-              CONS(x,CONS(y,NIL))         -> 2,
-              CONS(x,CONS(y,CONS(z,NIL))) -> 3,
+              NIL                            -> 0,
+              CONS(x, NIL)                   -> 1,
+              CONS(x, CONS(y, NIL))          -> 2,
+              CONS(x, CONS(y, CONS(z, NIL))) -> 3,
               otherwise -> 42)
     }
 
     expect_equal(f(NIL), 0)
-    expect_equal(f(CONS(1,NIL)), 1)
-    expect_equal(f(CONS(1,CONS(2,NIL))), 2)
-    expect_equal(f(CONS(1,CONS(2,CONS(3, NIL)))), 3)
-    expect_equal(f(CONS(1,CONS(2,CONS(3, CONS(4, NIL))))), 42)
+    expect_equal(f(CONS(1, NIL)), 1)
+    expect_equal(f(CONS(1, CONS(2, NIL))), 2)
+    expect_equal(f(CONS(1, CONS(2, CONS(3, NIL)))), 3)
+    expect_equal(f(CONS(1, CONS(2, CONS(3, CONS(4, NIL))))), 42)
 })
 
 test_that("We can create match constants on function constructors", {
@@ -36,19 +36,19 @@ test_that("We can create match constants on function constructors", {
     f <- function(lst) {
         cases(lst,
               NIL         -> 0,
-              CONS(1,NIL) -> 11,
-              CONS(2,NIL) -> 22,
-              CONS(x,NIL) -> x,
+              CONS(1, NIL) -> 11,
+              CONS(2, NIL) -> 22,
+              CONS(x, NIL) -> x,
               otherwise   -> 42)
     }
 
     expect_equal(f(NIL), 0)
-    expect_equal(f(CONS(1,NIL)), 11)
-    expect_equal(f(CONS(2,NIL)), 22)
-    expect_equal(f(CONS(3,NIL)), 3)
-    expect_equal(f(CONS(1,CONS(2,NIL))), 42)
-    expect_equal(f(CONS(1,CONS(2,CONS(3, NIL)))), 42)
-    expect_equal(f(CONS(1,CONS(2,CONS(3, CONS(4, NIL))))), 42)
+    expect_equal(f(CONS(1, NIL)), 11)
+    expect_equal(f(CONS(2, NIL)), 22)
+    expect_equal(f(CONS(3, NIL)), 3)
+    expect_equal(f(CONS(1, CONS(2, NIL))), 42)
+    expect_equal(f(CONS(1, CONS(2, CONS(3, NIL)))), 42)
+    expect_equal(f(CONS(1, CONS(2, CONS(3, CONS(4, NIL))))), 42)
 })
 
 test_that("We can create match variables in function constructors", {
@@ -57,15 +57,15 @@ test_that("We can create match variables in function constructors", {
 
     f <- function(lst) {
         cases(lst,
-              NIL                         -> 0,
-              CONS(x,NIL)                 -> x,
-              CONS(x,CONS(y,NIL))         -> x + y,
-              CONS(x,CONS(y,CONS(z,NIL))) -> x + y + z,
+              NIL                            -> 0,
+              CONS(x, NIL)                   -> x,
+              CONS(x, CONS(y, NIL))          -> x + y,
+              CONS(x, CONS(y, CONS(z, NIL))) -> x + y + z,
               otherwise -> 42)
     }
 
-    expect_equal(f(CONS(1,NIL)), 1)
-    expect_equal(f(CONS(11,NIL)), 11)
-    expect_equal(f(CONS(1,CONS(2,NIL))), 1 + 2)
-    expect_equal(f(CONS(1,CONS(2,CONS(3,NIL)))), 1 + 2 + 3)
+    expect_equal(f(CONS(1, NIL)), 1)
+    expect_equal(f(CONS(11, NIL)), 11)
+    expect_equal(f(CONS(1, CONS(2, NIL))), 1 + 2)
+    expect_equal(f(CONS(1, CONS(2, CONS(3, NIL)))), 1 + 2 + 3)
 })

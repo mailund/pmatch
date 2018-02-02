@@ -188,17 +188,9 @@ construction_printer <- function(x, ...) {
 
     process_alternatives(constructors, data_type_name, rlang::get_env(data_type))
 
-    assign(paste0("toString.", data_type_name), deparse_construction, envir = get_env(data_type))
-    assign(paste0("print.", data_type_name), construction_printer, envir = get_env(data_type))
+    assign(paste0("toString.", data_type_name),
+           deparse_construction, envir = rlang::get_env(data_type))
+    assign(paste0("print.", data_type_name),
+           construction_printer, envir = rlang::get_env(data_type))
 }
-
-`:=`(zero_one_two_three, ZERO | ONE(x) | TWO(x, y) | THREE(x, y, z))
-f <- function(v) {
-    cases(v, 0 <- ZERO, x <- ONE(x), x + y <- TWO(x, y), x + y + z <- THREE(x, y, z))
-}
-
-f(ZERO)
-f(ONE(1))
-f(TWO(1, 2))
-f(THREE(1, 2, 3))
 

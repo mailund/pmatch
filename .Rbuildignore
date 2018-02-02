@@ -1,8 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-Tcleanup.R$
+^cleanup.R$
 ^.travis.yml$
 ^.lintr$
 
 ^README\.Rmd$
 ^README-.*\.png$
+
+^figures/*$

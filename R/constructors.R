@@ -37,6 +37,7 @@ process_constructor_function <- function(constructor, data_type_name, env) {
         stopifnot(length(args) == length(constructor_arguments$arg))
         for (i in seq_along(args)) {
             arg <- args[[constructor_arguments$arg[i]]]
+            stopifnot(!rlang::is_null(arg))
             type <- constructor_arguments$type[i]
             stopifnot(rlang::is_na(type) || inherits(arg, type))
         }
@@ -187,23 +188,17 @@ construction_printer <- function(x, ...) {
 
     process_alternatives(constructors, data_type_name, rlang::get_env(data_type))
 
-    assign(paste0("toString.", data_type_name),
-           deparse_construction, envir = get_env(data_type))
-    assign(paste0("print.", data_type_name),
-           construction_printer, envir = get_env(data_type))
+    assign(paste0("toString.", data_type_name), deparse_construction, envir = get_env(data_type))
+    assign(paste0("print.", data_type_name), construction_printer, envir = get_env(data_type))
 }
 
-zero_one_two_three := ZERO | ONE(x) | TWO(x,y) | THREE(x,y,z)
+`:=`(zero_one_two_three, ZERO | ONE(x) | TWO(x, y) | THREE(x, y, z))
 f <- function(v) {
-    cases(v,
-          ZERO         -> 0,
-          ONE(x)       -> x,
-          TWO(x,y)     -> x + y,
-          THREE(x,y,z) -> x + y + z)
+    cases(v, 0 <- ZERO, x <- ONE(x), x + y <- TWO(x, y), x + y + z <- THREE(x, y, z))
 }
 
 f(ZERO)
 f(ONE(1))
-f(TWO(1,2))
-f(THREE(1,2,3))
+f(TWO(1, 2))
+f(THREE(1, 2, 3))
 

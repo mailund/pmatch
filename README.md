@@ -204,6 +204,11 @@ devtools::install_github("mailund/pmatch")
 
 ## Examples
 
+To show how the `pmatch` package can be used, I will use three data
+structures that I have implemented without `pmatch` in my book on
+[*Functional Data Structures in R*](http://amzn.to/2Eb4RKK): linked
+lists, plain search trees, and red-black search trees.
+
 To run the examples below, you will need to use the `magrittr` package
 for the pipe operator, `%>%`.
 
@@ -213,13 +218,45 @@ library(magrittr)
 
 ### Linked lists
 
+The `list` type in R is allocated to have a certain size when it is
+created, and changing the size of `list` objects involve creating a new
+object and moving all the elements from the old object to the new. This
+is a linear time operation, so growing lists usually lead to quadratic
+running times. With linked lists, on the other hand, you can prepend
+elements in constant time–at the cost of linear time random access.
+
+You can implement a linked list using `list` objects. You simply
+construct a list that contains two elements, the head of the linked
+lists–traditionally called `car`–and the tail of the list–another linked
+list, traditionally named `cdr`. You need a special representation for
+empty lists, and a natural choice is `NULL`. With `pmatch` we will use a
+constant instead, though, so we can pattern match on empty lists.
+
+We can define a linked list using the `pmatch` syntax like this:
+
 ``` r
 linked_list := NIL | CONS(car, cdr : linked_list)
-
 lst <- CONS(1, CONS(2, CONS(3, NIL)))
 ```
 
+Although R doesn’t implement tail recursion optimization, habit forces
+me to write tail recursive functions. For list functions, this usually
+means providing an accumulator parameter. Other than that, recursive
+functions operating on linke lists should simply match on `NIL` and
+`CONS` patterns. Two examples could be computing the length of a list
+and reversing a list:
+
 ``` r
+list_length <- function(lst, acc = 0) {
+  force(acc)
+  cases(lst,
+        NIL -> acc,
+        CONS(car, cdr) -> list_length(cdr, acc + 1))
+}
+
+list_length(lst)
+#> [1] 3
+
 reverse_list <- function(lst, acc = NIL) {
   force(acc)
   cases(lst,
@@ -227,11 +264,21 @@ reverse_list <- function(lst, acc = NIL) {
         CONS(car, cdr) -> reverse_list(cdr, CONS(car, acc)))
 }
 
-list_length <- function(lst, acc = 0) {
-  force(acc)
-  cases(lst,
-        NIL -> acc,
-        CONS(car, cdr) -> list_length(cdr, acc + 1))
+reverse_list(lst)
+#> CONS(car = 3, cdr = CONS(car = 2, cdr = CONS(car = 1, cdr = NIL)))
+```
+
+Translating to and from vectors/`list` objects is relatively simple. To
+go from a vector to a linke list, we use `NIL` and `CONS`, and to go the
+other direction we use pattern matching:
+
+``` r
+vector_to_list <- function(vec) {
+  lst <- NIL
+  for (i in seq_along(vec)) {
+    lst <- CONS(vec[[i]], lst)
+  }
+  reverse_list(lst)
 }
 
 list_to_vector <- function(lst) {
@@ -251,15 +298,6 @@ list_to_vector <- function(lst) {
   v %>% unlist
 }
 
-vector_to_list <- function(vec) {
-  lst <- NIL
-  for (i in seq_along(vec)) {
-    lst <- CONS(vec[[i]], lst)
-  }
-  reverse_list(lst)
-}
-
-
 lst <- vector_to_list(1:5)
 list_length(lst)
 #> [1] 5
@@ -271,9 +309,75 @@ lst %>% reverse_list %>% list_to_vector
 
 ### Search trees
 
+Search trees are binary trees that holds values in all inner nodes and
+satisfy the invariant that all values in a left subtree are smaller than
+the value in an inner node, and all values in the right subtree are
+larger.
+
+We can define a search tree like this:
+
 ``` r
 search_tree := E | T(left : search_tree, value, right : search_tree)
+```
 
+Here, we use an empty tree, `E`, for leaves. We only store values in
+inner nodes, created with the constructor `T`.
+
+``` r
+tree <- T(T(E,1,E), 3, T(E,4,E))
+tree
+#> T(left = T(left = E, value = 1, right = E), value = 3, right = T(left = E, value = 4, right = E))
+```
+
+Because of the invariant, we know where values should be found if they
+are in a tree. We can look at the value in the root of a subtree. If it
+is larger than the value we are searching for, we need to search to the
+left. If it is smaller, we need to search to the right. Otherwise, it
+must be equal to the value. If we reach an empty tree in this search,
+then we know the value is no the tree.
+
+``` r
+member <- function(tree, x) {
+  cases(tree,
+        E -> FALSE,
+        T(left, val, right) -> {
+          if (x < val) member(left, x)
+          else if (x > val) member(right, x)
+          else TRUE
+        })
+}
+member(tree, 0)
+#> [1] FALSE
+member(tree, 1)
+#> [1] TRUE
+member(tree, 2)
+#> [1] FALSE
+member(tree, 3)
+#> [1] TRUE
+member(tree, 4)
+#> [1] TRUE
+```
+
+Since data in R, in general, are immutable, we cannot update search
+trees. We can, however, create copies with updated structure, and
+because R implements “copy-on-write”, this is an efficient way of
+updating the structure of data we work on. If we insert elements into a
+search tree, what we will really be doing is to create a new tree that
+holds all the values the old tree held plus the new values. If the value
+is already in the old tree we do not add it again, but we will be
+returning a new tree. We create the new tree in a recursion. Whenever we
+call recursively, we create a new inner node that will contain one
+subtree that is an excact copy of one of the subtrees from the old
+tree–shared with the old tree so no actual copying takes place–and one
+subtree that is created in the recursive insertion. The recursion goes
+left or right using the same logic as in the `member` function. If we
+find that the element is already in the tree, we terminate the recursion
+with the tree that contains the value. If we reach an empty tree, the
+element was not in the old tree, but we have found the place where it
+should be in the new tree, so we create an inner tree with two empty
+subtrees and the value.
+
+``` r
 insert <- function(tree, x) {
   cases(tree,
         E -> T(E, x, E),
@@ -285,16 +389,6 @@ insert <- function(tree, x) {
           else
             T(left, x, right)
         )
-}
-
-member <- function(tree, x) {
-  cases(tree,
-        E -> FALSE,
-        T(left, val, right) -> {
-          if (x < val) member(left, x)
-          else if (x > val) member(right, x)
-          else TRUE
-        })
 }
 
 tree <- E
@@ -314,11 +408,31 @@ for (i in 1:6) {
 
 ### Red-black search trees
 
+The worst-case time usage for both of these functions is proportional to
+the depth of the tree, and that can be linear in the number of elements
+stored in the tree. If we keep the tree balanced, though, the time is
+reduced to logarithmic in the size of the tree. A classical data
+structure for keeping search trees balanced is so-called *red-black*
+search trees. Implementing these using pointer or reference manipulation
+in languages such as C/C++ or Java can be quite challenging, but in a
+functional language, balancing such trees is a simple matter of
+transforming trees based on local structure.
+
+Red-black search trees are binary search trees where each tree has a
+colour associated, either red or black. We can define colours using
+constant constructors and define a red-black search tree by extending
+the plain search tree:
+
 ``` r
 colour := R | B
 rb_tree := E | T(col : colour, left : rb_tree, value, right : rb_tree)
+```
 
+Except for including the colour in the pattern matching, the `member`
+function for this data structure is the same as for the plain search
+tree.
 
+``` r
 member <- function(tree, x) {
   cases(tree,
         E -> FALSE,
@@ -331,17 +445,33 @@ member <- function(tree, x) {
 
 tree <- T(R, E, 2, T(B, E, 5, E))
 for (i in 1:6) {
-  cat(i, " : ", member(tree, i), "\n")
+  cat(i, " : ", member(tree, i), "\\n")
 }
-#> 1  :  FALSE 
-#> 2  :  TRUE 
-#> 3  :  FALSE 
-#> 4  :  FALSE 
-#> 5  :  TRUE 
-#> 6  :  FALSE
+#> 1  :  FALSE \n2  :  TRUE \n3  :  FALSE \n4  :  FALSE \n5  :  TRUE \n6  :  FALSE \n
+```
 
+Red-black search trees are kept balanced because we enforce these two
+invariants:
+
+1.  No red node has a red parent.
+2.  Every path from the root to a leaf has the same number of black
+    nodes.
+
+If every path from root to a leaf has the same number of black nodes,
+then the tree is perfectly balanced if we ignored the red nodes. Since
+no red node has a red parent, the longest path, when red nodes are
+considered, can be no longer than twice the length of the shortest path.
+
+These invariants can be guaranteed by always inserting new values in red
+leaves, potentially invalidating the first invariant, and then
+rebalancing all sub-trees that invalidate this invariant, and at the end
+setting the root to be black. The rebalancing is done when returning
+from the recursive insertion calls that otherwise work as insertion in
+the plain search tree.
+
+``` r
 insert_rec <- function(tree, x) {
-  cases(tree,
+  match(tree,
         E -> T(R, E, x, E),
         T(col, left, val, right) -> {
           if (x < val)
@@ -357,26 +487,24 @@ insert <- function(tree, x) {
   tree$col <- B
   tree
 }
+```
 
+The transformation rules for the `balance` function are shown in the
+figure below:
+
+![](figures/RBT-transformations.png)
+
+Every time we see one of the trees around the edges, we must transform
+it into the tree in the middle. We can implement these transformations
+as simple as this:
+
+``` r
 balance <- function(tree) {
-  cases(tree,
-        T(B, T(R, a, x, T(R, b, y, c)), z, d) -> T(R, T(B,a,x,b), y, T(B,c,z,d)),
-        T(B, T(R, T(R, a, x, b), y, c), z, d) -> T(R, T(B,a,x,b), y, T(B,c,z,d)),
-        T(B, a, x, T(R, b, y, T(R, c, z, d))) -> T(R, T(B,a,x,b), y, T(B,c,z,d)),
-        T(B, a, x, T(R, T(R, b, y, c), z, d)) -> T(R, T(B,a,x,b), y, T(B,c,z,d)),
+  match(tree,
+        T(B,T(R,a,x,T(R,b,y,c)),z,d) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),
+        T(B,T(R,T(R,a,x,b),y,c),z,d) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),
+        T(B,a,x,T(R,b,y,T(R,c,z,d))) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),
+        T(B,a,x,T(R,T(R,b,y,c),z,d)) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),
         otherwise -> tree)
 }
-
-tree <- E
-for (i in sample(2:4))
-  tree <- insert(tree, i)
-for (i in 1:6) {
-  cat(i, " : ", member(tree, i), "\n")
-}
-#> 1  :  FALSE 
-#> 2  :  TRUE 
-#> 3  :  TRUE 
-#> 4  :  TRUE 
-#> 5  :  FALSE 
-#> 6  :  FALSE
 ```

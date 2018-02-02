@@ -452,9 +452,14 @@ member <- function(tree, x) {
 
 tree <- T(R, E, 2, T(B, E, 5, E))
 for (i in 1:6) {
-  cat(i, " : ", member(tree, i), "\\n")
+  cat(i, " : ", member(tree, i), "\n")
 }
-#> 1  :  FALSE \n2  :  TRUE \n3  :  FALSE \n4  :  FALSE \n5  :  TRUE \n6  :  FALSE \n
+#> 1  :  FALSE 
+#> 2  :  TRUE 
+#> 3  :  FALSE 
+#> 4  :  FALSE 
+#> 5  :  TRUE 
+#> 6  :  FALSE
 ```
 
 Red-black search trees are kept balanced because we enforce these two

@@ -333,7 +333,7 @@ member <- function(tree, x) {
 
 tree <- T(R, E, 2, T(B, E, 5, E))
 for (i in 1:6) {
-  cat(i, " : ", member(tree, i), "\\n")
+  cat(i, " : ", member(tree, i), "\n")
 }
 ```
 

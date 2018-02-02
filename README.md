@@ -3,6 +3,13 @@
 
 # pmatch – A package for Haskell-like pattern matching in R
 
+[![Travis-CI Build
+Status](https://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
+[![Coverage
+Status](https://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
+[![Coverage
+Status](https://coveralls.io/repos/github/mailund/pmatch/badge.svg?branch=master)](https://coveralls.io/github/mailund/pmatch?branch=master)
+
 The goal of the `pmatch` package is to provide structure pattern
 matching, similar to Haskell and ML, to R programmers. The package
 provide functionality for defining new types and for matching against

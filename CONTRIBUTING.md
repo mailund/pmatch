@@ -81,7 +81,7 @@ code are covered by tests, run the following to get a local coverage report of
 the package so you can see exactly what lines are not covered in the project.
 
 ``` r
-devtools::test_coverage()
+covr::report(covr::package_coverage())
 ```
 
 ### NEWS

@@ -6,7 +6,7 @@
 [![Travis-CI Build
 Status](https://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build
-status](https://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
+Status](https://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
 [![Coverage
 Status](https://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
 [![Coverage
@@ -507,7 +507,7 @@ insert <- function(tree, x) {
 The transformation rules for the `balance` function are shown in the
 figure below:
 
-![](figures/RBT-transformations.png)
+![](http://users-cs.au.dk/mailund/RBT-transformations.png)
 
 Every time we see one of the trees around the edges, we must transform
 it into the tree in the middle. We can implement these transformations

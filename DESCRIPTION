@@ -9,15 +9,15 @@ Description: Implements type constructions and pattern matching.
     the structure of objects of such types to program data structure transformations more succinctly.
 License: GPL-3
 Depends: 
-    dplyr (>= 0.7.4),
-    purrr (>= 0.2.4),
     R (>= 3.1),
-    rlang (>= 0.1.6),
-    tibble (>= 1.4.2)
+    dplyr,
+    purrr,
+    rlang,
+    tibble
 Suggests: 
-    covr (>= 3.0.1),
-    lintr (>= 1.0.2),
-    testthat (>= 2.0.0)
+    covr,
+    lintr,
+    testthat
 ByteCompile: true
 Encoding: UTF-8
 RoxygenNote: 6.0.1

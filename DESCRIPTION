@@ -8,6 +8,7 @@ Description: This package implements Haskell- or SML-like type constructions and
     Using this package, you can specify a type of object and write functions that matches against
     the structure of objects of such types to program data structure transformations more succinctly.
 License: GPL-3
+ByteCompile: true
 Encoding: UTF-8
 Depends: tibble, rlang, dplyr, purrr
 Suggests: testthat, lintr

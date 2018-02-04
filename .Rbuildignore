@@ -6,5 +6,5 @@
 
 ^README\.Rmd$
 ^README-.*\.png$
-
 ^figures/*$
+^appveyor\.yml$

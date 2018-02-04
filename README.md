@@ -9,6 +9,7 @@ Status](https://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-
 Status](https://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
 [![Coverage
 Status](https://coveralls.io/repos/github/mailund/pmatch/badge.svg?branch=master)](https://coveralls.io/github/mailund/pmatch?branch=master)
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 
 The goal of the `pmatch` package is to provide structure pattern
 matching, similar to Haskell and ML, to R programmers. The package

@@ -3,8 +3,10 @@
 ^cleanup.R$
 ^.travis.yml$
 ^.lintr$
+^appveyor\.yml$
 
 ^README\.Rmd$
 ^README-.*\.png$
 ^figures/*$
-^appveyor\.yml$
+
+^cran-comments\.md$

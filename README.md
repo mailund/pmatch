@@ -5,6 +5,8 @@
 
 [![Travis-CI Build
 Status](https://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
+[![AppVeyor Build
+status](https://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
 [![Coverage
 Status](https://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
 [![Coverage

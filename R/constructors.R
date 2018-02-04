@@ -25,14 +25,14 @@ process_arguments <- function(constructor_arguments) {
 
 process_constructor_function <- function(constructor, data_type_name, env) {
     stopifnot(is.call(constructor))
-
+    
     constructor_name <- rlang::quo_name(constructor[[1]])
     constructor_arguments <- process_arguments(constructor[-1])
-
+    
     # create the constructor function
     constructor <- function() {
         args <- rlang::as_list(environment())
-
+        
         # type check!
         stopifnot(length(args) == length(constructor_arguments$arg))
         for (i in seq_along(args)) {
@@ -41,21 +41,21 @@ process_constructor_function <- function(constructor, data_type_name, env) {
             type <- constructor_arguments$type[i]
             stopifnot(rlang::is_na(type) || inherits(arg, type))
         }
-
+        
         structure(args, constructor = constructor_name, class = data_type_name)
     }
     formals(constructor) <- make_args_list(constructor_arguments$arg)
-
+    
     # set meta information about the constructor
     class(constructor) <- c("constructor", "function")
-
+    
     # put the constructor in the binding scope
     assign(constructor_name, constructor, envir = env)
 }
 
 process_constructor_constant <- function(constructor, data_type_name, env) {
     stopifnot(rlang::is_symbol(constructor))
-
+    
     constructor_name <- rlang::as_string(constructor)
     constructor_object <- structure(NA, constructor_constant = constructor_name, class = data_type_name)
     assign(constructor_name, constructor_object, envir = env)
@@ -85,18 +85,17 @@ deparse_construction <- function(object) {
         # this is not a constructor, so just get the value
         return(toString(object))
     }
-
+    
     if (rlang::is_list(object)) {
         components <- names(object)
         values <- purrr::map(rlang::as_list(object), deparse_construction)
-
+        
         print_args <- vector("character", length = length(components))
         for (i in seq_along(components)) {
             print_args[i] <- paste0(components[i], " = ", values[i])
         }
         print_args <- paste0(print_args, collapse = ", ")
         paste0(constructor_name, "(", print_args, ")")
-
     } else {
         constructor_name
     }
@@ -182,15 +181,12 @@ construction_printer <- function(x, ...) {
 `:=` <- function(data_type, constructors) {
     data_type <- rlang::enquo(data_type)
     constructors <- rlang::enexpr(constructors)
-
+    
     stopifnot(rlang::quo_is_symbol(data_type))
     data_type_name <- rlang::quo_name(data_type)
-
+    
     process_alternatives(constructors, data_type_name, rlang::get_env(data_type))
-
-    assign(paste0("toString.", data_type_name),
-           deparse_construction, envir = rlang::get_env(data_type))
-    assign(paste0("print.", data_type_name),
-           construction_printer, envir = rlang::get_env(data_type))
+    
+    assign(paste0("toString.", data_type_name), deparse_construction, envir = rlang::get_env(data_type))
+    assign(paste0("print.", data_type_name), construction_printer, envir = rlang::get_env(data_type))
 }
-

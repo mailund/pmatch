@@ -19,6 +19,7 @@ suppressPackageStartupMessages(library(pmatch, quietly = TRUE))
 # pmatch -- A package for Haskell-like pattern matching in R
 
 [![Travis-CI Build Status](https://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
+[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
 [![Coverage Status](https://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/mailund/pmatch/badge.svg?branch=master)](https://coveralls.io/github/mailund/pmatch?branch=master)
 [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)

@@ -1,5 +1,5 @@
-Package: pmatch
 Type: Package
+Package: pmatch
 Title: Pattern Matching for R
 Version: 0.1.0
 Author: Thomas Mailund <mailund@birc.au.dk>
@@ -8,8 +8,16 @@ Description: This package implements Haskell- or SML-like type constructions and
     Using this package, you can specify a type of object and write functions that matches against
     the structure of objects of such types to program data structure transformations more succinctly.
 License: GPL-3
+Depends: 
+    dplyr (>= 0.7.4),
+    purrr (>= 0.2.4),
+    R (>= 3.1),
+    rlang (>= 0.1.6),
+    tibble (>= 1.4.2)
+Suggests: 
+    covr (>= 3.0.1),
+    lintr (>= 1.0.2),
+    testthat (>= 2.0.0)
 ByteCompile: true
 Encoding: UTF-8
-Depends: tibble, rlang, dplyr, purrr
-Suggests: testthat, lintr
 RoxygenNote: 6.0.1

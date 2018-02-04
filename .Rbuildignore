@@ -8,5 +8,9 @@
 ^README\.Rmd$
 ^README-.*\.png$
 ^figures/*$
-
 ^cran-comments\.md$
+^\.travis\.yml$
+^codecov\.yml$
+^CONTRIBUTING\.md$
+^ISSUE_TEMPLATE\.md$
+^SUPPORT\.md$

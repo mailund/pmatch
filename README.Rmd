@@ -192,7 +192,7 @@ linked_list := NIL | CONS(car, cdr : linked_list)
 lst <- CONS(1, CONS(2, CONS(3, NIL)))
 ```
 
-Although R doesn't implement tail recursion optimization, habit forces me to write tail recursive functions. For list functions, this usually means providing an accumulator parameter. Other than that, recursive functions operating on linke lists should simply match on `NIL` and `CONS` patterns. Two examples could be computing the length of a list and reversing a list:
+Although R doesn't implement tail recursion optimization, habit forces me to write tail recursive functions. For list functions, this usually means providing an accumulator parameter. Other than that, recursive functions operating on linked lists should simply match on `NIL` and `CONS` patterns. Two examples could be computing the length of a list and reversing a list:
 
 ```{r list-functions}
 list_length <- function(lst, acc = 0) {
@@ -214,7 +214,7 @@ reverse_list <- function(lst, acc = NIL) {
 reverse_list(lst)
 ```
 
-Translating to and from vectors/`list` objects is relatively simple. To go from a vector to a linke list, we use `NIL` and `CONS`, and to go the other direction we use pattern matching:
+Translating to and from vectors/`list` objects is relatively simple. To go from a vector to a linked list, we use `NIL` and `CONS`, and to go the other direction we use pattern matching:
 
 ```{r}
 vector_to_list <- function(vec) {
@@ -284,7 +284,7 @@ member(tree, 3)
 member(tree, 4)
 ```
 
-Since data in R, in general, are immutable, we cannot update search trees. We can, however, create copies with updated structure, and because R implements "copy-on-write", this is an efficient way of updating the structure of data we work on. If we insert elements into a search tree, what we will really be doing is to create a new tree that holds all the values the old tree held plus the new values. If the value is already in the old tree we do not add it again, but we will be returning a new tree. We create the new tree in a recursion. Whenever we call recursively, we create a new inner node that will contain one subtree that is an excact copy of one of the subtrees from the old tree--shared with the old tree so no actual copying takes place--and one subtree that is created in the recursive insertion. The recursion goes left or right using the same logic as in the `member` function. If we find that the element is already in the tree, we terminate the recursion with the tree that contains the value. If we reach an empty tree, the element was not in the old tree, but we have found the place where it should be in the new tree, so we create an inner tree with two empty subtrees and the value.
+Since data in R, in general, are immutable, we cannot update search trees. We can, however, create copies with updated structure, and because R implements "copy-on-write", this is an efficient way of updating the structure of data we work on. If we insert elements into a search tree, what we will really be doing is to create a new tree that holds all the values the old tree held plus the new values. If the value is already in the old tree we do not add it again, but we will be returning a new tree. We create the new tree in a recursion. Whenever we call recursively, we create a new inner node that will contain one subtree that is an exact copy of one of the subtrees from the old tree--shared with the old tree so no actual copying takes place--and one subtree that is created in the recursive insertion. The recursion goes left or right using the same logic as in the `member` function. If we find that the element is already in the tree, we terminate the recursion with the tree that contains the value. If we reach an empty tree, the element was not in the old tree, but we have found the place where it should be in the new tree, so we create an inner tree with two empty subtrees and the value.
 
 ```{r}
 insert <- function(tree, x) {

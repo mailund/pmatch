@@ -10,7 +10,7 @@ Description: Implements type constructions and pattern matching.
     data structure transformations more succinctly.
 License: GPL-3
 Depends: 
-    R (>= 3.1),
+    R (>= 3.2),
     dplyr,
     purrr,
     rlang,

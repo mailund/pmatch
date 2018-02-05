@@ -45,7 +45,7 @@ a linked list like this
 \code{linked_list := NIL | CONS(car, cdr : linked_list)}
 
 This expression defines constant \code{NIL} and function \code{CONS}. The function takes
-two argumetns, \code{car} and \code{cdr}, and requires that \code{cdr} has type
+two arguments, \code{car} and \code{cdr}, and requires that \code{cdr} has type
 \code{linked_list}. We can create a list with three elements, 1, 2, and 3, by writing
 
 \code{CONS(1, CONS(2, CONS(3, NIL)))}

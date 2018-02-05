@@ -72,3 +72,12 @@ test_that("We can create match variables in function constructors", {
   expect_equal(f(CONS(1, CONS(2, NIL))), 1 + 2)
   expect_equal(f(CONS(1, CONS(2, CONS(3, NIL)))), 1 + 2 + 3)
 })
+
+test_that("We can distinguish between constructors", {
+    type := ONE(val) | TWO(val)
+
+    f <- function(x) cases(x, ONE(v) -> 1, TWO(v) -> 2)
+
+    expect_equal(f(ONE(1)), 1)
+    expect_equal(f(TWO(1)), 2)
+})

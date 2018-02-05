@@ -36,3 +36,31 @@ test_that("We can create print constructed values", {
     expect_output(print(NIL), "NIL")
     expect_output(print(CONS(1, NIL)), "CONS\\(car = 1, cdr = NIL\\)")
 })
+
+test_that("We handle syntax errors gracefully", {
+    expect_error(
+        42 := foo,
+        regexp = "Incorrect type specification: 42\\. The type must be a bare symbol."
+    )
+    expect_error(
+        type := 12,
+        regexp = paste0(
+            "The constructor is malformed.\n",
+            "Constructors must either be constanst, i.e. bare symbols, or in the form of a function call."
+        )
+    )
+    expect_error(
+        type := f(12),
+        regexp = paste0(
+            "The constructor argument is malformed.\n",
+            "The expression 12 should either be a bare symbol or on the form 'variable : type'."
+        )
+    )
+    expect_error(
+        type := f(g(x)),
+        regexp = paste0(
+            "The constructor argument is malformed.\n",
+            "The expression .* should either be a bare symbol or on the form 'variable : type'."
+        )
+    )
+})

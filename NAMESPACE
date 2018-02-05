@@ -3,6 +3,7 @@
 export(":=")
 export(cases)
 importFrom(dplyr,bind_rows)
+importFrom(glue,glue)
 importFrom(purrr,map)
 importFrom(rlang,eval_tidy)
 importFrom(tibble,tibble)

@@ -14,7 +14,8 @@ Depends:
     dplyr,
     purrr,
     rlang,
-    tibble
+    tibble,
+    glue
 Suggests: 
     shiny,
     DT,

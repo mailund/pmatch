@@ -5,27 +5,35 @@ make_args_list <- function(args) {
     as.pairlist(res)
 }
 
-#' @importFrom dplyr bind_rows
 #' @importFrom tibble tibble
+#' @importFrom glue glue
+process_arg <- function(argument) {
+    error_msg <- glue::glue(
+        "The constructor argument is malformed.\n",
+        "The expression {deparse(argument)} should either be a bare symbol or on the form 'variable : type'."
+    )
+    if (rlang::is_lang(argument)) {
+        if (argument[[1]] != ":") {
+            stop(simpleError(error_msg, call = argument))
+        }
+        arg <- rlang::quo_name(argument[[2]])
+        type <- rlang::quo_name(argument[[3]])
+        tibble::tibble(arg = arg, type = type)
+    } else if (rlang::is_symbol(argument)) {
+        arg <- rlang::quo_name(argument)
+        tibble::tibble(arg = arg, type = NA)
+    } else {
+        stop(simpleError(error_msg, call = argument))
+    }
+}
+
+#' @importFrom dplyr bind_rows
 #' @importFrom purrr map
 process_arguments <- function(constructor_arguments) {
-    process_arg <- function(argument) {
-        if (rlang::is_lang(argument)) {
-            stopifnot(argument[[1]] == ":")
-            arg <- rlang::quo_name(argument[[2]])
-            type <- rlang::quo_name(argument[[3]])
-            tibble::tibble(arg = arg, type = type)
-        } else {
-            arg <- rlang::quo_name(argument)
-            tibble::tibble(arg = arg, type = NA)
-        }
-    }
     dplyr::bind_rows(purrr::map(as.list(constructor_arguments), process_arg))
 }
 
 process_constructor_function <- function(constructor, data_type_name, env) {
-    stopifnot(is.call(constructor))
-
     constructor_name <- rlang::quo_name(constructor[[1]])
     constructor_arguments <- process_arguments(constructor[-1])
 
@@ -34,12 +42,15 @@ process_constructor_function <- function(constructor, data_type_name, env) {
         args <- rlang::as_list(environment())
 
         # type check!
-        stopifnot(length(args) == length(constructor_arguments$arg))
         for (i in seq_along(args)) {
             arg <- args[[constructor_arguments$arg[i]]]
-            stopifnot(!rlang::is_null(arg))
             type <- constructor_arguments$type[i]
-            stopifnot(rlang::is_na(type) || inherits(arg, type))
+            if (!rlang::is_na(type) && !inherits(arg, type)) {
+                error_msg <- glue::glue(
+                    "The argument {arg} is of type {class(arg)} but should be of type {type}."
+                )
+                stop(simpleError(error_msg, call = match.call()))
+            }
         }
 
         structure(args, constructor = constructor_name, class = data_type_name)
@@ -54,8 +65,6 @@ process_constructor_function <- function(constructor, data_type_name, env) {
 }
 
 process_constructor_constant <- function(constructor, data_type_name, env) {
-    stopifnot(rlang::is_symbol(constructor))
-
     constructor_name <- rlang::as_string(constructor)
     constructor_object <- structure(NA, constructor_constant = constructor_name, class = data_type_name)
     assign(constructor_name, constructor_object, envir = env)
@@ -64,8 +73,14 @@ process_constructor_constant <- function(constructor, data_type_name, env) {
 process_constructor <- function(constructor, data_type_name, env) {
     if (rlang::is_lang(constructor)) {
         process_constructor_function(constructor, data_type_name, env)
-    } else {
+    } else if (rlang::is_symbol(constructor)) {
         process_constructor_constant(constructor, data_type_name, env)
+    } else {
+        error_msg <- glue::glue(
+            "The constructor is malformed.\n",
+            "Constructors must either be constanst, i.e. bare symbols, or in the form of a function call."
+        )
+        stop(simpleError(error_msg, call = constructor))
     }
 }
 
@@ -182,9 +197,15 @@ construction_printer <- function(x, ...) {
     data_type <- rlang::enquo(data_type)
     constructors <- rlang::enexpr(constructors)
 
-    stopifnot(rlang::quo_is_symbol(data_type))
-    data_type_name <- rlang::quo_name(data_type)
+    if (!rlang::quo_is_symbol(data_type)) {
+        error_msg <- glue::glue(
+            "Incorrect type specification: {rlang::quo_expr(data_type)}. ",
+            "The type must be a bare symbol."
+        )
+        stop(simpleError(error_msg, call = match.call()))
+    }
 
+    data_type_name <- rlang::quo_name(data_type)
     process_alternatives(constructors, data_type_name, rlang::get_env(data_type))
 
     assign(paste0("toString.", data_type_name), deparse_construction, envir = rlang::get_env(data_type))

@@ -104,3 +104,18 @@ test_that("We can do quasi-quoting", {
 
     expect_equal(cases(TWO(2), ONE -> 1, rlang::UQ(two_q) -> TWO(2)), TWO(2))
 })
+
+test_that("We handle syntax errors gracefully", {
+    type := ONE | TWO
+
+    print(toString(TWO))
+
+    expect_error(
+        cases(ONE, x),
+        "Malformed matching rule. Rules must be on the form 'pattern -> expression'."
+    )
+    expect_error(
+        cases(TWO, ONE -> 1),
+        "None of the patterns matched the expression."
+    )
+})

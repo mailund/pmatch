@@ -105,12 +105,16 @@ test_pattern <- function(expr, test_expr, eval_env) {
 #' @export
 cases <- function(expr, ...) {
     matchings <- rlang::quos(...)
-    matchings[[1]]
 
     for (i in seq_along(matchings)) {
         eval_env <- rlang::get_env(matchings[[i]])
         match_expr <- rlang::quo_expr(matchings[[i]])
-        stopifnot(match_expr[[1]] == "<-")
+        if (!rlang::is_lang(match_expr) || match_expr[[1]] != "<-") {
+            error_msg <- glue::glue(
+                "Malformed matching rule. Rules must be on the form 'pattern -> expression'."
+            )
+            stop(simpleError(error_msg, call = match_expr))
+        }
 
         test_expr <- match_expr[[3]]
         result_expr <- match_expr[[2]]
@@ -121,5 +125,8 @@ cases <- function(expr, ...) {
         }
     }
 
-    stop("No matching pattern!")
+    error_msg <- glue::glue(
+        "None of the patterns matched the expression."
+    )
+    stop(simpleError(error_msg, call = match.call()))
 }

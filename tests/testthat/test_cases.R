@@ -81,3 +81,19 @@ test_that("We can distinguish between constructors", {
     expect_equal(f(ONE(1)), 1)
     expect_equal(f(TWO(1)), 2)
 })
+
+test_that("We do not confuse variables for constructors", {
+    type := ONE | TWO(x)
+
+    one <- ONE
+    two <- TWO(2)
+
+    expect_equal(cases(ONE, ONE -> 1, TWO(two) -> two), 1)
+    expect_equal(cases(TWO(3), ONE -> 1, TWO(two) -> two), 3)
+    expect_equal(cases(TWO(3), ONE -> 1, x -> x), TWO(3))
+    expect_equal(cases(TWO(3), ONE -> 1, two -> two), TWO(3))
+    expect_equal(cases(one, ONE -> 1, two -> two), 1)
+    expect_equal(cases(two, ONE -> 1, two -> two), two)
+    #cases(TWO(3), ONE -> 1, !!two -> two)
+
+})

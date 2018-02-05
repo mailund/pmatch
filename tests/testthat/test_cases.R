@@ -94,6 +94,15 @@ test_that("We do not confuse variables for constructors", {
     expect_equal(cases(TWO(3), ONE -> 1, two -> two), TWO(3))
     expect_equal(cases(one, ONE -> 1, two -> two), 1)
     expect_equal(cases(two, ONE -> 1, two -> two), two)
-    #cases(TWO(3), ONE -> 1, !!two -> two)
+    expect_equal(cases(one, one -> one), one)
+    expect_equal(cases(one, two -> two), one)
 
+
+})
+
+test_that("We can do quasi-quoting", {
+    type := ONE | TWO(x)
+    two_q <- rlang::expr(TWO(2))
+
+    expect_equal(cases(TWO(2), ONE -> 1, rlang::UQ(two_q) -> TWO(2)), TWO(2))
 })

@@ -1,5 +1,7 @@
 
 test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
+    #browser()
+
     # Is this a function-constructor?
     if (rlang::is_lang(test_expr)) {
         func <- get(rlang::as_string(test_expr[[1]]), eval_env)
@@ -27,11 +29,17 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
         val <- get(constructor, eval_env)
         val_constructor <- attr(val, "constructor_constant")
         if (!rlang::is_null(val_constructor)) {
-            expr_constructor <- attr(expr, "constructor")
-            if (rlang::is_null(expr_constructor) || constructor != expr_constructor) {
-                escape(NULL)  # wrong type
-            } else {
-                return(match_env)  # Successfull match
+            # we have a constructor but is it the actual constant?
+            if (val_constructor == constructor) {
+                # the symbol refers to a literal constructor so
+                # we treat it as such -- if it wasn't, we treat it
+                # as a variable below.
+                expr_constructor <- attr(expr, "constructor")
+                if (rlang::is_null(expr_constructor) || constructor != expr_constructor) {
+                    escape(NULL)  # wrong type
+                } else {
+                    return(match_env)  # Successfull match
+                }
             }
         }
     }

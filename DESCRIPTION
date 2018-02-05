@@ -22,7 +22,11 @@ Suggests:
     covr,
     styler,
     lintr,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown,
+    magrittr
 ByteCompile: true
 Encoding: UTF-8
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr

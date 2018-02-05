@@ -4,14 +4,14 @@
 # pmatch – A package for Haskell-like pattern matching in R
 
 [![Travis-CI Build
-Status](https://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
+Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
+Status](http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
 [![Coverage
-Status](https://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
+Status](http://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
 [![Coverage
-Status](https://coveralls.io/repos/github/mailund/pmatch/badge.svg?branch=master)](https://coveralls.io/github/mailund/pmatch?branch=master)
-[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+Status](http://coveralls.io/repos/github/mailund/pmatch/badge.svg?branch=master)](https://coveralls.io/github/mailund/pmatch?branch=master)
+[![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 
 The goal of the `pmatch` package is to provide structure pattern
 matching, similar to Haskell and ML, to R programmers. The package
@@ -176,7 +176,7 @@ constructors were not `numeric`:
 ONE(1)
 #> ONE(x = 1)
 ONE("foo")
-#> Error: rlang::is_na(type) || inherits(arg, type) is not TRUE
+#> Error in ONE(x = "foo"): The argument foo is of type character but should be of type numeric.
 ```
 
 Constructors and pattern matching becomes even more powerful when you
@@ -252,7 +252,7 @@ lst <- CONS(1, CONS(2, CONS(3, NIL)))
 Although R doesn’t implement tail recursion optimization, habit forces
 me to write tail recursive functions. For list functions, this usually
 means providing an accumulator parameter. Other than that, recursive
-functions operating on linke lists should simply match on `NIL` and
+functions operating on linked lists should simply match on `NIL` and
 `CONS` patterns. Two examples could be computing the length of a list
 and reversing a list:
 
@@ -279,8 +279,8 @@ reverse_list(lst)
 ```
 
 Translating to and from vectors/`list` objects is relatively simple. To
-go from a vector to a linke list, we use `NIL` and `CONS`, and to go the
-other direction we use pattern matching:
+go from a vector to a linked list, we use `NIL` and `CONS`, and to go
+the other direction we use pattern matching:
 
 ``` r
 vector_to_list <- function(vec) {
@@ -377,7 +377,7 @@ holds all the values the old tree held plus the new values. If the value
 is already in the old tree we do not add it again, but we will be
 returning a new tree. We create the new tree in a recursion. Whenever we
 call recursively, we create a new inner node that will contain one
-subtree that is an excact copy of one of the subtrees from the old
+subtree that is an exact copy of one of the subtrees from the old
 tree–shared with the old tree so no actual copying takes place–and one
 subtree that is created in the recursive insertion. The recursion goes
 left or right using the same logic as in the `member` function. If we

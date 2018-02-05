@@ -19,6 +19,7 @@ Suggests:
     shiny,
     DT,
     covr,
+    styler,
     lintr,
     testthat
 ByteCompile: true

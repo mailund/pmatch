@@ -1,7 +1,5 @@
 
 test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
-    #browser()
-
     # Is this a function-constructor?
     if (rlang::is_lang(test_expr)) {
         func <- get(rlang::as_string(test_expr[[1]]), eval_env)
@@ -10,8 +8,8 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
             constructor <- rlang::as_string(test_expr[[1]])
             expr_constructor <- attr(expr, "constructor")
             if (rlang::is_null(expr_constructor) || constructor != expr_constructor) {
-                  escape(NULL)
-                }  # wrong type
+                escape(NULL)
+            } # wrong type
 
             # Now check recursively
             for (i in seq_along(expr)) {
@@ -36,9 +34,9 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
                 # as a variable below.
                 expr_constructor <- attr(expr, "constructor")
                 if (rlang::is_null(expr_constructor) || constructor != expr_constructor) {
-                    escape(NULL)  # wrong type
+                    escape(NULL) # wrong type
                 } else {
-                    return(match_env)  # Successfull match
+                    return(match_env) # Successfull match
                 }
             }
         }

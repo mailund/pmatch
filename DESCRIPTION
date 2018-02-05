@@ -1,6 +1,6 @@
 Type: Package
 Package: pmatch
-Title: Pattern Matching for R
+Title: Pattern Matching
 Version: 0.1.0
 Author: Thomas Mailund <mailund@birc.au.dk>
 Maintainer: Thomas Mailund <mailund@birc.au.dk>

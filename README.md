@@ -12,6 +12,10 @@ Status](http://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https
 [![Coverage
 Status](http://coveralls.io/repos/github/mailund/pmatch/badge.svg?branch=master)](https://coveralls.io/github/mailund/pmatch?branch=master)
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![CRAN
+status](http://www.r-pkg.org/badges/version/pmatch)](https://cran.r-project.org/package=pmatch)
+[![CRAN
+downloads](http://cranlogs.r-pkg.org/badges/grand-total/pmatch)](https://cran.r-project.org/package=pmatch)
 
 The goal of the `pmatch` package is to provide structure pattern
 matching, similar to Haskell and ML, to R programmers. The package

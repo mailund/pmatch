@@ -1,7 +1,7 @@
 Type: Package
 Package: pmatch
-Title: Pattern Matching for R
-Version: 0.1.0
+Title: Pattern Matching
+Version: 0.1.1
 Author: Thomas Mailund <mailund@birc.au.dk>
 Maintainer: Thomas Mailund <mailund@birc.au.dk>
 Description: Implements type constructions and pattern matching.
@@ -30,3 +30,4 @@ ByteCompile: true
 Encoding: UTF-8
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr
+Language: en-GB

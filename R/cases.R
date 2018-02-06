@@ -74,7 +74,7 @@ test_pattern <- function(expr, test_expr, eval_env) {
 #'
 #' Given an expression of a type defined by the \code{\link{:=}} operator, \code{cases}
 #' matches it against patterns until it find one that has the same structure as \code{expr}.
-#' When it does, it evalutes the expression the pattern is associated with. During matching,
+#' When it does, it evaluates the expression the pattern is associated with. During matching,
 #' any symbol that is not quasi-quoted will be considered a variable, and matching
 #' values will be bound to such variables and be available when an expression is evaluated.
 #'

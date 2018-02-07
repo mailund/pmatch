@@ -165,9 +165,16 @@ For more examples, see below.
 
 ## Installation
 
-You can install pmatch from github with:
+You can install the stable version of pmatch from CRAN using
 
-```{r gh-installation, eval = FALSE}
+```{r gh-installation-cran, eval = FALSE}
+install.packages("pmatch")
+```
+
+
+You can install the development version pmatch from github with:
+
+```{r gh-installation-github, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("mailund/pmatch")
 ```

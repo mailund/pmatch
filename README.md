@@ -180,7 +180,7 @@ constructors were not `numeric`:
 ONE(1)
 #> ONE(x = 1)
 ONE("foo")
-#> Error in ONE(x = "foo"): The argument foo is of type character but should be of type numeric.
+#> Error: rlang::is_na(type) || inherits(arg, type) is not TRUE
 ```
 
 Constructors and pattern matching becomes even more powerful when you
@@ -209,7 +209,13 @@ For more examples, see below.
 
 ## Installation
 
-You can install pmatch from github with:
+You can install the stable version of pmatch from CRAN using
+
+``` r
+install.packages("pmatch")
+```
+
+You can install the development version pmatch from github with:
 
 ``` r
 # install.packages("devtools")

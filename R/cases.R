@@ -55,7 +55,9 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
     match_env
 }
 
-test_pattern <- function(expr, test_expr, eval_env) {
+#' @describeIn test_pattern Version that quotes \code{test_expr} itself.
+#' @export
+test_pattern_ <- function(expr, test_expr, eval_env = rlang::caller_env()) {
     # Environment in which to store matched variables
     match_env <- rlang::env()
 
@@ -68,6 +70,37 @@ test_pattern <- function(expr, test_expr, eval_env) {
         test_pattern_rec(escape, expr, test_expr, eval_env, match_env)
     }
     callCC(tester)
+}
+
+#' Test if a pattern matches an expression
+#'
+#' Test if a value, \code{expr}, created from constructors matches a pattern of constructors.
+#' The \code{test_pattern_} function requires that \code{test_expr} is a quoted expression
+#' whiel the \code{test_pattern} function expects a bare expression and will quote it
+#' itself.
+#'
+#' @param expr A value created using constructors.
+#' @param test_expr A constructor pattern to test \code{expr} against.
+#' @param eval_env The environment where constructors can be found.
+#'
+#' @return \code{NULL} if the pattern does not match or an environment with bound
+#'         variables if it does.
+#'
+#' @examples
+#' type := ZERO | ONE(x) | TWO(x,y)
+#' zero <- ZERO
+#' one <- ONE(1)
+#' two <- TWO(1,2)
+#'
+#' as.list(test_pattern(zero, ZERO)) # returns an empty binding
+#' test_pattern_(one, quote(ZERO)) # returns NULL
+#' as.list(test_pattern_(one, quote(ONE(v)))) # returns a binding for v
+#' as.list(test_pattern(two, TWO(v,w))) # returns a binding for v and w
+#'
+#' @describeIn test_pattern Version that quotes \code{test_expr} itself.
+#' @export
+test_pattern <- function(expr, test_expr, eval_env = rlang::caller_env()) {
+    test_pattern_(expr, rlang::enexpr(test_expr), eval_env)
 }
 
 #' Dispatches from an expression to a matching pattern
@@ -119,7 +152,7 @@ cases <- function(expr, ...) {
         test_expr <- match_expr[[3]]
         result_expr <- match_expr[[2]]
 
-        match <- test_pattern(expr, test_expr, eval_env)
+        match <- test_pattern_(expr, test_expr, eval_env)
         if (!rlang::is_null(match)) {
             return(rlang::eval_tidy(result_expr, data = match, env = eval_env))
         }

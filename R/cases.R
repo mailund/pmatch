@@ -186,6 +186,7 @@ make_match_expr <- function(expr, match_expr, continue) {
 }
 
 #' @describeIn cases_expr Version that expects \code{expr} to be quoted.
+#' @export
 cases_expr_ <- function(expr, ...) {
     matchings <- rlang::exprs(...)
 
@@ -225,6 +226,7 @@ cases_expr_ <- function(expr, ...) {
 #' ll_length(CONS(1, CONS(2, CONS(3, CONS(4, NIL)))))
 #'
 #' @describeIn cases_expr Version that quotes \code{expr} itself.
+#' @export
 cases_expr <- function(expr, ...) {
     expr <- rlang::enexpr(expr)
     cases_expr_(expr, ...)

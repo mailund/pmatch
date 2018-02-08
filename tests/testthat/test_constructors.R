@@ -1,4 +1,4 @@
-context("constructors")
+context("Constructors")
 
 test_that("We can create constant constructors", {
     type := A | B

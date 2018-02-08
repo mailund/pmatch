@@ -1,4 +1,4 @@
-context("cases")
+context("Cases")
 
 test_that("We can match on constant constructors", {
     type := ONE | TWO | THREE
@@ -7,6 +7,14 @@ test_that("We can match on constant constructors", {
     expect_equal(f(TWO), 2)
     expect_equal(f(THREE), 3)
     expect_error(f("foo"))
+
+    one <- ONE
+    two <- TWO
+
+    expect_null(test_pattern(one, TWO))
+    expect_null(test_pattern_(one, quote(TWO)))
+    expect_true(!rlang::is_null(test_pattern(two, TWO)))
+    expect_true(!rlang::is_null(test_pattern_(two, quote(TWO))))
 })
 
 test_that("We can create match on function constructors", {
@@ -53,6 +61,7 @@ test_that("We can create match constants on function constructors", {
     expect_equal(f(CONS(1, CONS(2, CONS(3, CONS(4, NIL))))), 42)
 })
 
+
 test_that("We can create match variables in function constructors", {
     linked_list := NIL | CONS(car, cdr:linked_list)
 
@@ -73,6 +82,7 @@ test_that("We can create match variables in function constructors", {
     expect_equal(f(CONS(1, CONS(2, CONS(3, NIL)))), 1 + 2 + 3)
 })
 
+
 test_that("We can distinguish between constructors", {
     type := ONE(val) | TWO(val)
 
@@ -81,6 +91,7 @@ test_that("We can distinguish between constructors", {
     expect_equal(f(ONE(1)), 1)
     expect_equal(f(TWO(1)), 2)
 })
+
 
 test_that("We do not confuse variables for constructors", {
     type := ONE | TWO(x)
@@ -98,6 +109,7 @@ test_that("We do not confuse variables for constructors", {
     expect_equal(cases(one, two -> two), one)
 })
 
+
 test_that("We can do quasi-quoting", {
     type := ONE | TWO(x)
     two_q <- rlang::expr(TWO(2))
@@ -108,8 +120,6 @@ test_that("We can do quasi-quoting", {
 test_that("We handle syntax errors gracefully", {
     type := ONE | TWO
 
-    print(toString(TWO))
-
     expect_error(
         cases(ONE, x),
         "Malformed matching rule. Rules must be on the form 'pattern -> expression'."
@@ -118,4 +128,25 @@ test_that("We handle syntax errors gracefully", {
         cases(TWO, ONE -> 1),
         "None of the patterns matched the expression."
     )
+
+    expect_error(
+        cases_expr(ONE),
+        "At least one pattern must be provided."
+    )
+})
+
+
+test_that("We can build a function using cases_expr", {
+    type := ZERO | ONE(x) | TWO(x,y)
+    fun_body <- cases_expr(
+        v,
+        ZERO -> 0,
+        ONE(x) -> x,
+        TWO(x, y) -> x + y
+    )
+    fun <- rlang::new_function(alist(v=), fun_body)
+
+    expect_equal(fun(ZERO), 0)
+    expect_equal(fun(ONE(12)), 12)
+    expect_equal(fun(TWO(21, 21)), 42)
 })

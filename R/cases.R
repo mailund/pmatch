@@ -103,6 +103,18 @@ test_pattern <- function(expr, test_expr, eval_env = rlang::caller_env()) {
     test_pattern_(expr, rlang::enexpr(test_expr), eval_env)
 }
 
+#' Raise an error if a match expression is malformed.
+#'
+#' @param match_expr The match expression
+assert_correctly_formed_pattern_expression <- function(match_expr) {
+    if (!rlang::is_lang(match_expr) || match_expr[[1]] != "<-") {
+        error_msg <- glue::glue(
+            "Malformed matching rule. Rules must be on the form 'pattern -> expression'."
+        )
+        stop(simpleError(error_msg, call = match_expr))
+    }
+}
+
 #' Dispatches from an expression to a matching pattern
 #'
 #' Given an expression of a type defined by the \code{\link{:=}} operator, \code{cases}
@@ -142,12 +154,7 @@ cases <- function(expr, ...) {
     for (i in seq_along(matchings)) {
         eval_env <- rlang::get_env(matchings[[i]])
         match_expr <- rlang::quo_expr(matchings[[i]])
-        if (!rlang::is_lang(match_expr) || match_expr[[1]] != "<-") {
-            error_msg <- glue::glue(
-                "Malformed matching rule. Rules must be on the form 'pattern -> expression'."
-            )
-            stop(simpleError(error_msg, call = match_expr))
-        }
+        assert_correctly_formed_pattern_expression(match_expr)
 
         test_expr <- match_expr[[3]]
         result_expr <- match_expr[[2]]
@@ -162,4 +169,63 @@ cases <- function(expr, ...) {
         "None of the patterns matched the expression."
     )
     stop(simpleError(error_msg, call = match.call()))
+}
+
+make_match_expr <- function(expr, match_expr, continue) {
+    assert_correctly_formed_pattern_expression(match_expr)
+    pattern_test <-
+        rlang::expr(!rlang::is_null(..match_env <- test_pattern(!! expr, !! match_expr[[3]])))
+    eval_match <-
+        rlang::expr(eval(quote(!! match_expr[[2]]), as.list(..match_env)))
+
+    if (rlang::is_null(continue)) {
+        rlang::call2("if", pattern_test, eval_match)
+    } else {
+        rlang::call2("if", pattern_test, eval_match, continue)
+    }
+}
+
+#' @describeIn cases_expr Version that expects \code{expr} to be quoted.
+cases_expr_ <- function(expr, ...) {
+    matchings <- rlang::exprs(...)
+
+    if (length(matchings) < 1) {
+        error_msg <- glue::glue(
+            "At least one pattern must be provided."
+        )
+        stop(simpleError(error_msg, call = match.call()))
+    }
+
+    rev_match_indices <- rev(seq_along(matchings))
+    last_idx <- rev_match_indices[1]
+    continue_expr <- make_match_expr(expr, matchings[[last_idx]], NULL)
+    for (i in rev_match_indices[c(-1)]) {
+        continue_expr <- make_match_expr(expr, matchings[[i]], continue_expr)
+    }
+    return(continue_expr)
+}
+
+#' Create an expression that tests patterns against an expression in turn
+#'
+#' Where \code{\link{cases}} evalutes expressions based on pattern matches, this function
+#' creates a long if-else expression that tests patterns in turn and evalute the expression
+#' for a matching pattern. This function is intended for meta-programming rather than
+#' usual pattern matching.
+#'
+#' @param expr The expression to test against. This is usually a bare symbol.
+#' @param ... Pattern matching rules as in \code{\link{cases}}.
+#'
+#' @examples
+#' linked_list := NIL | CONS(car, cdr : linked_list)
+#'
+#' length_body <- cases_expr(lst, NIL -> acc, CONS(car, cdr) -> ll_length(cdr, acc + 1))
+#' length_body
+#'
+#' ll_length <- rlang::new_function(alist(lst=, acc = 0), length_body)
+#' ll_length(CONS(1, CONS(2, CONS(3, CONS(4, NIL)))))
+#'
+#' @describeIn cases_expr Version that quotes \code{expr} itself.
+cases_expr <- function(expr, ...) {
+    expr <- rlang::enexpr(expr)
+    cases_expr_(expr, ...)
 }

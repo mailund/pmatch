@@ -3,6 +3,13 @@
 
 # pmatch – A package for Haskell-like pattern matching in R
 
+[![Project Status:
+Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--02--07-orange.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.1.9000-orange.svg?style=flat-square)](commits/master)
+[![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build
@@ -11,11 +18,15 @@ Status](http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](h
 Status](http://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
 [![Coverage
 Status](http://coveralls.io/repos/github/mailund/pmatch/badge.svg?branch=master)](https://coveralls.io/github/mailund/pmatch?branch=master)
-[![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+
 [![CRAN
 status](http://www.r-pkg.org/badges/version/pmatch)](https://cran.r-project.org/package=pmatch)
 [![CRAN
 downloads](http://cranlogs.r-pkg.org/badges/grand-total/pmatch)](https://cran.r-project.org/package=pmatch)
+[![minimal R
+version](https://img.shields.io/badge/R-%E2%89%A53.2-blue.svg)](https://cran.r-project.org/)
+
+-----
 
 The goal of the `pmatch` package is to provide structure pattern
 matching, similar to Haskell and ML, to R programmers. The package
@@ -180,7 +191,7 @@ constructors were not `numeric`:
 ONE(1)
 #> ONE(x = 1)
 ONE("foo")
-#> Error in ONE(x = "foo"): The argument foo is of type character but should be of type numeric.
+#> Error: rlang::is_na(type) || inherits(arg, type) is not TRUE
 ```
 
 Constructors and pattern matching becomes even more powerful when you
@@ -209,7 +220,13 @@ For more examples, see below.
 
 ## Installation
 
-You can install pmatch from github with:
+You can install the stable version of pmatch from CRAN using
+
+``` r
+install.packages("pmatch")
+```
+
+You can install the development version pmatch from github with:
 
 ``` r
 # install.packages("devtools")

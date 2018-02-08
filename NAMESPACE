@@ -2,10 +2,7 @@
 
 export(":=")
 export(cases)
+export(cases_expr)
+export(cases_expr_)
 export(test_pattern)
 export(test_pattern_)
-importFrom(dplyr,bind_rows)
-importFrom(glue,glue)
-importFrom(purrr,map)
-importFrom(rlang,eval_tidy)
-importFrom(tibble,tibble)

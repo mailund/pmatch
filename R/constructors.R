@@ -6,8 +6,6 @@
 #'
 #' @param args List of variable names.
 #' @return A pair list that can be used with rlang::new_function.
-#' @importFrom tibble tibble
-#' @importFrom glue glue
 make_args_list <- function(args) {
     res <- replicate(length(args), substitute())
     names(res) <- args
@@ -42,9 +40,6 @@ process_arg <- function(argument) {
 #'
 #' @param constructor_arguments The arguments provided in the constructor specification
 #' @return The arguments represented as a tibble. The first column contain argument names, the second their types.
-#'
-#' @importFrom dplyr bind_rows
-#' @importFrom purrr map
 process_arguments <- function(constructor_arguments) {
     dplyr::bind_rows(purrr::map(as.list(constructor_arguments), process_arg))
 }

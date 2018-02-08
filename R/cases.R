@@ -1,4 +1,15 @@
 
+#' Recursive comparison of expression and pattern.
+#'
+#' @param escape     Continuation from callCC, used to escape if we cannot match.
+#' @param expr       The expression to match again.
+#' @param test_expr  The pattern we are trying to match.
+#' @param eval_env   The enviornment where we get constructors from.
+#' @param match_env  The environment to put matched variables in.
+#'
+#' @return An environment containing bound variables from the expression, if matching.
+#'         If the pattern doesn't match, the function escapes through the \code{escape}
+#'         continuation.
 test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
     # Is this a function-constructor?
     if (rlang::is_lang(test_expr)) {
@@ -146,7 +157,6 @@ assert_correctly_formed_pattern_expression <- function(match_expr) {
 #' }
 #' list_sum(lst)
 #'
-#' @importFrom rlang eval_tidy
 #' @export
 cases <- function(expr, ...) {
     matchings <- rlang::quos(...)
@@ -171,6 +181,15 @@ cases <- function(expr, ...) {
     stop(simpleError(error_msg, call = match.call()))
 }
 
+#' Create an if-statement for \code{\link{cases_expr}} and \code{\link{cases_expr_}} functions
+#'
+#' @param expr        The expression we pattern match against.
+#' @param match_expr  The pattern specification, on the form pattern -> expression
+#' @param continue    The expression that goes in the \code{else} part of the \code{if}
+#'                    expression. If this is \code{NULL}, we create an \code{if}-expression
+#'                    instead of an \code{if-else}-expression.
+#'
+#' @return A new if-expression
 make_match_expr <- function(expr, match_expr, continue) {
     assert_correctly_formed_pattern_expression(match_expr)
     pattern_test <-

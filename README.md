@@ -5,8 +5,8 @@
 
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--02--07-orange.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.1.9000-orange.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--02--08-orange.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.1.9001-orange.svg?style=flat-square)](commits/master)
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
@@ -191,7 +191,7 @@ constructors were not `numeric`:
 ONE(1)
 #> ONE(x = 1)
 ONE("foo")
-#> Error: rlang::is_na(type) || inherits(arg, type) is not TRUE
+#> Error in ONE(x = "foo"): The argument foo is of type character but should be of type numeric.
 ```
 
 Constructors and pattern matching becomes even more powerful when you

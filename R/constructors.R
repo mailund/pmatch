@@ -1,12 +1,23 @@
 
+
+#' Construct a pair-list of arguments that can be used to create a new function
+#'
+#' Given a list of argument names, construct a list of arguments with empty defaults.
+#'
+#' @param args List of variable names.
+#' @return A pair list that can be used with rlang::new_function.
+#' @importFrom tibble tibble
+#' @importFrom glue glue
 make_args_list <- function(args) {
     res <- replicate(length(args), substitute())
     names(res) <- args
     as.pairlist(res)
 }
 
-#' @importFrom tibble tibble
-#' @importFrom glue glue
+#' Build a tibble form a list of constructor arguments.
+#'
+#' @param argument The argument provided to a constructor in its definition
+#' @return A tibble with a single row, the first column holds the argument name, the second its type.
 process_arg <- function(argument) {
     error_msg <- glue::glue(
         "The constructor argument is malformed.\n",
@@ -27,12 +38,22 @@ process_arg <- function(argument) {
     }
 }
 
+#' Construct a tibble from all the arguments of a constructor
+#'
+#' @param constructor_arguments The arguments provided in the constructor specification
+#' @return The arguments represented as a tibble. The first column contain argument names, the second their types.
+#'
 #' @importFrom dplyr bind_rows
 #' @importFrom purrr map
 process_arguments <- function(constructor_arguments) {
     dplyr::bind_rows(purrr::map(as.list(constructor_arguments), process_arg))
 }
 
+#' Create a function constructor and put it in an environment.
+#'
+#' @param constructor The construct specification
+#' @param data_type_name The type the constructor should generate
+#' @param env The environment where we define the constructor
 process_constructor_function <- function(constructor, data_type_name, env) {
     constructor_name <- rlang::quo_name(constructor[[1]])
     constructor_arguments <- process_arguments(constructor[-1])
@@ -64,12 +85,22 @@ process_constructor_function <- function(constructor, data_type_name, env) {
     assign(constructor_name, constructor, envir = env)
 }
 
+#' Create a constant constructor and put it in an environment.
+#'
+#' @param constructor The construct specification
+#' @param data_type_name The type the constructor should generate
+#' @param env The environment where we define the constructor
 process_constructor_constant <- function(constructor, data_type_name, env) {
     constructor_name <- rlang::as_string(constructor)
     constructor_object <- structure(NA, constructor_constant = constructor_name, class = data_type_name)
     assign(constructor_name, constructor_object, envir = env)
 }
 
+#' Create a constructor and put it in an environment.
+#'
+#' @param constructor The construct specification
+#' @param data_type_name The type the constructor should generate
+#' @param env The environment where we define the constructor
 process_constructor <- function(constructor, data_type_name, env) {
     if (rlang::is_lang(constructor)) {
         process_constructor_function(constructor, data_type_name, env)
@@ -84,7 +115,11 @@ process_constructor <- function(constructor, data_type_name, env) {
     }
 }
 
-
+#' Goes through a list of |-separated expressions and define them as constructors
+#'
+#' @param constructors The constructs specification
+#' @param data_type_name The type the constructor should generate
+#' @param env The environment where we define the constructor
 process_alternatives <- function(constructors, data_type_name, env) {
     if (rlang::is_lang(constructors) && constructors[[1]] == "|") {
         process_alternatives(constructors[[2]], data_type_name, env)
@@ -94,6 +129,10 @@ process_alternatives <- function(constructors, data_type_name, env) {
     }
 }
 
+#' Create a string representation from a constructed object
+#'
+#' @param object The object to translate into a string
+#' @return A string representation of \code{object}
 deparse_construction <- function(object) {
     constructor_name <- attr(object, "constructor")
     if (rlang::is_null(constructor_name)) {
@@ -115,6 +154,12 @@ deparse_construction <- function(object) {
         constructor_name
     }
 }
+
+
+#' Print a constructed value
+#'
+#' @param x Object to print
+#' @param ... Additional parameters; not used.
 construction_printer <- function(x, ...) {
     cat(deparse_construction(x), "\n")
 }

@@ -180,6 +180,8 @@ cases <- function(expr, ...) {
     )
     stop(simpleError(error_msg, call = match.call()))
 }
+# setting the class so I can dispatch on tailr's transform_call.
+class(cases) <- c("tailr_pmatch_cases", class(cases))
 
 #' Create an if-statement for \code{\link{cases_expr}} and \code{\link{cases_expr_}} functions
 #'
@@ -195,7 +197,8 @@ make_match_expr <- function(expr, match_expr, continue) {
     pattern_test <-
         rlang::expr(!rlang::is_null(..match_env <- test_pattern(!! expr, !! match_expr[[3]])))
     eval_match <-
-        rlang::expr(eval(quote(!! match_expr[[2]]), as.list(..match_env)))
+        rlang::expr(with(..match_env, !! match_expr[[2]]))
+            #eval(quote(!! match_expr[[2]]), as.list(..match_env)))
 
     if (rlang::is_null(continue)) {
         rlang::call2("if", pattern_test, eval_match)

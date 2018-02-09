@@ -9,6 +9,11 @@ Description: Implements type constructions and pattern matching.
     that matches against the structure of objects of such types to program
     data structure transformations more succinctly.
 License: GPL-3
+ByteCompile: true
+Encoding: UTF-8
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr
+Language: en-GB
 Depends:
     R (>= 3.2),
 Imports:
@@ -26,10 +31,8 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
-    magrittr
-ByteCompile: true
-Encoding: UTF-8
-RoxygenNote: 6.0.1
-VignetteBuilder: knitr
-Language: en-GB
-Remotes: tidyverse/rlang
+    magrittr,
+    tailr (>= 0.0.0.9002)
+Remotes:
+    tidyverse/rlang,
+    mailund/tailr

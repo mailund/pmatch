@@ -68,9 +68,11 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
 
 #' @describeIn test_pattern Version that quotes \code{test_expr} itself.
 #' @export
-test_pattern_ <- function(expr, test_expr, eval_env = rlang::caller_env()) {
+test_pattern_ <- function(expr, test_expr,
+                          eval_env = rlang::caller_env(),
+                          match_parent_env = rlang::caller_env()) {
     # Environment in which to store matched variables
-    match_env <- rlang::env()
+    match_env <- rlang::child_env(.parent = match_parent_env)
 
     if (test_expr == quote(otherwise)) {
         return(match_env)
@@ -90,9 +92,12 @@ test_pattern_ <- function(expr, test_expr, eval_env = rlang::caller_env()) {
 #' whiel the \code{test_pattern} function expects a bare expression and will quote it
 #' itself.
 #'
-#' @param expr A value created using constructors.
-#' @param test_expr A constructor pattern to test \code{expr} against.
-#' @param eval_env The environment where constructors can be found.
+#' @param expr             A value created using constructors.
+#' @param test_expr        A constructor pattern to test \code{expr} against.
+#' @param eval_env         The environment where constructors can be found.
+#' @param match_parent_env Environment to use as the parent of the match bindings we return.
+#'                         This parameter enables you provide additional values to
+#'                         the environment where match-expressions are evaluated.
 #'
 #' @return \code{NULL} if the pattern does not match or an environment with bound
 #'         variables if it does.
@@ -110,8 +115,10 @@ test_pattern_ <- function(expr, test_expr, eval_env = rlang::caller_env()) {
 #'
 #' @describeIn test_pattern Version that quotes \code{test_expr} itself.
 #' @export
-test_pattern <- function(expr, test_expr, eval_env = rlang::caller_env()) {
-    test_pattern_(expr, rlang::enexpr(test_expr), eval_env)
+test_pattern <- function(expr, test_expr,
+                         eval_env = rlang::caller_env(),
+                         match_parent_env = rlang::caller_env()) {
+    test_pattern_(expr, rlang::enexpr(test_expr), eval_env, match_parent_env)
 }
 
 #' Raise an error if a match expression is malformed.

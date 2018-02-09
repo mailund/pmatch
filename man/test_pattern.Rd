@@ -5,9 +5,11 @@
 \alias{test_pattern}
 \title{Test if a pattern matches an expression}
 \usage{
-test_pattern_(expr, test_expr, eval_env = rlang::caller_env())
+test_pattern_(expr, test_expr, eval_env = rlang::caller_env(),
+  match_parent_env = rlang::caller_env())
 
-test_pattern(expr, test_expr, eval_env = rlang::caller_env())
+test_pattern(expr, test_expr, eval_env = rlang::caller_env(),
+  match_parent_env = rlang::caller_env())
 }
 \arguments{
 \item{expr}{A value created using constructors.}
@@ -15,6 +17,10 @@ test_pattern(expr, test_expr, eval_env = rlang::caller_env())
 \item{test_expr}{A constructor pattern to test \code{expr} against.}
 
 \item{eval_env}{The environment where constructors can be found.}
+
+\item{match_parent_env}{Environment to use as the parent of the match bindings we return.
+This parameter enables you provide additional values to
+the environment where match-expressions are evaluated.}
 }
 \value{
 \code{NULL} if the pattern does not match or an environment with bound

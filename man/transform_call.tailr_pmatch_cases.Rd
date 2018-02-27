@@ -7,7 +7,8 @@
 transform_call.tailr_pmatch_cases(fun, expr)
 }
 \arguments{
-\item{fun}{The function used to dispatch the generic function on. This would be the \code{\link{cases}} function.}
+\item{fun}{The function used to dispatch the generic function on.
+This would be the \code{\link{cases}} function.}
 
 \item{expr}{The call expression to transform.}
 }

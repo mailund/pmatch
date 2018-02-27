@@ -1,7 +1,8 @@
 
 #' Transformation hook for tailr
 #'
-#' @param fun   The function used to dispatch the generic function on. This would be the \code{\link{cases}} function.
+#' @param fun   The function used to dispatch the generic function on.
+#'              This would be the \code{\link{cases}} function.
 #' @param expr  The call expression to transform.
 #' @return Transformed expression.
 #' @export

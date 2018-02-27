@@ -205,7 +205,6 @@ make_match_expr <- function(expr, match_expr, continue) {
         rlang::expr(!rlang::is_null(..match_env <- test_pattern(!! expr, !! match_expr[[3]])))
     eval_match <-
         rlang::expr(with(..match_env, !! match_expr[[2]]))
-            #eval(quote(!! match_expr[[2]]), as.list(..match_env)))
 
     if (rlang::is_null(continue)) {
         rlang::call2("if", pattern_test, eval_match)

@@ -12,8 +12,18 @@ test_that("we can transform a function that contains a call to cases", {
 
     expect_true(tailr::can_loop_transform(llength))
 
-    skip("We cannot yet handle `with` expressions in `tailr`, which is needed here.")
+    llength_tr <- tailr::loop_transform(llength)
+    make_llist <- function(n) {
+        l <- NIL
+        for (i in 1:n) {
+            l <- CONS(i, l)
+        }
+        l
+    }
 
+    for (n in 1:10) {
+        expect_equal(n, llength_tr(make_llist(n)))
+    }
 })
 
 

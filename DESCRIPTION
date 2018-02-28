@@ -1,7 +1,7 @@
 Type: Package
 Package: pmatch
 Title: Pattern Matching
-Version: 0.1.1.9003
+Version: 0.1.2
 Author: Thomas Mailund <mailund@birc.au.dk>
 Maintainer: Thomas Mailund <mailund@birc.au.dk>
 Description: Implements type constructions and pattern matching.
@@ -32,6 +32,4 @@ Suggests:
     knitr,
     rmarkdown,
     magrittr,
-    tailr (>= 0.0.0.9004)
-Remotes:
-    mailund/tailr
+    tailr (>= 0.1.0)

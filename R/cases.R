@@ -4,7 +4,7 @@
 #' @param escape     Continuation from callCC, used to escape if we cannot match.
 #' @param expr       The expression to match again.
 #' @param test_expr  The pattern we are trying to match.
-#' @param eval_env   The enviornment where we get constructors from.
+#' @param eval_env   The environment where we get constructors from.
 #' @param match_env  The environment to put matched variables in.
 #'
 #' @return An environment containing bound variables from the expression, if matching.
@@ -89,7 +89,7 @@ test_pattern_ <- function(expr, test_expr,
 #'
 #' Test if a value, \code{expr}, created from constructors matches a pattern of constructors.
 #' The \code{test_pattern_} function requires that \code{test_expr} is a quoted expression
-#' whiel the \code{test_pattern} function expects a bare expression and will quote it
+#' while the \code{test_pattern} function expects a bare expression and will quote it
 #' itself.
 #'
 #' @param expr             A value created using constructors.
@@ -234,8 +234,8 @@ cases_expr_ <- function(expr, ...) {
 
 #' Create an expression that tests patterns against an expression in turn
 #'
-#' Where \code{\link{cases}} evalutes expressions based on pattern matches, this function
-#' creates a long if-else expression that tests patterns in turn and evalute the expression
+#' Where \code{\link{cases}} evaluates expressions based on pattern matches, this function
+#' creates a long if-else expression that tests patterns in turn and evaluate the expression
 #' for a matching pattern. This function is intended for meta-programming rather than
 #' usual pattern matching.
 #'

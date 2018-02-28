@@ -13,7 +13,7 @@ test_pattern_rec(escape, expr, test_expr, eval_env, match_env)
 
 \item{test_expr}{The pattern we are trying to match.}
 
-\item{eval_env}{The enviornment where we get constructors from.}
+\item{eval_env}{The environment where we get constructors from.}
 
 \item{match_env}{The environment to put matched variables in.}
 }

@@ -15,8 +15,8 @@ cases_expr(expr, ...)
 \item{...}{Pattern matching rules as in \code{\link{cases}}.}
 }
 \description{
-Where \code{\link{cases}} evalutes expressions based on pattern matches, this function
-creates a long if-else expression that tests patterns in turn and evalute the expression
+Where \code{\link{cases}} evaluates expressions based on pattern matches, this function
+creates a long if-else expression that tests patterns in turn and evaluate the expression
 for a matching pattern. This function is intended for meta-programming rather than
 usual pattern matching.
 }

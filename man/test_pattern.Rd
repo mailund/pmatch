@@ -29,7 +29,7 @@ the environment where match-expressions are evaluated.}
 \description{
 Test if a value, \code{expr}, created from constructors matches a pattern of constructors.
 The \code{test_pattern_} function requires that \code{test_expr} is a quoted expression
-whiel the \code{test_pattern} function expects a bare expression and will quote it
+while the \code{test_pattern} function expects a bare expression and will quote it
 itself.
 }
 \section{Functions}{

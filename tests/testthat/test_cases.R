@@ -137,14 +137,14 @@ test_that("We handle syntax errors gracefully", {
 
 
 test_that("We can build a function using cases_expr", {
-    type := ZERO | ONE(x) | TWO(x,y)
+    type := ZERO | ONE(x) | TWO(x, y)
     fun_body <- cases_expr(
         v,
         ZERO -> 0,
         ONE(x) -> x,
         TWO(x, y) -> x + y
     )
-    fun <- rlang::new_function(alist(v=), fun_body)
+    fun <- rlang::new_function(alist(v = ), fun_body)
 
     expect_equal(fun(ZERO), 0)
     expect_equal(fun(ONE(12)), 12)

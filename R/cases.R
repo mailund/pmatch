@@ -265,7 +265,6 @@ tailr_transform_call <- function(expr) {
     args <- rlang::call_args(expr)
     value <- args[[1]]
     patterns <- args[-1]
-    eval(rlang::expr(cases_expr(!!value, !!!patterns)))
+    eval(rlang::expr(cases_expr(!! value, !!! patterns)))
 }
 attr(cases, "tailr_transform") <- tailr_transform_call
-

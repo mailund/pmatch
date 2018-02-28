@@ -19,7 +19,7 @@ Depends:
 Imports:
     dplyr,
     purrr,
-    rlang,
+    rlang (>= 0.2.0),
     tibble,
     glue
 Suggests: 
@@ -34,5 +34,4 @@ Suggests:
     magrittr,
     tailr (>= 0.0.0.9004)
 Remotes:
-    tidyverse/rlang,
     mailund/tailr

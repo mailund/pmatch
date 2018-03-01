@@ -22,7 +22,7 @@ suppressPackageStartupMessages(library(pmatch, quietly = TRUE))
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-orange.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2-orange.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9000-orange.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build Status](http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)

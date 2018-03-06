@@ -2,8 +2,8 @@ context("Transformations for the tailr package")
 
 test_that("we can transform a function that contains a call to cases", {
     if (!requireNamespace("tailr", quietly = TRUE)) {
-          skip("tailr not installed")
-      }
+        skip("tailr not installed")
+    }
 
     llist := NIL | CONS(car, cdr:llist)
     llength <- function(lst, acc = 0)

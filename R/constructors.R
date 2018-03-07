@@ -126,18 +126,19 @@ process_alternatives <- function(constructors, data_type_name, env) {
 
 #' Create a string representation from a constructed object
 #'
-#' @param object The object to translate into a string
+#' @param x The object to translate into a string
+#' @param ... Additional parameters; not used.
 #' @return A string representation of \code{object}
-deparse_construction <- function(object) {
-    constructor_name <- attr(object, "constructor")
+deparse_construction <- function(x, ...) {
+    constructor_name <- attr(x, "constructor")
     if (rlang::is_null(constructor_name)) {
         # this is not a constructor, so just get the value
-        return(toString(object))
+        return(toString(x))
     }
 
-    if (rlang::is_list(object)) {
-        components <- names(object)
-        values <- purrr::map(rlang::as_list(object), deparse_construction)
+    if (rlang::is_list(x)) {
+        components <- names(x)
+        values <- purrr::map(rlang::as_list(x), deparse_construction)
 
         print_args <- vector("character", length = length(components))
         for (i in seq_along(components)) {

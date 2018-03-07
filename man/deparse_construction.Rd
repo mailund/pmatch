@@ -4,10 +4,12 @@
 \alias{deparse_construction}
 \title{Create a string representation from a constructed object}
 \usage{
-deparse_construction(object)
+deparse_construction(x, ...)
 }
 \arguments{
-\item{object}{The object to translate into a string}
+\item{x}{The object to translate into a string}
+
+\item{...}{Additional parameters; not used.}
 }
 \value{
 A string representation of \code{object}

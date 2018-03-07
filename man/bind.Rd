@@ -3,25 +3,12 @@
 \docType{data}
 \name{bind}
 \alias{bind}
-\title{Bind variables to pattern-matched expressions.}
-\format{}
+\title{Dummy object used for generic function dispatching.}
+\format{An object of class \code{tailr_bind} of length 1.}
 \usage{
-bind[variables] <- values
+bind
 }
 \description{
-The \code{bind} object itself doesn't do anything. It simply exists in order to define
-notation for binding variabels using the sub-script operator.
-}
-\examples{
-bind[x, y] <- c(2,4)
-x == 2
-y == 4
-
-llist := NIL | CONS(car, cdr : llist)
-L <- CONS(1, CONS(2, CONS(3, NIL)))
-bind[CONS(first, CONS(second, rest))] <- L
-first == 1
-second == 2
-
+Dummy object used for generic function dispatching.
 }
 \keyword{datasets}

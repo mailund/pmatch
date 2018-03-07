@@ -12,15 +12,18 @@ copy_env <- function(from, to, names=ls(from, all.names = TRUE)) {
     invisible(NULL)
 }
 
+#' Dummy object used for generic function dispatching.
+#' @export
+bind <- structure(NA, class = "tailr_bind")
+
 #' Bind variables to pattern-matched expressions.
 #'
 #' The \code{bind} object itself doesn't do anything. It simply exists in order to define
 #' notation for binding variabels using the sub-script operator.
 #'
-#' @usage
-#' bind[variables] <- values
-#'
-#' @format
+#' @param dummy The \code{bind} object. Only used to dispatch to the right subscript operator.
+#' @param ...   Patterns to assign to.
+#' @param value Actual values to assign
 #'
 #' @examples
 #' bind[x, y] <- c(2,4)
@@ -33,9 +36,6 @@ copy_env <- function(from, to, names=ls(from, all.names = TRUE)) {
 #' first == 1
 #' second == 2
 #'
-#' @export
-bind <- structure(NA, class = "tailr_bind")
-
 #' @export
 `[<-.tailr_bind` <- function(dummy, ..., value) {
     force(value)

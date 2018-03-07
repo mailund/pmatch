@@ -15,7 +15,7 @@ RoxygenNote: 6.0.1
 VignetteBuilder: knitr
 Language: en-GB
 Depends:
-    R (>= 3.2),
+    R (>= 3.2)
 Imports:
     dplyr,
     purrr,

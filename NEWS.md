@@ -1,3 +1,7 @@
+# pmatch 0.1.3
+
+ * bind[x,y,z] <- 1:3 syntax for binding variables.
+
 # pmatch 0.1.2
 
  * Transformation rules to make pattern matching work with tail-recursion from tailr package.

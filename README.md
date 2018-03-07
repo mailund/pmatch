@@ -7,8 +7,8 @@
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--01-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9000-green.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--06-green.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9001-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
@@ -214,6 +214,31 @@ f <- function(x) {
 x <- T(T(L(1),L(2)), T(T(L(3),L(4)),L(5)))
 f(x)
 #> [1] 1 2 3 4 5
+```
+
+You can also assign to variables in the current namespace using
+subscripting on the special object `bind`:
+
+``` r
+bind[a,b] <- 1:2
+a
+#> [1] 1
+b
+#> [1] 2
+```
+
+With the `bind` object, you can match against patterns, as with the
+`cases` function, and matched variables will be added to the namespace
+where you invoke subscripting on `bind`:
+
+``` r
+x
+#> T(left = T(left = L(elm = 1), right = L(elm = 2)), right = T(left = T(left = L(elm = 3), right = L(elm = 4)), right = L(elm = 5)))
+bind[T(left, right)] <- x
+left
+#> T(left = L(elm = 1), right = L(elm = 2))
+right
+#> T(left = T(left = L(elm = 3), right = L(elm = 4)), right = L(elm = 5))
 ```
 
 For more examples, see below.

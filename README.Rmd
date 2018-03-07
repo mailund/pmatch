@@ -22,7 +22,7 @@ suppressPackageStartupMessages(library(pmatch, quietly = TRUE))
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9000-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9001-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build Status](http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
@@ -166,6 +166,23 @@ f <- function(x) {
 }
 x <- T(T(L(1),L(2)), T(T(L(3),L(4)),L(5)))
 f(x)
+```
+
+You can also assign to variables in the current namespace using subscripting on the special object `bind`:
+
+```{r}
+bind[a,b] <- 1:2
+a
+b
+```
+
+With the `bind` object, you can match against patterns, as with the `cases` function, and matched variables will be added to the namespace where you invoke subscripting on `bind`:
+
+```{r}
+x
+bind[T(left, right)] <- x
+left
+right
 ```
 
 For more examples, see below.

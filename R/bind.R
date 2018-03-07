@@ -38,18 +38,26 @@ bind <- structure(NA, class = "tailr_bind")
 
 #' @export
 `[<-.tailr_bind` <- function(dummy, ..., value) {
+    force(value)
     var_env <- rlang::caller_env()
     patterns <- eval(substitute(alist(...)))
+
     # we have to treat single values special because a single constructor-value
     # is a list and we don't want to index into it as such.
     if (length(patterns) == 1) {
-          value <- list(value)
-      }
+        value <- list(value)
+    }
 
     for (i in seq_along(patterns)) {
         var_bindings <- test_pattern_(value[[i]], patterns[[i]], eval_env = var_env)
         if (is.null(var_bindings)) {
-            stop("error")
+            msg <- simpleError(
+                glue::glue(
+                    "The pattern {deparse(patterns[[i]])} ",
+                    "does not match its value."
+                )
+            )
+            stop(msg)
         }
         copy_env(from = var_bindings, to = var_env)
     }

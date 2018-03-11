@@ -7,7 +7,7 @@
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--06-green.svg)](/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--11-green.svg)](/commits/master)
 [![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9001-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build
@@ -532,7 +532,7 @@ the plain search tree.
 
 ``` r
 insert_rec <- function(tree, x) {
-  match(tree,
+  cases(tree,
         E -> T(R, E, x, E),
         T(col, left, val, right) -> {
           if (x < val)
@@ -561,7 +561,7 @@ as simple as this:
 
 ``` r
 balance <- function(tree) {
-  match(tree,
+  cases(tree,
         T(B,T(R,a,x,T(R,b,y,c)),z,d) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),
         T(B,T(R,T(R,a,x,b),y,c),z,d) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),
         T(B,a,x,T(R,b,y,T(R,c,z,d))) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),

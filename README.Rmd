@@ -385,7 +385,7 @@ These invariants can be guaranteed by always inserting new values in red leaves,
 
 ```{r}
 insert_rec <- function(tree, x) {
-  match(tree,
+  cases(tree,
         E -> T(R, E, x, E),
         T(col, left, val, right) -> {
           if (x < val)
@@ -411,7 +411,7 @@ Every time we see one of the trees around the edges, we must transform it into t
 
 ```{r}
 balance <- function(tree) {
-  match(tree,
+  cases(tree,
         T(B,T(R,a,x,T(R,b,y,c)),z,d) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),
         T(B,T(R,T(R,a,x,b),y,c),z,d) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),
         T(B,a,x,T(R,b,y,T(R,c,z,d))) -> T(R,T(B,a,x,b),y,T(B,c,z,d)),

@@ -36,6 +36,13 @@ test_that("We can create match on function constructors", {
     expect_equal(f(CONS(1, CONS(2, NIL))), 2)
     expect_equal(f(CONS(1, CONS(2, CONS(3, NIL)))), 3)
     expect_equal(f(CONS(1, CONS(2, CONS(3, CONS(4, NIL))))), 42)
+
+    tree := T(left : tree, right : tree) | L(value)
+    res <- cases(T(L(4), L(5)),
+               L(v) -> v,
+               T(L(v), L(w)) -> v + w,
+               otherwise -> 5)
+    expect_equal(res, 9)
 })
 
 test_that("We can create match constants on function constructors", {

@@ -2,7 +2,6 @@
   "exclude": [
     "^(node_modules|bower_components|\\.imdone|target|build|dist|logs|flow-typed|imdone-export.json)[\\/\\\\]?|\\.(git|svn|hg|npmignore)|\\~$|\\.(jpg|png|gif|swp|ttf|otf)$"
   ],
-  "languages": {".R":           {"name": "r", "symbol": "#"} },
   "watcher": true,
   "keepEmptyPriority": true,
   "code": {
@@ -21,7 +20,12 @@
       "REVIEW"
     ]
   },
-  "lists": [],
+  "lists": [
+    {
+      "name": "FIXME",
+      "hidden": false
+    }
+  ],
   "marked": {
     "gfm": true,
     "tables": true,
@@ -34,6 +38,12 @@
     "id": "5aacc1b6cae9560b1512528a",
     "name": "mailund/pmatch",
     "useImdoneioForPriority": true
+  },
+  "languages": {
+    ".R": {
+      "name": "r",
+      "symbol": "#"
+    }
   },
   "meta": {
     "gh": {

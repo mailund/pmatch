@@ -200,9 +200,9 @@ cases <- function(expr, ...) {
 make_match_expr <- function(expr, match_expr, continue) {
     assert_correctly_formed_pattern_expression(match_expr)
     pattern_test <-
-        rlang::expr(!rlang::is_null(..match_env <- pmatch::test_pattern(!! expr, !! match_expr[[3]])))
+        rlang::expr(!rlang::is_null(..match_env <- pmatch::test_pattern(!!expr, !!match_expr[[3]])))
     eval_match <-
-        rlang::expr(with(..match_env, !! match_expr[[2]]))
+        rlang::expr(with(..match_env, !!match_expr[[2]]))
 
     if (rlang::is_null(continue)) {
         rlang::call2("if", pattern_test, eval_match)
@@ -258,13 +258,3 @@ cases_expr <- function(expr, ...) {
     cases_expr_(expr, ...)
 }
 
-## tailr transformer
-tailr_transform_call <- function(expr) {
-    stopifnot(rlang::call_name(expr) == "cases")
-
-    args <- rlang::call_args(expr)
-    value <- args[[1]]
-    patterns <- args[-1]
-    eval(rlang::expr(cases_expr(!! value, !!! patterns)))
-}
-attr(cases, "tailr_transform") <- tailr_transform_call

@@ -20,8 +20,7 @@ transform_cases_function_rec <- function(expr) {
         # FIXME: This assumes that if we see `cases` it is pmatch::cases. id:0 gh:27 ic:gh
         # There could be other `cases`, from other scopes, so really,
         # we should carry the environment along the recursive calls and check.
-        if (rlang::call_name(expr) == "cases" &&
-            identical(rlang::call_fn(expr), pmatch::cases)) {
+        if (rlang::call_name(expr) == "cases") {
             expr <- transform_cases_call(expr)
         }
         expr

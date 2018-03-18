@@ -11,6 +11,7 @@ Description: Implements type constructions and pattern matching.
 License: GPL-3
 ByteCompile: true
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr
 Language: en-GB

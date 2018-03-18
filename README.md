@@ -7,8 +7,8 @@
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--11-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9001-green.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--18-green.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9002-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
@@ -240,6 +240,86 @@ left
 right
 #> T(left = T(left = L(elm = 3), right = L(elm = 4)), right = L(elm = 5))
 ```
+
+### Function transformations
+
+Since this package provides its functionality through a DSL, you *can*
+get into trouble when other parts of R tries to make sense of it.
+
+Consider this function:
+
+``` r
+is_leaf <- function(tree) {
+    cases(tree,
+          L(x) -> TRUE,
+          otherwise -> FALSE)
+}
+is_leaf(L(1))
+#> [1] TRUE
+is_leaf(T(L(1),L(2)))
+#> [1] FALSE
+```
+
+It works as intended, but if you try to byte-compile it, you get an
+error:
+
+``` r
+compiler::cmpfun(is_leaf)
+#> Error: bad assignment: 'TRUE <- L(x)'
+```
+
+This is because the byte-compiler tries to make meaning out of the `->
+TRUE` and `-> FALSE` assignments (it sees them as `TRUE <-` and `FALSE
+<-` because that is what the parser actually returns). We can transform
+the body of functions that calls `cases` to replace the DSL with
+`if`-statements.
+
+``` r
+is_leaf_tr <- transform_cases_function(is_leaf)
+is_leaf_tr
+#> function (tree) 
+#> {
+#>     if (!rlang::is_null(..match_env <- pmatch::test_pattern(tree, 
+#>         L(x)))) 
+#>         with(..match_env, TRUE)
+#>     else if (!rlang::is_null(..match_env <- pmatch::test_pattern(tree, 
+#>         otherwise))) 
+#>         with(..match_env, FALSE)
+#> }
+```
+
+After the transformation, the byte-compiler is happy.
+
+``` r
+is_leaf_tr_bc <- compiler::cmpfun(is_leaf_tr)
+is_leaf_tr_bc(L(1))
+#> [1] TRUE
+is_leaf_tr_bc(T(L(1),L(2)))
+#> [1] FALSE
+```
+
+Transformation has the added benefit of slightly speeding up the
+function. And, of course, being able to byte-compile can add a bit more
+to the performance.
+
+``` r
+bm <- microbenchmark::microbenchmark(
+    is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
+)
+bm
+#> Unit: microseconds
+#>                 expr     min       lq     mean   median       uq      max
+#>        is_leaf(L(1)) 475.090 520.8655 675.0437 560.2625 758.2160 3324.382
+#>     is_leaf_tr(L(1)) 299.463 362.8915 515.9576 383.3000 572.5210 4131.983
+#>  is_leaf_tr_bc(L(1)) 336.190 364.1810 465.4426 404.5345 490.2135  955.000
+#>  neval
+#>    100
+#>    100
+#>    100
+boxplot(bm)
+```
+
+![](README-unnamed-chunk-21-1.png)<!-- -->
 
 For more examples, see below.
 

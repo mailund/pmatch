@@ -1,7 +1,7 @@
 Type: Package
 Package: pmatch
 Title: Pattern Matching
-Version: 0.1.2.9001
+Version: 0.1.2.9002
 Author: Thomas Mailund <mailund@birc.au.dk>
 Maintainer: Thomas Mailund <mailund@birc.au.dk>
 Description: Implements type constructions and pattern matching.

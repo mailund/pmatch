@@ -22,7 +22,7 @@ suppressPackageStartupMessages(library(pmatch, quietly = TRUE))
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9001-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9002-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build Status](http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
@@ -184,6 +184,54 @@ bind[T(left, right)] <- x
 left
 right
 ```
+
+### Function transformations
+
+Since this package provides its functionality through a DSL, you *can* get into trouble when other parts of R tries to make sense of it.
+
+Consider this function:
+
+```{r}
+is_leaf <- function(tree) {
+    cases(tree,
+          L(x) -> TRUE,
+          otherwise -> FALSE)
+}
+is_leaf(L(1))
+is_leaf(T(L(1),L(2)))
+```
+
+It works as intended, but if you try to byte-compile it, you get an error:
+
+```{r, error=TRUE}
+compiler::cmpfun(is_leaf)
+```
+
+This is because the byte-compiler tries to make meaning out of the `-> TRUE` and `-> FALSE` assignments (it sees them as `TRUE <-` and `FALSE <-` because that is what the parser actually returns). We can transform the body of functions that calls `cases` to replace the DSL with `if`-statements.
+
+```{r}
+is_leaf_tr <- transform_cases_function(is_leaf)
+is_leaf_tr
+```
+
+After the transformation, the byte-compiler is happy.
+
+```{r, error=TRUE}
+is_leaf_tr_bc <- compiler::cmpfun(is_leaf_tr)
+is_leaf_tr_bc(L(1))
+is_leaf_tr_bc(T(L(1),L(2)))
+```
+
+Transformation has the added benefit of slightly speeding up the function. And, of course, being able to byte-compile can add a bit more to the performance.
+
+```{r}
+bm <- microbenchmark::microbenchmark(
+    is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
+)
+bm
+boxplot(bm)
+```
+
 
 For more examples, see below.
 

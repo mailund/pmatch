@@ -257,4 +257,3 @@ cases_expr <- function(expr, ...) {
     expr <- rlang::enexpr(expr)
     cases_expr_(expr, ...)
 }
-

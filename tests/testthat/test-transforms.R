@@ -32,10 +32,18 @@ test_that("we can translate a function that call cases into one that doesn't", {
     }
     expect_error(compiler::cmpfun(lldrop)) # an error because of the DSL
     lldrop <- transform_cases_function(lldrop)
-    expect_true(cases(lldrop(CONS(1, NIL), k = 1),
-                      NIL -> TRUE, otherwise -> FALSE))
+    expect_true(cases(
+        lldrop(CONS(1, NIL), k = 1),
+        NIL -> TRUE, otherwise -> FALSE
+    ))
 })
 
+test_that("we get appropriate error messages when translating", {
+    expect_error(transform_cases_function(1))
+    expect_error(transform_cases_function(~ .x))
+})
+
+## Transformation for the `tailr` package ###################################
 context("Transformations for the tailr package")
 
 test_that("we can transform a function that contains a call to cases", {

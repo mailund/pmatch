@@ -47,4 +47,3 @@ transform_cases_function <- function(fun) {
 
 ## tailr transformer
 attr(cases, "tailr_transform") <- transform_cases_call
-

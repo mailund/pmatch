@@ -7,8 +7,8 @@
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--18-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9002-green.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--20-green.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9003-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
@@ -308,10 +308,10 @@ bm <- microbenchmark::microbenchmark(
 )
 bm
 #> Unit: microseconds
-#>                 expr     min       lq     mean   median       uq      max
-#>        is_leaf(L(1)) 475.090 520.8655 675.0437 560.2625 758.2160 3324.382
-#>     is_leaf_tr(L(1)) 299.463 362.8915 515.9576 383.3000 572.5210 4131.983
-#>  is_leaf_tr_bc(L(1)) 336.190 364.1810 465.4426 404.5345 490.2135  955.000
+#>                 expr     min       lq     mean   median      uq      max
+#>        is_leaf(L(1)) 390.889 419.5595 497.9809 440.2480 506.336 1168.877
+#>     is_leaf_tr(L(1)) 276.557 303.1960 429.8333 318.9865 434.400 4097.574
+#>  is_leaf_tr_bc(L(1)) 277.653 298.6635 382.4473 312.3535 344.198 1630.556
 #>  neval
 #>    100
 #>    100

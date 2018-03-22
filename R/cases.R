@@ -87,20 +87,20 @@ test_pattern_ <- function(expr, test_expr,
 
 #' Test if a pattern matches an expression
 #'
-#' Test if a value, \code{expr}, created from constructors matches a pattern of constructors.
-#' The \code{test_pattern_} function requires that \code{test_expr} is a quoted expression
-#' while the \code{test_pattern} function expects a bare expression and will quote it
-#' itself.
+#' Test if a value, \code{expr}, created from constructors matches a pattern of
+#' constructors. The \code{test_pattern_} function requires that
+#' \code{test_expr} is a quoted expression while the \code{test_pattern}
+#' function expects a bare expression and will quote it itself.
 #'
 #' @param expr             A value created using constructors.
 #' @param test_expr        A constructor pattern to test \code{expr} against.
 #' @param eval_env         The environment where constructors can be found.
-#' @param match_parent_env Environment to use as the parent of the match bindings we return.
-#'                         This parameter enables you provide additional values to
-#'                         the environment where match-expressions are evaluated.
+#' @param match_parent_env Environment to use as the parent of the match
+#'   bindings we return. This parameter enables you provide additional values to
+#'   the environment where match-expressions are evaluated.
 #'
-#' @return \code{NULL} if the pattern does not match or an environment with bound
-#'         variables if it does.
+#' @return \code{NULL} if the pattern does not match or an environment with
+#'   bound variables if it does.
 #'
 #' @examples
 #' type := ZERO | ONE(x) | TWO(x,y)
@@ -125,9 +125,13 @@ test_pattern <- function(expr, test_expr,
 #'
 #' @param match_expr The match expression
 assert_correctly_formed_pattern_expression <- function(match_expr) {
-    if (!rlang::is_lang(match_expr) || match_expr[[1]] != "<-") {
+    if (!(rlang::is_lang(match_expr) && ( # must be a call, using either
+        (match_expr[[1]] == "<-") || # assignment syntax or
+            (match_expr[[1]] == "~") # formula syntax
+    ))) {
         error_msg <- glue::glue(
-            "Malformed matching rule. Rules must be on the form 'pattern -> expression'."
+            "Malformed matching rule. Rules must be on the form 'pattern -> expression' ",
+            "or pattern ~ expression."
         )
         stop(simpleError(error_msg, call = match_expr))
     }
@@ -135,15 +139,17 @@ assert_correctly_formed_pattern_expression <- function(match_expr) {
 
 #' Dispatches from an expression to a matching pattern
 #'
-#' Given an expression of a type defined by the \code{\link{:=}} operator, \code{cases}
-#' matches it against patterns until it find one that has the same structure as \code{expr}.
-#' When it does, it evaluates the expression the pattern is associated with. During matching,
-#' any symbol that is not quasi-quoted will be considered a variable, and matching
-#' values will be bound to such variables and be available when an expression is evaluated.
+#' Given an expression of a type defined by the \code{\link{:=}} operator,
+#' \code{cases} matches it against patterns until it find one that has the same
+#' structure as \code{expr}. When it does, it evaluates the expression the
+#' pattern is associated with. During matching, any symbol that is not
+#' quasi-quoted will be considered a variable, and matching values will be bound
+#' to such variables and be available when an expression is evaluated.
 #'
 #' @param expr The value the patterns will be matched against.
 #' @param ...  A list of \code{pattern -> expression} statements.
-#' @return The value of the expression associated with the first matching pattern.
+#' @return The value of the expression associated with the first matching
+#'   pattern.
 #'
 #' @seealso \code{\link{:=}}
 #'
@@ -173,8 +179,19 @@ cases <- function(expr, ...) {
         match_expr <- rlang::quo_expr(matchings[[i]])
         assert_correctly_formed_pattern_expression(match_expr)
 
-        test_expr <- match_expr[[3]]
-        result_expr <- match_expr[[2]]
+        # the order of test and result depend on the syntax... for `->` the
+        # R parser will switch the two; for `~` it will not.
+        switch(as.character(match_expr[[1]]),
+            "<-" = {
+                test_expr <- match_expr[[3]]
+                result_expr <- match_expr[[2]]
+            },
+            "~" = {
+                test_expr <- match_expr[[2]]
+                result_expr <- match_expr[[3]]
+            },
+            stop(paste0("Unexpected pattern call to ", match_expr[[1]])) # nocov
+        )
 
         match <- test_pattern_(expr, test_expr, eval_env)
         if (!rlang::is_null(match)) {
@@ -188,19 +205,23 @@ cases <- function(expr, ...) {
     stop(simpleError(error_msg, call = match.call()))
 }
 
-#' Create an if-statement for \code{\link{cases_expr}} and \code{\link{cases_expr_}} functions
+#' Create an if-statement for \code{\link{cases_expr}} and
+#' \code{\link{cases_expr_}} functions
 #'
 #' @param expr        The expression we pattern match against.
-#' @param match_expr  The pattern specification, on the form pattern -> expression
-#' @param continue    The expression that goes in the \code{else} part of the \code{if}
-#'                    expression. If this is \code{NULL}, we create an \code{if}-expression
-#'                    instead of an \code{if-else}-expression.
+#' @param match_expr  The pattern specification, on the form pattern ->
+#'   expression
+#' @param continue    The expression that goes in the \code{else} part of the
+#'   \code{if} expression. If this is \code{NULL}, we create an
+#'   \code{if}-expression instead of an \code{if-else}-expression.
 #'
 #' @return A new if-expression
 make_match_expr <- function(expr, match_expr, continue) {
     assert_correctly_formed_pattern_expression(match_expr)
     pattern_test <-
-        rlang::expr(!rlang::is_null(..match_env <- pmatch::test_pattern(!!expr, !!match_expr[[3]])))
+        rlang::expr(!rlang::is_null(
+            ..match_env <- pmatch::test_pattern(!!expr, !!match_expr[[3]])
+        ))
     eval_match <-
         rlang::expr(with(..match_env, !!match_expr[[2]]))
 
@@ -234,10 +255,10 @@ cases_expr_ <- function(expr, ...) {
 
 #' Create an expression that tests patterns against an expression in turn
 #'
-#' Where \code{\link{cases}} evaluates expressions based on pattern matches, this function
-#' creates a long if-else expression that tests patterns in turn and evaluate the expression
-#' for a matching pattern. This function is intended for meta-programming rather than
-#' usual pattern matching.
+#' Where \code{\link{cases}} evaluates expressions based on pattern matches,
+#' this function creates a long if-else expression that tests patterns in turn
+#' and evaluate the expression for a matching pattern. This function is intended
+#' for meta-programming rather than usual pattern matching.
 #'
 #' @param expr The expression to test against. This is usually a bare symbol.
 #' @param ... Pattern matching rules as in \code{\link{cases}}.

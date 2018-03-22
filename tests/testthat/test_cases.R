@@ -47,6 +47,53 @@ test_that("We can create match on function constructors", {
     expect_equal(res, 9)
 })
 
+test_that("We can formula as well as assignment syntax", {
+    type := ONE | TWO | THREE
+    f <- function(x) cases(x, ONE ~ 1, TWO ~ 2, THREE ~ 3)
+    f <- function(x) cases(x, ONE -> 1, TWO -> 2, THREE -> 3)
+    expect_equal(f(ONE), 1)
+    expect_equal(f(TWO), 2)
+    expect_equal(f(THREE), 3)
+    expect_error(f("foo"))
+
+    one <- ONE
+    two <- TWO
+
+    expect_null(test_pattern(one, TWO))
+    expect_null(test_pattern_(one, quote(TWO)))
+    expect_true(!rlang::is_null(test_pattern(two, TWO)))
+    expect_true(!rlang::is_null(test_pattern_(two, quote(TWO))))
+
+    linked_list := NIL | CONS(car, cdr:linked_list)
+
+    f <- function(lst) {
+        cases(
+            lst,
+            NIL ~ 0,
+            CONS(x, NIL) ~ 1,
+            CONS(x, CONS(y, NIL)) ~ 2,
+            CONS(x, CONS(y, CONS(z, NIL))) ~ 3,
+            otherwise ~ 42
+        )
+    }
+
+    expect_equal(f(NIL), 0)
+    expect_equal(f(CONS(1, NIL)), 1)
+    expect_equal(f(CONS(1, CONS(2, NIL))), 2)
+    expect_equal(f(CONS(1, CONS(2, CONS(3, NIL)))), 3)
+    expect_equal(f(CONS(1, CONS(2, CONS(3, CONS(4, NIL))))), 42)
+
+    tree := T(left:tree, right:tree) | L(value)
+    res <- cases(
+        T(L(4), L(5)),
+        L(v) ~ v,
+        T(L(v), L(w)) ~ v + w,
+        otherwise ~ 5
+    )
+    expect_equal(res, 9)
+})
+
+
 test_that("We can create match constants on function constructors", {
     linked_list := NIL | CONS(car, cdr:linked_list)
 

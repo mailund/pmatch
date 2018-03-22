@@ -1,7 +1,7 @@
 Type: Package
 Package: pmatch
 Title: Pattern Matching
-Version: 0.1.2.9004
+Version: 0.1.3
 Author: Thomas Mailund <mailund@birc.au.dk>
 Maintainer: Thomas Mailund <mailund@birc.au.dk>
 Description: Implements type constructions and pattern matching.
@@ -13,7 +13,6 @@ ByteCompile: true
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
-VignetteBuilder: knitr
 Language: en-GB
 Depends:
     R (>= 3.2)
@@ -33,6 +32,7 @@ Suggests:
     knitr,
     rmarkdown,
     magrittr,
+    microbenchmark,
     tailr (>= 0.1.0)
 URL: https://github.com/mailund/pmatch
 BugReports: https://github.com/mailund/pmatch/issues

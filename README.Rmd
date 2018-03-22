@@ -22,7 +22,7 @@ suppressPackageStartupMessages(library(pmatch, quietly = TRUE))
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9004-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build Status](http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
@@ -249,11 +249,9 @@ is_leaf_tr_bc(T(L(1),L(2)))
 Transformation has the added benefit of slightly speeding up the function. And, of course, being able to byte-compile can add a bit more to the performance.
 
 ```{r}
-bm <- microbenchmark::microbenchmark(
+microbenchmark::microbenchmark(
     is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
 )
-bm
-boxplot(bm)
 ```
 
 

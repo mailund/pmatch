@@ -4,7 +4,7 @@
 \name{bind}
 \alias{bind}
 \title{Dummy object used for generic function dispatching.}
-\format{An object of class \code{tailr_bind} of length 1.}
+\format{An object of class \code{pmatch_bind} of length 1.}
 \usage{
 bind
 }

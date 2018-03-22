@@ -19,8 +19,8 @@ test_pattern_rec(escape, expr, test_expr, eval_env, match_env)
 }
 \value{
 An environment containing bound variables from the expression, if matching.
-        If the pattern doesn't match, the function escapes through the \code{escape}
-        continuation.
+If the pattern doesn't match, the function escapes through the \code{escape}
+continuation.
 }
 \description{
 Recursive comparison of expression and pattern.

@@ -1,3 +1,9 @@
+# FIXME: Replace these with `foolbox` code when going to 0.1.4
+
+#' Recursive function for transforming a call `cases`.
+#'
+#' @param expr The expression to transform.
+#' @return Updated expression.
 transform_cases_call <- function(expr) {
     stopifnot(rlang::call_name(expr) == "cases")
 
@@ -7,6 +13,10 @@ transform_cases_call <- function(expr) {
     eval(rlang::expr(cases_expr(!!value, !!!patterns)))
 }
 
+#' Recursive function for transforming a function that uses `cases`.
+#'
+#' @param expr The expression to transform.
+#' @return Updated expression.
 transform_cases_function_rec <- function(expr) {
     if (rlang::is_atomic(expr) || rlang::is_pairlist(expr) ||
         rlang::is_symbol(expr) || rlang::is_primitive(expr)) {

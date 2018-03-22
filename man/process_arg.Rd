@@ -10,7 +10,8 @@ process_arg(argument)
 \item{argument}{The argument provided to a constructor in its definition}
 }
 \value{
-A tibble with a single row, the first column holds the argument name, the second its type.
+A tibble with a single row, the first column holds the argument name,
+the second its type.
 }
 \description{
 Build a tibble form a list of constructor arguments.

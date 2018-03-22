@@ -2,7 +2,7 @@
 % Please edit documentation in R/transforms.R
 \name{transform_cases_function}
 \alias{transform_cases_function}
-\title{Transform a function containing a `cases` call into one that
+\title{Transform a function containing a \code{cases} call into one that
 instead has if-statements.}
 \usage{
 transform_cases_function(fun)
@@ -14,7 +14,7 @@ transform_cases_function(fun)
 Another function with a transformed body
 }
 \description{
-Transform a function containing a `cases` call into one that
+Transform a function containing a \code{cases} call into one that
 instead has if-statements.
 }
 \seealso{

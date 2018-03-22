@@ -7,46 +7,41 @@
 ":="(data_type, constructors)
 }
 \arguments{
-\item{data_type}{The name of the new data type. Should be given as a bare symbol.}
+\item{data_type}{The name of the new data type. Should be given as a bare
+symbol.}
 
 \item{constructors}{A list of \code{|}-separated constructor specifications.}
 }
 \description{
 This assignment operator introduces a domain-specific language for specifying
-new types. Types are defined by the ways they can be constructed. This is provided
-as a sequence of \code{|}-separated constructors, where a constructor is either
-a constant, i.e., a bare symbol, or a function.
+new types. Types are defined by the ways they can be constructed. This is
+provided as a sequence of \code{|}-separated constructors, where a
+constructor is either a constant, i.e., a bare symbol, or a function.
 }
 \details{
 We can construct an enumeration like this:
 
-\code{
-numbers := ONE | TWO | THREE
-}
+\code{ numbers := ONE | TWO | THREE }
 
-This will create the type \code{numbers} and three constants, \code{ONE}, \code{TWO},
-and \code{THREE} that can be matched against using the \code{\link{cases}} function
+This will create the type \code{numbers} and three constants, \code{ONE},
+\code{TWO}, and \code{THREE} that can be matched against using the
+\code{\link{cases}} function
 
-\code{
-x <- TWO
-cases(x,
-      ONE -> 1,
-      TWO -> 2,
-      THREE -> 3)
-}
+\code{ x <- TWO cases(x, ONE -> 1, TWO -> 2, THREE -> 3) }
 
-Evaluating the \code{\link{cases}} function will compare the value in \code{x} against the three
-patterns and recognize that \code{x} holds the constant \code{TWO} and it will then return
-\code{2}.
+Evaluating the \code{\link{cases}} function will compare the value in
+\code{x} against the three patterns and recognize that \code{x} holds the
+constant \code{TWO} and it will then return \code{2}.
 
-With function constructors we can create more interesting data types. For example, we can create
-a linked list like this
+With function constructors we can create more interesting data types. For
+example, we can create a linked list like this
 
 \code{linked_list := NIL | CONS(car, cdr : linked_list)}
 
-This expression defines constant \code{NIL} and function \code{CONS}. The function takes
-two arguments, \code{car} and \code{cdr}, and requires that \code{cdr} has type
-\code{linked_list}. We can create a list with three elements, 1, 2, and 3, by writing
+This expression defines constant \code{NIL} and function \code{CONS}. The
+function takes two arguments, \code{car} and \code{cdr}, and requires that
+\code{cdr} has type \code{linked_list}. We can create a list with three
+elements, 1, 2, and 3, by writing
 
 \code{CONS(1, CONS(2, CONS(3, NIL)))}
 
@@ -54,8 +49,8 @@ and we can, e.g., test if a list is empty using
 
 \code{cases(lst, NIL -> TRUE, CONS(car,cdr) -> FALSE)}
 
-A special pattern, \code{otherwise},can be used to capture all patterns, so the
-emptiness test can also be written
+A special pattern, \code{otherwise},can be used to capture all patterns, so
+the emptiness test can also be written
 
 \code{cases(lst, NIL -> TRUE, otherwise -> FALSE)}
 

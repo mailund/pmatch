@@ -24,7 +24,7 @@ the environment where match-expressions are evaluated.}
 }
 \value{
 \code{NULL} if the pattern does not match or an environment with bound
-        variables if it does.
+variables if it does.
 }
 \description{
 Test if a value, \code{expr}, created from constructors matches a pattern of constructors.

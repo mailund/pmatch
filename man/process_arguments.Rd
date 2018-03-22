@@ -7,10 +7,12 @@
 process_arguments(constructor_arguments)
 }
 \arguments{
-\item{constructor_arguments}{The arguments provided in the constructor specification}
+\item{constructor_arguments}{The arguments provided in the constructor
+specification}
 }
 \value{
-The arguments represented as a tibble. The first column contain argument names, the second their types.
+The arguments represented as a tibble. The first column contain
+argument names, the second their types.
 }
 \description{
 Construct a tibble from all the arguments of a constructor

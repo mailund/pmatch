@@ -2,22 +2,25 @@
 % Please edit documentation in R/cases.R
 \name{make_match_expr}
 \alias{make_match_expr}
-\title{Create an if-statement for \code{\link{cases_expr}} and \code{\link{cases_expr_}} functions}
+\title{Create an if-statement for \code{\link{cases_expr}} and
+\code{\link{cases_expr_}} functions}
 \usage{
 make_match_expr(expr, match_expr, continue)
 }
 \arguments{
 \item{expr}{The expression we pattern match against.}
 
-\item{match_expr}{The pattern specification, on the form pattern -> expression}
+\item{match_expr}{The pattern specification, on the form pattern ->
+expression}
 
-\item{continue}{The expression that goes in the \code{else} part of the \code{if}
-expression. If this is \code{NULL}, we create an \code{if}-expression
-instead of an \code{if-else}-expression.}
+\item{continue}{The expression that goes in the \code{else} part of the
+\code{if} expression. If this is \code{NULL}, we create an
+\code{if}-expression instead of an \code{if-else}-expression.}
 }
 \value{
 A new if-expression
 }
 \description{
-Create an if-statement for \code{\link{cases_expr}} and \code{\link{cases_expr_}} functions
+Create an if-statement for \code{\link{cases_expr}} and
+\code{\link{cases_expr_}} functions
 }

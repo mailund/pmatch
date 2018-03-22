@@ -7,8 +7,8 @@
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--20-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9003-green.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--22-green.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9004-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
@@ -216,6 +216,8 @@ f(x)
 #> [1] 1 2 3 4 5
 ```
 
+### Binding local variables
+
 You can also assign to variables in the current namespace using
 subscripting on the special object `bind`:
 
@@ -270,9 +272,40 @@ compiler::cmpfun(is_leaf)
 
 This is because the byte-compiler tries to make meaning out of the `->
 TRUE` and `-> FALSE` assignments (it sees them as `TRUE <-` and `FALSE
-<-` because that is what the parser actually returns). We can transform
-the body of functions that calls `cases` to replace the DSL with
-`if`-statements.
+<-` because that is what the parser actually returns).
+
+There are two ways around this problem; one is easy and just requires a
+different syntax in the call to `cases`, the other is *almost* as easy,
+but requires that we transform the function.
+
+First, we can get around the issue using a formula syntax instead of an
+assignment syntax. Instead of the `is_leaf` above, we can define
+
+``` r
+other_is_leaf <- function(tree) {
+    cases(tree,
+          L(x) ~ TRUE,
+          otherwise ~ FALSE)
+}
+```
+
+This function, you can byte compile
+
+``` r
+compiler::cmpfun(other_is_leaf)
+#> function(tree) {
+#>     cases(tree,
+#>           L(x) ~ TRUE,
+#>           otherwise ~ FALSE)
+#> }
+#> <bytecode: 0x7fe95ecb8320>
+```
+
+The `pmatch` package makes no distinction betwen the `~` or the `->`
+syntax; you can use them interchangeable.
+
+Alternatively, we can transform the body of functions that calls `cases`
+to replace the DSL with `if`-statements.
 
 ``` r
 is_leaf_tr <- transform_cases_function(is_leaf)
@@ -308,10 +341,10 @@ bm <- microbenchmark::microbenchmark(
 )
 bm
 #> Unit: microseconds
-#>                 expr     min       lq     mean   median      uq      max
-#>        is_leaf(L(1)) 390.889 419.5595 497.9809 440.2480 506.336 1168.877
-#>     is_leaf_tr(L(1)) 276.557 303.1960 429.8333 318.9865 434.400 4097.574
-#>  is_leaf_tr_bc(L(1)) 277.653 298.6635 382.4473 312.3535 344.198 1630.556
+#>                 expr     min      lq     mean   median       uq      max
+#>        is_leaf(L(1)) 443.514 486.836 652.8813 536.9005 786.4130 2125.139
+#>     is_leaf_tr(L(1)) 300.753 346.337 548.5831 410.8325 585.3085 5006.925
+#>  is_leaf_tr_bc(L(1)) 299.065 340.842 440.1834 383.1630 534.1485  887.267
 #>  neval
 #>    100
 #>    100
@@ -319,7 +352,7 @@ bm
 boxplot(bm)
 ```
 
-![](README-unnamed-chunk-21-1.png)<!-- -->
+![](README-unnamed-chunk-23-1.png)<!-- -->
 
 For more examples, see below.
 

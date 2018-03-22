@@ -12,14 +12,16 @@ cases(expr, ...)
 \item{...}{A list of \code{pattern -> expression} statements.}
 }
 \value{
-The value of the expression associated with the first matching pattern.
+The value of the expression associated with the first matching
+pattern.
 }
 \description{
-Given an expression of a type defined by the \code{\link{:=}} operator, \code{cases}
-matches it against patterns until it find one that has the same structure as \code{expr}.
-When it does, it evaluates the expression the pattern is associated with. During matching,
-any symbol that is not quasi-quoted will be considered a variable, and matching
-values will be bound to such variables and be available when an expression is evaluated.
+Given an expression of a type defined by the \code{\link{:=}} operator,
+\code{cases} matches it against patterns until it find one that has the same
+structure as \code{expr}. When it does, it evaluates the expression the
+pattern is associated with. During matching, any symbol that is not
+quasi-quoted will be considered a variable, and matching values will be bound
+to such variables and be available when an expression is evaluated.
 }
 \examples{
 linked_list := NIL | CONS(car, cdr : linked_list)

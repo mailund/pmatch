@@ -18,19 +18,19 @@ test_pattern(expr, test_expr, eval_env = rlang::caller_env(),
 
 \item{eval_env}{The environment where constructors can be found.}
 
-\item{match_parent_env}{Environment to use as the parent of the match bindings we return.
-This parameter enables you provide additional values to
+\item{match_parent_env}{Environment to use as the parent of the match
+bindings we return. This parameter enables you provide additional values to
 the environment where match-expressions are evaluated.}
 }
 \value{
-\code{NULL} if the pattern does not match or an environment with bound
-variables if it does.
+\code{NULL} if the pattern does not match or an environment with
+bound variables if it does.
 }
 \description{
-Test if a value, \code{expr}, created from constructors matches a pattern of constructors.
-The \code{test_pattern_} function requires that \code{test_expr} is a quoted expression
-while the \code{test_pattern} function expects a bare expression and will quote it
-itself.
+Test if a value, \code{expr}, created from constructors matches a pattern of
+constructors. The \code{test_pattern_} function requires that
+\code{test_expr} is a quoted expression while the \code{test_pattern}
+function expects a bare expression and will quote it itself.
 }
 \section{Functions}{
 \itemize{

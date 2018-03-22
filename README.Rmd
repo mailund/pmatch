@@ -22,7 +22,7 @@ suppressPackageStartupMessages(library(pmatch, quietly = TRUE))
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9003-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9004-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build Status](http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](https://ci.appveyor.com/project/mailund/pmatch)
@@ -168,6 +168,8 @@ x <- T(T(L(1),L(2)), T(T(L(3),L(4)),L(5)))
 f(x)
 ```
 
+### Binding local variables
+
 You can also assign to variables in the current namespace using subscripting on the special object `bind`:
 
 ```{r}
@@ -207,7 +209,29 @@ It works as intended, but if you try to byte-compile it, you get an error:
 compiler::cmpfun(is_leaf)
 ```
 
-This is because the byte-compiler tries to make meaning out of the `-> TRUE` and `-> FALSE` assignments (it sees them as `TRUE <-` and `FALSE <-` because that is what the parser actually returns). We can transform the body of functions that calls `cases` to replace the DSL with `if`-statements.
+This is because the byte-compiler tries to make meaning out of the `-> TRUE` and `-> FALSE` assignments (it sees them as `TRUE <-` and `FALSE <-` because that is what the parser actually returns).
+
+There are two ways around this problem; one is easy and just requires a different syntax in the call to `cases`, the other is *almost* as easy, but requires that we transform the function.
+
+First, we can get around the issue using a formula syntax instead of an assignment syntax. Instead of the `is_leaf` above, we can define
+
+```{r}
+other_is_leaf <- function(tree) {
+    cases(tree,
+          L(x) ~ TRUE,
+          otherwise ~ FALSE)
+}
+```
+
+This function, you can byte compile
+
+```{r}
+compiler::cmpfun(other_is_leaf)
+```
+
+The `pmatch` package makes no distinction betwen the `~` or the `->` syntax; you can use them interchangeable. 
+
+Alternatively, we can transform the body of functions that calls `cases` to replace the DSL with `if`-statements.
 
 ```{r}
 is_leaf_tr <- transform_cases_function(is_leaf)

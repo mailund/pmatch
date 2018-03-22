@@ -298,7 +298,7 @@ compiler::cmpfun(other_is_leaf)
 #>           L(x) ~ TRUE,
 #>           otherwise ~ FALSE)
 #> }
-#> <bytecode: 0x7fe39b06d708>
+#> <bytecode: 0x7fcbb2c4cc98>
 ```
 
 The `pmatch` package makes no distinction betwen the `~` or the `->`
@@ -340,10 +340,10 @@ microbenchmark::microbenchmark(
     is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
 )
 #> Unit: microseconds
-#>                 expr     min       lq     mean  median       uq      max
-#>        is_leaf(L(1)) 394.504 421.8150 547.9162 454.731 614.2365 1389.600
-#>     is_leaf_tr(L(1)) 273.133 303.8825 473.8971 326.271 547.3810 3691.823
-#>  is_leaf_tr_bc(L(1)) 274.024 297.2015 392.1318 314.548 354.1250 2367.804
+#>                 expr     min       lq     mean   median      uq      max
+#>        is_leaf(L(1)) 466.990 506.0890 739.9398 560.3095 860.519 2572.300
+#>     is_leaf_tr(L(1)) 329.298 367.6575 542.0151 424.9680 615.043 4348.246
+#>  is_leaf_tr_bc(L(1)) 328.325 375.8775 547.6445 430.3445 613.340 2568.045
 #>  neval
 #>    100
 #>    100

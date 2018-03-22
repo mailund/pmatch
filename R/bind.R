@@ -14,14 +14,15 @@ copy_env <- function(from, to, names=ls(from, all.names = TRUE)) {
 
 #' Dummy object used for generic function dispatching.
 #' @export
-bind <- structure(NA, class = "tailr_bind")
+bind <- structure(NA, class = "pmatch_bind")
 
 #' Bind variables to pattern-matched expressions.
 #'
-#' The \code{bind} object itself doesn't do anything. It simply exists in order to define
-#' notation for binding variabels using the sub-script operator.
+#' The \code{bind} object itself doesn't do anything. It simply exists in order
+#' to define notation for binding variables using the sub-script operator.
 #'
-#' @param dummy The \code{bind} object. Only used to dispatch to the right subscript operator.
+#' @param dummy The \code{bind} object. Only used to dispatch to the right
+#'   subscript operator.
 #' @param ...   Patterns to assign to.
 #' @param value Actual values to assign
 #'
@@ -37,7 +38,7 @@ bind <- structure(NA, class = "tailr_bind")
 #' second == 2
 #'
 #' @export
-`[<-.tailr_bind` <- function(dummy, ..., value) {
+`[<-.pmatch_bind` <- function(dummy, ..., value) {
     force(value)
     var_env <- rlang::caller_env()
     patterns <- eval(substitute(alist(...)))

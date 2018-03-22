@@ -249,11 +249,9 @@ is_leaf_tr_bc(T(L(1),L(2)))
 Transformation has the added benefit of slightly speeding up the function. And, of course, being able to byte-compile can add a bit more to the performance.
 
 ```{r}
-bm <- microbenchmark::microbenchmark(
+microbenchmark::microbenchmark(
     is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
 )
-bm
-boxplot(bm)
 ```
 
 

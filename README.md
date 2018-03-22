@@ -8,7 +8,7 @@
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--22-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.2.9004-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3-green.svg?style=flat-square)](commits/master)
 
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
@@ -298,7 +298,7 @@ compiler::cmpfun(other_is_leaf)
 #>           L(x) ~ TRUE,
 #>           otherwise ~ FALSE)
 #> }
-#> <bytecode: 0x7fe95ecb8320>
+#> <bytecode: 0x7fe39b06d708>
 ```
 
 The `pmatch` package makes no distinction betwen the `~` or the `->`
@@ -336,23 +336,19 @@ function. And, of course, being able to byte-compile can add a bit more
 to the performance.
 
 ``` r
-bm <- microbenchmark::microbenchmark(
+microbenchmark::microbenchmark(
     is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
 )
-bm
 #> Unit: microseconds
-#>                 expr     min      lq     mean   median       uq      max
-#>        is_leaf(L(1)) 443.514 486.836 652.8813 536.9005 786.4130 2125.139
-#>     is_leaf_tr(L(1)) 300.753 346.337 548.5831 410.8325 585.3085 5006.925
-#>  is_leaf_tr_bc(L(1)) 299.065 340.842 440.1834 383.1630 534.1485  887.267
+#>                 expr     min       lq     mean  median       uq      max
+#>        is_leaf(L(1)) 394.504 421.8150 547.9162 454.731 614.2365 1389.600
+#>     is_leaf_tr(L(1)) 273.133 303.8825 473.8971 326.271 547.3810 3691.823
+#>  is_leaf_tr_bc(L(1)) 274.024 297.2015 392.1318 314.548 354.1250 2367.804
 #>  neval
 #>    100
 #>    100
 #>    100
-boxplot(bm)
 ```
-
-![](README-unnamed-chunk-23-1.png)<!-- -->
 
 For more examples, see below.
 

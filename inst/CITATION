@@ -1,0 +1,14 @@
+citHeader("To cite the dynprog package in publications use:")
+
+citEntry(
+    entry = "book",
+    author = personList(as.person("Thomas Mailund")),
+    title = "Domain-Specific Languages in R: Advanced Statistical Programming",
+    publisher = "Apress",
+    year = "2018",
+    url = "https://amzn.to/2DRmFXb",
+    isbn = "1484235878",
+    textVersion = paste("Mailund, T. (2018)",
+        "Domain-Specific Languages in R: Advanced Statistical Programming,",
+        "Apress. ISBN 1484235878")
+    )

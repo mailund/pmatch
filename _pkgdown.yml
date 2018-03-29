@@ -1,0 +1,50 @@
+template:
+    params:
+        bootswatch: cosmo
+
+navbar:
+  title: "pmatch"
+
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: "Getting Started"
+      href: articles/getting-started-with-pmatch-.html
+    - text: "Tutorials"
+      menu:
+        - text: "Getting Started"
+          href: articles/getting-started-with-pmatch-.html
+    - text: "Functions"
+      href: reference/index.html
+    - text: "Changelog"
+      href: news/index.html
+
+  right:
+   - icon: fa-twitter
+     href: https://twitter.com/ThomasMailund
+   - icon: fa-github
+     href: https://github.com/mailund/pmatch
+
+reference:
+    - title: Defining new types
+      desc: >
+        Functions for defining new types and the constructors that go with them.
+      contents:
+        - :=
+
+    - title: Pattern matching
+      desc: >
+        Functions for matching constructed values against patterns.
+      contents:
+        - bind
+        - cases
+        - cases_expr
+        - cases_expr_
+        - test_pattern
+        - test_pattern_
+
+    - title: Function rewriting
+      desc: >
+        Functionality for rewriting functions that use pattern matching.
+      contents:
+        - transform_cases_function

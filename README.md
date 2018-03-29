@@ -1,15 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pmatch – A package for Haskell-like pattern matching in R
+# pmatch – Haskell-like pattern matching in R
 
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--22-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3-green.svg?style=flat-square)](commits/master)
-
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--29-green.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3.9000-green.svg?style=flat-square)](commits/master)
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build
@@ -18,7 +17,6 @@ Status](http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true)](h
 Status](http://img.shields.io/codecov/c/github/mailund/pmatch/master.svg)](https://codecov.io/github/mailund/pmatch?branch=master)
 [![Coverage
 Status](http://coveralls.io/repos/github/mailund/pmatch/badge.svg?branch=master)](https://coveralls.io/github/mailund/pmatch?branch=master)
-
 [![CRAN
 status](http://www.r-pkg.org/badges/version/pmatch)](https://cran.r-project.org/package=pmatch)
 [![CRAN
@@ -298,7 +296,7 @@ compiler::cmpfun(other_is_leaf)
 #>           L(x) ~ TRUE,
 #>           otherwise ~ FALSE)
 #> }
-#> <bytecode: 0x7fcbb2c4cc98>
+#> <bytecode: 0x7fbdbf487fc0>
 ```
 
 The `pmatch` package makes no distinction betwen the `~` or the `->`
@@ -340,10 +338,10 @@ microbenchmark::microbenchmark(
     is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
 )
 #> Unit: microseconds
-#>                 expr     min       lq     mean   median      uq      max
-#>        is_leaf(L(1)) 466.990 506.0890 739.9398 560.3095 860.519 2572.300
-#>     is_leaf_tr(L(1)) 329.298 367.6575 542.0151 424.9680 615.043 4348.246
-#>  is_leaf_tr_bc(L(1)) 328.325 375.8775 547.6445 430.3445 613.340 2568.045
+#>                 expr     min      lq     mean   median       uq      max
+#>        is_leaf(L(1)) 415.099 433.782 588.6610 445.5965 615.8335 2220.003
+#>     is_leaf_tr(L(1)) 292.867 318.504 500.7040 349.0280 566.0935 3950.902
+#>  is_leaf_tr_bc(L(1)) 295.288 319.347 436.5413 357.8870 549.1735 1113.331
 #>  neval
 #>    100
 #>    100

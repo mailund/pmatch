@@ -1,0 +1,56 @@
+---
+title: "Optional Types with pmatch"
+author: "Thomas Mailund"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Optional Types with pmatch}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(pmatch)
+```
+
+```{r}
+OPT := NONE | VALUE(val) | ERROR(err)
+```
+
+```{r}
+try <- function(expr) {
+    rlang::enquo(expr)
+    tryCatch(VALUE(rlang::eval_tidy(expr)), 
+             error = function(e) ERROR(e))
+}
+```
+
+```{r}
+cases(try(42),
+      VALUE(val) -> val,
+      ERROR(err) -> err,
+      NONE -> "NOTHING")
+```
+
+```{r}
+cases(try(x + 42), # x isn't defined...
+      VALUE(val) -> val,
+      ERROR(err) -> err,
+      NONE -> "NOTHING")
+```
+
+```r
+Ops.OPT <- function(e1, e2) {
+    cases(.(e1, e2),
+          .(NONE, .) -> NONE,
+          .(., NONE) -> NONE,
+          .(ERROR(err), .) -> ERROR(err),
+          .(., ERROR(err)) -> ERROR(err),
+          .(VALUE(v1), VALUE(v2)) -> VALUE(.Generic(v1, v2)))
+}
+```

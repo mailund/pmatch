@@ -4,10 +4,12 @@
 \alias{transform_cases_call}
 \title{Recursive function for transforming a call \code{cases}.}
 \usage{
-transform_cases_call(expr)
+transform_cases_call(expr, ...)
 }
 \arguments{
 \item{expr}{The expression to transform.}
+
+\item{...}{Additional callback arguments to make this work with \code{foolbox}}
 }
 \value{
 Updated expression.

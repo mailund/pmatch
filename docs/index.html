@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">pmatch</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.3.9000</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.3.9001</span>
       </span>
     </div>
 
@@ -100,7 +100,6 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#pmatch-haskell-like-pattern-matching-in-r" class="anchor"></a>pmatch – Haskell-like pattern matching in R</h1></div>
 
-<hr>
 <p>The goal of the <code>pmatch</code> package is to provide structure pattern matching, similar to Haskell and ML, to R programmers. The package provide functionality for defining new types and for matching against the structure of such types.</p>
 <p>The idea behind pattern matching is that we define types by how we create them, and we have ways of matching a pattern of constructors against a value to pick the one that matches the value.</p>
 <p>The simplest example is a type defined just from constants. For example, we can define the type <code>enum</code> to consist of one of <code>ONE</code>, <code>TWO</code>, or <code>THREE</code>.</p>
@@ -249,7 +248,7 @@
 <a class="sourceLine" id="cb19-4" data-line-number="4"><span class="co">#&gt;           L(x) ~ TRUE,</span></a>
 <a class="sourceLine" id="cb19-5" data-line-number="5"><span class="co">#&gt;           otherwise ~ FALSE)</span></a>
 <a class="sourceLine" id="cb19-6" data-line-number="6"><span class="co">#&gt; }</span></a>
-<a class="sourceLine" id="cb19-7" data-line-number="7"><span class="co">#&gt; &lt;bytecode: 0x7ffbb9f31b48&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb19-7" data-line-number="7"><span class="co">#&gt; &lt;bytecode: 0x7f9782495510&gt;</span></a></code></pre></div>
 <p>The <code>pmatch</code> package makes no distinction betwen the <code>~</code> or the <code>-&gt;</code> syntax; you can use them interchangeable.</p>
 <p>Alternatively, we can transform the body of functions that calls <code>cases</code> to replace the DSL with <code>if</code>-statements.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">is_leaf_tr &lt;-<span class="st"> </span><span class="kw"><a href="reference/transform_cases_function.html">transform_cases_function</a></span>(is_leaf)</a>
@@ -274,10 +273,10 @@
 <a class="sourceLine" id="cb22-2" data-line-number="2">    <span class="kw">is_leaf</span>(<span class="kw">L</span>(<span class="dv">1</span>)), <span class="kw">is_leaf_tr</span>(<span class="kw">L</span>(<span class="dv">1</span>)), <span class="kw">is_leaf_tr_bc</span>(<span class="kw">L</span>(<span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb22-3" data-line-number="3">)</a>
 <a class="sourceLine" id="cb22-4" data-line-number="4"><span class="co">#&gt; Unit: microseconds</span></a>
-<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt;                 expr     min      lq     mean   median       uq      max</span></a>
-<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt;        is_leaf(L(1)) 425.151 447.413 567.3193 499.6780 645.4440  964.129</span></a>
-<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt;     is_leaf_tr(L(1)) 299.024 315.023 433.5037 335.2795 448.8755 3543.531</span></a>
-<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt;  is_leaf_tr_bc(L(1)) 294.143 316.995 401.8185 339.0480 447.4780 1802.751</span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt;                 expr     min       lq     mean   median       uq      max</span></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt;        is_leaf(L(1)) 403.475 453.6570 593.5040 501.4135 660.4340 1848.127</span></a>
+<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt;     is_leaf_tr(L(1)) 285.695 314.2265 494.1400 354.6320 516.5845 4394.574</span></a>
+<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt;  is_leaf_tr_bc(L(1)) 288.982 315.1515 403.1002 339.1795 422.4155 1028.878</span></a>
 <a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt;  neval</span></a>
 <a class="sourceLine" id="cb22-10" data-line-number="10"><span class="co">#&gt;    100</span></a>
 <a class="sourceLine" id="cb22-11" data-line-number="11"><span class="co">#&gt;    100</span></a>
@@ -526,7 +525,7 @@
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="http://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="lifecycle"></a></li>
 <li><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active"></a></li>
 <li><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2018--03--29-green.svg" alt="Last-changedate"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-0.1.3.9000-green.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-0.1.3.9001-orange.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://travis-ci.org/mailund/pmatch"><img src="http://travis-ci.org/mailund/pmatch.svg?branch=master" alt="Travis-CI Build Status"></a></li>
 <li><a href="https://ci.appveyor.com/project/mailund/pmatch"><img src="http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true" alt="AppVeyor Build Status"></a></li>
 <li><a href="https://codecov.io/github/mailund/pmatch?branch=master"><img src="http://img.shields.io/codecov/c/github/mailund/pmatch/master.svg" alt="Coverage Status"></a></li>

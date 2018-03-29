@@ -17,3 +17,6 @@
 ^CODE_OF_CONDUCT\.md$
 ^.imdone$
 ^revdep$
+
+^_pkgdown.yml$
+^docs$

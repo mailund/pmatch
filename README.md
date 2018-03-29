@@ -8,7 +8,7 @@
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--29-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3.9000-green.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3.9001-orange.svg?style=flat-square)](commits/master)
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build
@@ -23,8 +23,6 @@ status](http://www.r-pkg.org/badges/version/pmatch)](https://cran.r-project.org/
 downloads](http://cranlogs.r-pkg.org/badges/grand-total/pmatch)](https://cran.r-project.org/package=pmatch)
 [![minimal R
 version](https://img.shields.io/badge/R-%E2%89%A53.2-blue.svg)](https://cran.r-project.org/)
-
------
 
 The goal of the `pmatch` package is to provide structure pattern
 matching, similar to Haskell and ML, to R programmers. The package
@@ -296,7 +294,7 @@ compiler::cmpfun(other_is_leaf)
 #>           L(x) ~ TRUE,
 #>           otherwise ~ FALSE)
 #> }
-#> <bytecode: 0x7fbdbf487fc0>
+#> <bytecode: 0x7fe0f3c67468>
 ```
 
 The `pmatch` package makes no distinction betwen the `~` or the `->`
@@ -338,10 +336,10 @@ microbenchmark::microbenchmark(
     is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
 )
 #> Unit: microseconds
-#>                 expr     min      lq     mean   median       uq      max
-#>        is_leaf(L(1)) 415.099 433.782 588.6610 445.5965 615.8335 2220.003
-#>     is_leaf_tr(L(1)) 292.867 318.504 500.7040 349.0280 566.0935 3950.902
-#>  is_leaf_tr_bc(L(1)) 295.288 319.347 436.5413 357.8870 549.1735 1113.331
+#>                 expr     min       lq     mean   median       uq      max
+#>        is_leaf(L(1)) 367.856 409.5235 617.0918 499.4080 774.0195 2939.202
+#>     is_leaf_tr(L(1)) 259.567 280.4350 481.3778 323.3315 533.5525 6795.412
+#>  is_leaf_tr_bc(L(1)) 260.393 299.8950 457.5098 367.3410 566.5845 1457.255
 #>  neval
 #>    100
 #>    100

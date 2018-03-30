@@ -58,7 +58,7 @@ for meta-programming rather than usual pattern matching." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pmatch</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.3.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.3.9003</span>
       </span>
     </div>
 
@@ -156,7 +156,10 @@ for meta-programming rather than usual pattern matching.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>linked_list</span> <span class='kw'>:=</span> <span class='no'>NIL</span> <span class='kw'>|</span> <span class='fu'>CONS</span>(<span class='no'>car</span>, <span class='no'>cdr</span> : <span class='no'>linked_list</span>)
 
-<span class='no'>length_body</span> <span class='kw'>&lt;-</span> <span class='fu'>cases_expr</span>(<span class='no'>lst</span>, <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>, <span class='fu'>CONS</span>(<span class='no'>car</span>, <span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>ll_length</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='fl'>1</span>))
+<span class='no'>length_body</span> <span class='kw'>&lt;-</span> <span class='fu'>cases_expr</span>(
+                  <span class='no'>lst</span>,
+                  <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
+                  <span class='fu'>CONS</span>(<span class='no'>car</span>, <span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>ll_length</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='fl'>1</span>))
 <span class='no'>length_body</span></div><div class='output co'>#&gt; if (!rlang::is_null(..match_env &lt;- pmatch::test_pattern(lst, 
 #&gt;     NIL))) with(..match_env, acc) else if (!rlang::is_null(..match_env &lt;- pmatch::test_pattern(lst, 
 #&gt;     CONS(car, cdr)))) with(..match_env, ll_length(cdr, acc + 

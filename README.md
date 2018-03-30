@@ -1,14 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pmatch – Haskell-like pattern matching in R
+# Haskell-like pattern matching in R
 
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--29-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3.9001-orange.svg?style=flat-square)](commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--03--30-green.svg)](/commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3.9003-orange.svg?style=flat-square)](commits/master)
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build
@@ -239,6 +239,29 @@ right
 #> T(left = T(left = L(elm = 3), right = L(elm = 4)), right = L(elm = 5))
 ```
 
+### Testing more than one pattern
+
+If you want to test more than one pattern at a time, you can use the
+`..` function:
+
+``` r
+f <- function(t1,t2) 
+    cases(..(t1, t2),
+          ..(L(.),L(.)) -> "Both leaves",
+          ..(L(.),.)    -> "Left leaf",
+          ..(.,L(.))    -> "Right leaf",
+          ..(.,.)       -> "None are leaves")
+
+f(L(0), L(2))
+#> [1] "Both leaves"
+f(L(0), x)
+#> [1] "Left leaf"
+f(x, L(42))
+#> [1] "Right leaf"
+f(x, x)
+#> [1] "None are leaves"
+```
+
 ### Function transformations
 
 Since this package provides its functionality through a DSL, you *can*
@@ -294,7 +317,7 @@ compiler::cmpfun(other_is_leaf)
 #>           L(x) ~ TRUE,
 #>           otherwise ~ FALSE)
 #> }
-#> <bytecode: 0x7fe0f3c67468>
+#> <bytecode: 0x7f867f5ecf40>
 ```
 
 The `pmatch` package makes no distinction betwen the `~` or the `->`
@@ -337,9 +360,9 @@ microbenchmark::microbenchmark(
 )
 #> Unit: microseconds
 #>                 expr     min       lq     mean   median       uq      max
-#>        is_leaf(L(1)) 367.856 409.5235 617.0918 499.4080 774.0195 2939.202
-#>     is_leaf_tr(L(1)) 259.567 280.4350 481.3778 323.3315 533.5525 6795.412
-#>  is_leaf_tr_bc(L(1)) 260.393 299.8950 457.5098 367.3410 566.5845 1457.255
+#>        is_leaf(L(1)) 487.789 508.8845 707.9073 566.3430 825.4835 2068.764
+#>     is_leaf_tr(L(1)) 357.915 381.2840 615.8350 489.8320 693.8555 4163.308
+#>  is_leaf_tr_bc(L(1)) 347.187 379.5040 526.5103 406.7675 633.4945 2016.569
 #>  neval
 #>    100
 #>    100

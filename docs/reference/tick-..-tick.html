@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Pipe operator — %&gt;% • pmatch</title>
+<title>Function for specifying a sequence of patterns/expressions — `..` • pmatch</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -25,9 +25,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-<meta property="og:title" content="Pipe operator — %&gt;%" />
+<meta property="og:title" content="Function for specifying a sequence of patterns/expressions — `..`" />
 
-<meta property="og:description" content="See magrittr::%&gt;% for details." />
+<meta property="og:description" content="This function is used when you want to test for more than one pattern
+in parallel." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -114,22 +115,56 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Pipe operator</h1>
-    <small>Source: <a href='https://github.com/mailund/pmatch/blob/master/R/utils-pipe.R'><code>R/utils-pipe.R</code></a></small>
+    <h1>Function for specifying a sequence of patterns/expressions</h1>
+    <small>Source: <a href='https://github.com/mailund/pmatch/blob/master/R/cases.R'><code>R/cases.R</code></a></small>
     </div>
 
     
-    <p>See <code>magrittr::%&gt;%</code> for details.</p>
+    <p>This function is used when you want to test for more than one pattern
+in parallel.</p>
     
 
-    <pre class="usage"><span class='no'>lhs</span> <span class='kw'>%&gt;%</span> <span class='no'>rhs</span></pre>
-        
+    <pre class="usage"><span class='fu'>..</span>(<span class='no'>...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>...</th>
+      <td><p>The patterns/expressions to combine</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>If you want to test two or more patterns against the same number of values,
+then you can use this function to combine the values and expressions
+in a <code><a href='cases.html'>cases()</a></code> (or related) function.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>llist</span> <span class='kw'>:=</span> <span class='no'>NIL</span> <span class='kw'>|</span> <span class='fu'>CONS</span>(<span class='no'>car</span>, <span class='no'>cdr</span> : <span class='no'>llist</span>)
+<span class='no'>compare_llists</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>l1</span>, <span class='no'>l2</span>) {
+    <span class='fu'><a href='cases.html'>cases</a></span>(<span class='fu'>..</span>(<span class='no'>l1</span>, <span class='no'>l2</span>),
+          <span class='fu'>..</span>(<span class='no'>NIL</span>, <span class='no'>NIL</span>) <span class='kw'>-&gt;</span> <span class='fl'>TRUE</span>,
+          <span class='fu'>..</span>(<span class='no'>NIL</span>, <span class='no'>.</span>)   <span class='kw'>-&gt;</span> <span class='fl'>FALSE</span>,
+          <span class='fu'>..</span>(<span class='no'>.</span>, <span class='no'>NIL</span>)   <span class='kw'>-&gt;</span> <span class='fl'>FALSE</span>,
+          <span class='fu'>..</span>(<span class='fu'>CONS</span>(<span class='no'>car1</span>,<span class='no'>cdr1</span>), <span class='fu'>CONS</span>(<span class='no'>car2</span>,<span class='no'>cdr2</span>)) <span class='kw'>-&gt;</span>
+              <span class='no'>car1</span> <span class='kw'>==</span> <span class='no'>car2</span> <span class='kw'>&amp;&amp;</span> <span class='fu'>compare_llists</span>(<span class='no'>cdr1</span>, <span class='no'>cdr2</span>)
+          )
+}
+<span class='fu'>compare_llists</span>(<span class='no'>NIL</span>, <span class='no'>NIL</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>compare_llists</span>(<span class='fu'>CONS</span>(<span class='fl'>1</span>, <span class='no'>NIL</span>), <span class='fu'>CONS</span>(<span class='fl'>1</span>, <span class='no'>NIL</span>))</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>compare_llists</span>(<span class='fu'>CONS</span>(<span class='fl'>1</span>, <span class='no'>NIL</span>), <span class='no'>NIL</span>)</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='fu'>compare_llists</span>(<span class='fu'>CONS</span>(<span class='fl'>1</span>, <span class='no'>NIL</span>), <span class='fu'>CONS</span>(<span class='fl'>2</span>, <span class='no'>NIL</span>))</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-                </ul>
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

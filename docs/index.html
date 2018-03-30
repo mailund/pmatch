@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">pmatch</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.3.9001</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.3.9003</span>
       </span>
     </div>
 
@@ -96,9 +96,9 @@
     
 <div class="contents">
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<div id="pmatch-haskell-like-pattern-matching-in-r" class="section level1">
+<div id="haskell-like-pattern-matching-in-r" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#pmatch-haskell-like-pattern-matching-in-r" class="anchor"></a>pmatch – Haskell-like pattern matching in R</h1></div>
+<a href="#haskell-like-pattern-matching-in-r" class="anchor"></a>Haskell-like pattern matching in R</h1></div>
 
 <p>The goal of the <code>pmatch</code> package is to provide structure pattern matching, similar to Haskell and ML, to R programmers. The package provide functionality for defining new types and for matching against the structure of such types.</p>
 <p>The idea behind pattern matching is that we define types by how we create them, and we have ways of matching a pattern of constructors against a value to pick the one that matches the value.</p>
@@ -216,236 +216,256 @@
 <a class="sourceLine" id="cb15-6" data-line-number="6">right</a>
 <a class="sourceLine" id="cb15-7" data-line-number="7"><span class="co">#&gt; T(left = T(left = L(elm = 3), right = L(elm = 4)), right = L(elm = 5))</span></a></code></pre></div>
 </div>
+<div id="testing-more-than-one-pattern" class="section level3">
+<h3 class="hasAnchor">
+<a href="#testing-more-than-one-pattern" class="anchor"></a>Testing more than one pattern</h3>
+<p>If you want to test more than one pattern at a time, you can use the <code>..</code> function:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">f &lt;-<span class="st"> </span><span class="cf">function</span>(t1,t2) </a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">    <span class="kw"><a href="reference/cases.html">cases</a></span>(<span class="kw"><a href="reference/tick-..-tick.html">..</a></span>(t1, t2),</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">          <span class="kw"><a href="reference/tick-..-tick.html">..</a></span>(<span class="kw">L</span>(.),<span class="kw">L</span>(.)) -&gt;<span class="st"> "Both leaves"</span>,</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">          <span class="kw"><a href="reference/tick-..-tick.html">..</a></span>(<span class="kw">L</span>(.),.)    -&gt;<span class="st"> "Left leaf"</span>,</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">          <span class="kw"><a href="reference/tick-..-tick.html">..</a></span>(.,<span class="kw">L</span>(.))    -&gt;<span class="st"> "Right leaf"</span>,</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">          <span class="kw"><a href="reference/tick-..-tick.html">..</a></span>(.,.)       -&gt;<span class="st"> "None are leaves"</span>)</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="kw">f</span>(<span class="kw">L</span>(<span class="dv">0</span>), <span class="kw">L</span>(<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt; [1] "Both leaves"</span></a>
+<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="kw">f</span>(<span class="kw">L</span>(<span class="dv">0</span>), x)</a>
+<a class="sourceLine" id="cb16-11" data-line-number="11"><span class="co">#&gt; [1] "Left leaf"</span></a>
+<a class="sourceLine" id="cb16-12" data-line-number="12"><span class="kw">f</span>(x, <span class="kw">L</span>(<span class="dv">42</span>))</a>
+<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="co">#&gt; [1] "Right leaf"</span></a>
+<a class="sourceLine" id="cb16-14" data-line-number="14"><span class="kw">f</span>(x, x)</a>
+<a class="sourceLine" id="cb16-15" data-line-number="15"><span class="co">#&gt; [1] "None are leaves"</span></a></code></pre></div>
+</div>
 <div id="function-transformations" class="section level3">
 <h3 class="hasAnchor">
 <a href="#function-transformations" class="anchor"></a>Function transformations</h3>
 <p>Since this package provides its functionality through a DSL, you <em>can</em> get into trouble when other parts of R tries to make sense of it.</p>
 <p>Consider this function:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">is_leaf &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">    <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">          <span class="kw">L</span>(x) -&gt;<span class="st"> </span><span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb16-4" data-line-number="4">          otherwise -&gt;<span class="st"> </span><span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb16-5" data-line-number="5">}</a>
-<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="kw">is_leaf</span>(<span class="kw">L</span>(<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="kw">is_leaf</span>(<span class="kw">T</span>(<span class="kw">L</span>(<span class="dv">1</span>),<span class="kw">L</span>(<span class="dv">2</span>)))</a>
-<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">#&gt; [1] FALSE</span></a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">is_leaf &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">    <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">          <span class="kw">L</span>(x) -&gt;<span class="st"> </span><span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">          otherwise -&gt;<span class="st"> </span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">}</a>
+<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="kw">is_leaf</span>(<span class="kw">L</span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="co">#&gt; [1] TRUE</span></a>
+<a class="sourceLine" id="cb17-8" data-line-number="8"><span class="kw">is_leaf</span>(<span class="kw">T</span>(<span class="kw">L</span>(<span class="dv">1</span>),<span class="kw">L</span>(<span class="dv">2</span>)))</a>
+<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="co">#&gt; [1] FALSE</span></a></code></pre></div>
 <p>It works as intended, but if you try to byte-compile it, you get an error:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">compiler<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/compiler/topics/compile">cmpfun</a></span>(is_leaf)</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co">#&gt; Error: bad assignment: 'TRUE &lt;- L(x)'</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">compiler<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/compiler/topics/compile">cmpfun</a></span>(is_leaf)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="co">#&gt; Error: bad assignment: 'TRUE &lt;- L(x)'</span></a></code></pre></div>
 <p>This is because the byte-compiler tries to make meaning out of the <code>-&gt; TRUE</code> and <code>-&gt; FALSE</code> assignments (it sees them as <code>TRUE &lt;-</code> and <code>FALSE &lt;-</code> because that is what the parser actually returns).</p>
 <p>There are two ways around this problem; one is easy and just requires a different syntax in the call to <code>cases</code>, the other is <em>almost</em> as easy, but requires that we transform the function.</p>
 <p>First, we can get around the issue using a formula syntax instead of an assignment syntax. Instead of the <code>is_leaf</code> above, we can define</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">other_is_leaf &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">    <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">          <span class="kw">L</span>(x) <span class="op">~</span><span class="st"> </span><span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb18-4" data-line-number="4">          otherwise <span class="op">~</span><span class="st"> </span><span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb18-5" data-line-number="5">}</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">other_is_leaf &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">    <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">          <span class="kw">L</span>(x) <span class="op">~</span><span class="st"> </span><span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">          otherwise <span class="op">~</span><span class="st"> </span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5">}</a></code></pre></div>
 <p>This function, you can byte compile</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">compiler<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/compiler/topics/compile">cmpfun</a></span>(other_is_leaf)</a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="co">#&gt; function(tree) {</span></a>
-<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="co">#&gt;     cases(tree,</span></a>
-<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="co">#&gt;           L(x) ~ TRUE,</span></a>
-<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="co">#&gt;           otherwise ~ FALSE)</span></a>
-<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="co">#&gt; }</span></a>
-<a class="sourceLine" id="cb19-7" data-line-number="7"><span class="co">#&gt; &lt;bytecode: 0x7f9782495510&gt;</span></a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">compiler<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/compiler/topics/compile">cmpfun</a></span>(other_is_leaf)</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co">#&gt; function(tree) {</span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt;     cases(tree,</span></a>
+<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">#&gt;           L(x) ~ TRUE,</span></a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#&gt;           otherwise ~ FALSE)</span></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">#&gt; }</span></a>
+<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">#&gt; &lt;bytecode: 0x7fcc9ef0b6e8&gt;</span></a></code></pre></div>
 <p>The <code>pmatch</code> package makes no distinction betwen the <code>~</code> or the <code>-&gt;</code> syntax; you can use them interchangeable.</p>
 <p>Alternatively, we can transform the body of functions that calls <code>cases</code> to replace the DSL with <code>if</code>-statements.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">is_leaf_tr &lt;-<span class="st"> </span><span class="kw"><a href="reference/transform_cases_function.html">transform_cases_function</a></span>(is_leaf)</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">is_leaf_tr</a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt; function (tree) </span></a>
-<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">#&gt; {</span></a>
-<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#&gt;     if (!rlang::is_null(..match_env &lt;- pmatch::test_pattern(tree, </span></a>
-<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">#&gt;         L(x)))) </span></a>
-<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">#&gt;         with(..match_env, TRUE)</span></a>
-<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="co">#&gt;     else if (!rlang::is_null(..match_env &lt;- pmatch::test_pattern(tree, </span></a>
-<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co">#&gt;         otherwise))) </span></a>
-<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="co">#&gt;         with(..match_env, FALSE)</span></a>
-<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="co">#&gt; }</span></a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">is_leaf_tr &lt;-<span class="st"> </span><span class="kw"><a href="reference/transform_cases_function.html">transform_cases_function</a></span>(is_leaf)</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">is_leaf_tr</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="co">#&gt; function (tree) </span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="co">#&gt; {</span></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#&gt;     if (!rlang::is_null(..match_env &lt;- pmatch::test_pattern(tree, </span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="co">#&gt;         L(x)))) </span></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="co">#&gt;         with(..match_env, TRUE)</span></a>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="co">#&gt;     else if (!rlang::is_null(..match_env &lt;- pmatch::test_pattern(tree, </span></a>
+<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="co">#&gt;         otherwise))) </span></a>
+<a class="sourceLine" id="cb21-10" data-line-number="10"><span class="co">#&gt;         with(..match_env, FALSE)</span></a>
+<a class="sourceLine" id="cb21-11" data-line-number="11"><span class="co">#&gt; }</span></a></code></pre></div>
 <p>After the transformation, the byte-compiler is happy.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">is_leaf_tr_bc &lt;-<span class="st"> </span>compiler<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/compiler/topics/compile">cmpfun</a></span>(is_leaf_tr)</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="kw">is_leaf_tr_bc</span>(<span class="kw">L</span>(<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="kw">is_leaf_tr_bc</span>(<span class="kw">T</span>(<span class="kw">L</span>(<span class="dv">1</span>),<span class="kw">L</span>(<span class="dv">2</span>)))</a>
-<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#&gt; [1] FALSE</span></a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">is_leaf_tr_bc &lt;-<span class="st"> </span>compiler<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/compiler/topics/compile">cmpfun</a></span>(is_leaf_tr)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="kw">is_leaf_tr_bc</span>(<span class="kw">L</span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="co">#&gt; [1] TRUE</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="kw">is_leaf_tr_bc</span>(<span class="kw">T</span>(<span class="kw">L</span>(<span class="dv">1</span>),<span class="kw">L</span>(<span class="dv">2</span>)))</a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt; [1] FALSE</span></a></code></pre></div>
 <p>Transformation has the added benefit of slightly speeding up the function. And, of course, being able to byte-compile can add a bit more to the performance.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">microbenchmark<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/microbenchmark/topics/microbenchmark">microbenchmark</a></span>(</a>
-<a class="sourceLine" id="cb22-2" data-line-number="2">    <span class="kw">is_leaf</span>(<span class="kw">L</span>(<span class="dv">1</span>)), <span class="kw">is_leaf_tr</span>(<span class="kw">L</span>(<span class="dv">1</span>)), <span class="kw">is_leaf_tr_bc</span>(<span class="kw">L</span>(<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb22-3" data-line-number="3">)</a>
-<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="co">#&gt; Unit: microseconds</span></a>
-<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="co">#&gt;                 expr     min       lq     mean   median       uq      max</span></a>
-<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="co">#&gt;        is_leaf(L(1)) 403.475 453.6570 593.5040 501.4135 660.4340 1848.127</span></a>
-<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="co">#&gt;     is_leaf_tr(L(1)) 285.695 314.2265 494.1400 354.6320 516.5845 4394.574</span></a>
-<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="co">#&gt;  is_leaf_tr_bc(L(1)) 288.982 315.1515 403.1002 339.1795 422.4155 1028.878</span></a>
-<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="co">#&gt;  neval</span></a>
-<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="co">#&gt;    100</span></a>
-<a class="sourceLine" id="cb22-11" data-line-number="11"><span class="co">#&gt;    100</span></a>
-<a class="sourceLine" id="cb22-12" data-line-number="12"><span class="co">#&gt;    100</span></a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">microbenchmark<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/microbenchmark/topics/microbenchmark">microbenchmark</a></span>(</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">    <span class="kw">is_leaf</span>(<span class="kw">L</span>(<span class="dv">1</span>)), <span class="kw">is_leaf_tr</span>(<span class="kw">L</span>(<span class="dv">1</span>)), <span class="kw">is_leaf_tr_bc</span>(<span class="kw">L</span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">)</a>
+<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="co">#&gt; Unit: microseconds</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt;                 expr     min       lq     mean  median       uq       max</span></a>
+<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt;        is_leaf(L(1)) 416.023 508.1350 965.9077 856.136 1087.436 10328.682</span></a>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;     is_leaf_tr(L(1)) 312.175 388.4565 706.3483 526.953  802.875  5205.577</span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt;  is_leaf_tr_bc(L(1)) 305.175 367.0445 652.6664 538.960  812.842  2868.321</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt;  neval</span></a>
+<a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">#&gt;    100</span></a>
+<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="co">#&gt;    100</span></a>
+<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="co">#&gt;    100</span></a></code></pre></div>
 <p>For more examples, see below.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the stable version of pmatch from CRAN using</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"pmatch"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"pmatch"</span>)</a></code></pre></div>
 <p>You can install the development version pmatch from github with:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb24-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"mailund/pmatch"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"mailund/pmatch"</span>)</a></code></pre></div>
 </div>
 <div id="examples" class="section level2">
 <h2 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h2>
 <p>To show how the <code>pmatch</code> package can be used, I will use three data structures that I have implemented without <code>pmatch</code> in my book on <a href="http://amzn.to/2Eb4RKK"><em>Functional Data Structures in R</em></a>: linked lists, plain search trees, and red-black search trees.</p>
 <p>To run the examples below, you will need to use the <code>magrittr</code> package for the pipe operator, <code>%&gt;%</code>.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">library</span>(magrittr)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">library</span>(magrittr)</a></code></pre></div>
 <div id="linked-lists" class="section level3">
 <h3 class="hasAnchor">
 <a href="#linked-lists" class="anchor"></a>Linked lists</h3>
 <p>The <code>list</code> type in R is allocated to have a certain size when it is created, and changing the size of <code>list</code> objects involve creating a new object and moving all the elements from the old object to the new. This is a linear time operation, so growing lists usually lead to quadratic running times. With linked lists, on the other hand, you can prepend elements in constant time–at the cost of linear time random access.</p>
 <p>You can implement a linked list using <code>list</code> objects. You simply construct a list that contains two elements, the head of the linked lists–traditionally called <code>car</code>–and the tail of the list–another linked list, traditionally named <code>cdr</code>. You need a special representation for empty lists, and a natural choice is <code>NULL</code>. With <code>pmatch</code> we will use a constant instead, though, so we can pattern match on empty lists.</p>
 <p>We can define a linked list using the <code>pmatch</code> syntax like this:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">linked_list <span class="op">:</span><span class="er">=</span><span class="st"> </span>NIL <span class="op">|</span><span class="st"> </span><span class="kw">CONS</span>(car, cdr <span class="op">:</span><span class="st"> </span>linked_list)</a>
-<a class="sourceLine" id="cb26-2" data-line-number="2">lst &lt;-<span class="st"> </span><span class="kw">CONS</span>(<span class="dv">1</span>, <span class="kw">CONS</span>(<span class="dv">2</span>, <span class="kw">CONS</span>(<span class="dv">3</span>, NIL)))</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">linked_list <span class="op">:</span><span class="er">=</span><span class="st"> </span>NIL <span class="op">|</span><span class="st"> </span><span class="kw">CONS</span>(car, cdr <span class="op">:</span><span class="st"> </span>linked_list)</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">lst &lt;-<span class="st"> </span><span class="kw">CONS</span>(<span class="dv">1</span>, <span class="kw">CONS</span>(<span class="dv">2</span>, <span class="kw">CONS</span>(<span class="dv">3</span>, NIL)))</a></code></pre></div>
 <p>Although R doesn’t implement tail recursion optimization, habit forces me to write tail recursive functions. For list functions, this usually means providing an accumulator parameter. Other than that, recursive functions operating on linked lists should simply match on <code>NIL</code> and <code>CONS</code> patterns. Two examples could be computing the length of a list and reversing a list:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">list_length &lt;-<span class="st"> </span><span class="cf">function</span>(lst, <span class="dt">acc =</span> <span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb27-2" data-line-number="2">  <span class="kw">force</span>(acc)</a>
-<a class="sourceLine" id="cb27-3" data-line-number="3">  <span class="kw"><a href="reference/cases.html">cases</a></span>(lst,</a>
-<a class="sourceLine" id="cb27-4" data-line-number="4">        NIL -&gt;<span class="st"> </span>acc,</a>
-<a class="sourceLine" id="cb27-5" data-line-number="5">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">list_length</span>(cdr, acc <span class="op">+</span><span class="st"> </span><span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb27-6" data-line-number="6">}</a>
-<a class="sourceLine" id="cb27-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="kw">list_length</span>(lst)</a>
-<a class="sourceLine" id="cb27-9" data-line-number="9"><span class="co">#&gt; [1] 3</span></a>
-<a class="sourceLine" id="cb27-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb27-11" data-line-number="11">reverse_list &lt;-<span class="st"> </span><span class="cf">function</span>(lst, <span class="dt">acc =</span> NIL) {</a>
-<a class="sourceLine" id="cb27-12" data-line-number="12">  <span class="kw">force</span>(acc)</a>
-<a class="sourceLine" id="cb27-13" data-line-number="13">  <span class="kw"><a href="reference/cases.html">cases</a></span>(lst,</a>
-<a class="sourceLine" id="cb27-14" data-line-number="14">        NIL -&gt;<span class="st"> </span>acc,</a>
-<a class="sourceLine" id="cb27-15" data-line-number="15">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">reverse_list</span>(cdr, <span class="kw">CONS</span>(car, acc)))</a>
-<a class="sourceLine" id="cb27-16" data-line-number="16">}</a>
-<a class="sourceLine" id="cb27-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb27-18" data-line-number="18"><span class="kw">reverse_list</span>(lst)</a>
-<a class="sourceLine" id="cb27-19" data-line-number="19"><span class="co">#&gt; CONS(car = 3, cdr = CONS(car = 2, cdr = CONS(car = 1, cdr = NIL)))</span></a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">list_length &lt;-<span class="st"> </span><span class="cf">function</span>(lst, <span class="dt">acc =</span> <span class="dv">0</span>) {</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">  <span class="kw">force</span>(acc)</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3">  <span class="kw"><a href="reference/cases.html">cases</a></span>(lst,</a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">        NIL -&gt;<span class="st"> </span>acc,</a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">list_length</span>(cdr, acc <span class="op">+</span><span class="st"> </span><span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb28-6" data-line-number="6">}</a>
+<a class="sourceLine" id="cb28-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb28-8" data-line-number="8"><span class="kw">list_length</span>(lst)</a>
+<a class="sourceLine" id="cb28-9" data-line-number="9"><span class="co">#&gt; [1] 3</span></a>
+<a class="sourceLine" id="cb28-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb28-11" data-line-number="11">reverse_list &lt;-<span class="st"> </span><span class="cf">function</span>(lst, <span class="dt">acc =</span> NIL) {</a>
+<a class="sourceLine" id="cb28-12" data-line-number="12">  <span class="kw">force</span>(acc)</a>
+<a class="sourceLine" id="cb28-13" data-line-number="13">  <span class="kw"><a href="reference/cases.html">cases</a></span>(lst,</a>
+<a class="sourceLine" id="cb28-14" data-line-number="14">        NIL -&gt;<span class="st"> </span>acc,</a>
+<a class="sourceLine" id="cb28-15" data-line-number="15">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">reverse_list</span>(cdr, <span class="kw">CONS</span>(car, acc)))</a>
+<a class="sourceLine" id="cb28-16" data-line-number="16">}</a>
+<a class="sourceLine" id="cb28-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb28-18" data-line-number="18"><span class="kw">reverse_list</span>(lst)</a>
+<a class="sourceLine" id="cb28-19" data-line-number="19"><span class="co">#&gt; CONS(car = 3, cdr = CONS(car = 2, cdr = CONS(car = 1, cdr = NIL)))</span></a></code></pre></div>
 <p>Translating to and from vectors/<code>list</code> objects is relatively simple. To go from a vector to a linked list, we use <code>NIL</code> and <code>CONS</code>, and to go the other direction we use pattern matching:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">vector_to_list &lt;-<span class="st"> </span><span class="cf">function</span>(vec) {</a>
-<a class="sourceLine" id="cb28-2" data-line-number="2">  lst &lt;-<span class="st"> </span>NIL</a>
-<a class="sourceLine" id="cb28-3" data-line-number="3">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(vec)) {</a>
-<a class="sourceLine" id="cb28-4" data-line-number="4">    lst &lt;-<span class="st"> </span><span class="kw">CONS</span>(vec[[i]], lst)</a>
-<a class="sourceLine" id="cb28-5" data-line-number="5">  }</a>
-<a class="sourceLine" id="cb28-6" data-line-number="6">  <span class="kw">reverse_list</span>(lst)</a>
-<a class="sourceLine" id="cb28-7" data-line-number="7">}</a>
-<a class="sourceLine" id="cb28-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb28-9" data-line-number="9">list_to_vector &lt;-<span class="st"> </span><span class="cf">function</span>(lst) {</a>
-<a class="sourceLine" id="cb28-10" data-line-number="10">  n &lt;-<span class="st"> </span><span class="kw">list_length</span>(lst)</a>
-<a class="sourceLine" id="cb28-11" data-line-number="11">  v &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">"list"</span>, <span class="dt">length =</span> n)</a>
-<a class="sourceLine" id="cb28-12" data-line-number="12">  f &lt;-<span class="st"> </span><span class="cf">function</span>(lst, i) {</a>
-<a class="sourceLine" id="cb28-13" data-line-number="13">    <span class="kw">force</span>(i)</a>
-<a class="sourceLine" id="cb28-14" data-line-number="14">    <span class="kw"><a href="reference/cases.html">cases</a></span>(lst,</a>
-<a class="sourceLine" id="cb28-15" data-line-number="15">          NIL -&gt;<span class="st"> </span><span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb28-16" data-line-number="16">          <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span>{</a>
-<a class="sourceLine" id="cb28-17" data-line-number="17">            v[[i]] &lt;&lt;-<span class="st"> </span>car</a>
-<a class="sourceLine" id="cb28-18" data-line-number="18">            <span class="kw">f</span>(cdr, i <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb28-19" data-line-number="19">            }</a>
-<a class="sourceLine" id="cb28-20" data-line-number="20">          )</a>
-<a class="sourceLine" id="cb28-21" data-line-number="21">  }</a>
-<a class="sourceLine" id="cb28-22" data-line-number="22">  <span class="kw">f</span>(lst, <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb28-23" data-line-number="23">  v <span class="op">%&gt;%</span><span class="st"> </span>unlist</a>
-<a class="sourceLine" id="cb28-24" data-line-number="24">}</a>
-<a class="sourceLine" id="cb28-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb28-26" data-line-number="26">lst &lt;-<span class="st"> </span><span class="kw">vector_to_list</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb28-27" data-line-number="27"><span class="kw">list_length</span>(lst)</a>
-<a class="sourceLine" id="cb28-28" data-line-number="28"><span class="co">#&gt; [1] 5</span></a>
-<a class="sourceLine" id="cb28-29" data-line-number="29"><span class="kw">list_to_vector</span>(lst)</a>
-<a class="sourceLine" id="cb28-30" data-line-number="30"><span class="co">#&gt; [1] 1 2 3 4 5</span></a>
-<a class="sourceLine" id="cb28-31" data-line-number="31">lst <span class="op">%&gt;%</span><span class="st"> </span>reverse_list <span class="op">%&gt;%</span><span class="st"> </span>list_to_vector</a>
-<a class="sourceLine" id="cb28-32" data-line-number="32"><span class="co">#&gt; [1] 5 4 3 2 1</span></a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">vector_to_list &lt;-<span class="st"> </span><span class="cf">function</span>(vec) {</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">  lst &lt;-<span class="st"> </span>NIL</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(vec)) {</a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">    lst &lt;-<span class="st"> </span><span class="kw">CONS</span>(vec[[i]], lst)</a>
+<a class="sourceLine" id="cb29-5" data-line-number="5">  }</a>
+<a class="sourceLine" id="cb29-6" data-line-number="6">  <span class="kw">reverse_list</span>(lst)</a>
+<a class="sourceLine" id="cb29-7" data-line-number="7">}</a>
+<a class="sourceLine" id="cb29-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb29-9" data-line-number="9">list_to_vector &lt;-<span class="st"> </span><span class="cf">function</span>(lst) {</a>
+<a class="sourceLine" id="cb29-10" data-line-number="10">  n &lt;-<span class="st"> </span><span class="kw">list_length</span>(lst)</a>
+<a class="sourceLine" id="cb29-11" data-line-number="11">  v &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">"list"</span>, <span class="dt">length =</span> n)</a>
+<a class="sourceLine" id="cb29-12" data-line-number="12">  f &lt;-<span class="st"> </span><span class="cf">function</span>(lst, i) {</a>
+<a class="sourceLine" id="cb29-13" data-line-number="13">    <span class="kw">force</span>(i)</a>
+<a class="sourceLine" id="cb29-14" data-line-number="14">    <span class="kw"><a href="reference/cases.html">cases</a></span>(lst,</a>
+<a class="sourceLine" id="cb29-15" data-line-number="15">          NIL -&gt;<span class="st"> </span><span class="ot">NULL</span>,</a>
+<a class="sourceLine" id="cb29-16" data-line-number="16">          <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span>{</a>
+<a class="sourceLine" id="cb29-17" data-line-number="17">            v[[i]] &lt;&lt;-<span class="st"> </span>car</a>
+<a class="sourceLine" id="cb29-18" data-line-number="18">            <span class="kw">f</span>(cdr, i <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb29-19" data-line-number="19">            }</a>
+<a class="sourceLine" id="cb29-20" data-line-number="20">          )</a>
+<a class="sourceLine" id="cb29-21" data-line-number="21">  }</a>
+<a class="sourceLine" id="cb29-22" data-line-number="22">  <span class="kw">f</span>(lst, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb29-23" data-line-number="23">  v <span class="op">%&gt;%</span><span class="st"> </span>unlist</a>
+<a class="sourceLine" id="cb29-24" data-line-number="24">}</a>
+<a class="sourceLine" id="cb29-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb29-26" data-line-number="26">lst &lt;-<span class="st"> </span><span class="kw">vector_to_list</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb29-27" data-line-number="27"><span class="kw">list_length</span>(lst)</a>
+<a class="sourceLine" id="cb29-28" data-line-number="28"><span class="co">#&gt; [1] 5</span></a>
+<a class="sourceLine" id="cb29-29" data-line-number="29"><span class="kw">list_to_vector</span>(lst)</a>
+<a class="sourceLine" id="cb29-30" data-line-number="30"><span class="co">#&gt; [1] 1 2 3 4 5</span></a>
+<a class="sourceLine" id="cb29-31" data-line-number="31">lst <span class="op">%&gt;%</span><span class="st"> </span>reverse_list <span class="op">%&gt;%</span><span class="st"> </span>list_to_vector</a>
+<a class="sourceLine" id="cb29-32" data-line-number="32"><span class="co">#&gt; [1] 5 4 3 2 1</span></a></code></pre></div>
 </div>
 <div id="search-trees" class="section level3">
 <h3 class="hasAnchor">
 <a href="#search-trees" class="anchor"></a>Search trees</h3>
 <p>Search trees are binary trees that holds values in all inner nodes and satisfy the invariant that all values in a left subtree are smaller than the value in an inner node, and all values in the right subtree are larger.</p>
 <p>We can define a search tree like this:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">search_tree <span class="op">:</span><span class="er">=</span><span class="st"> </span>E <span class="op">|</span><span class="st"> </span><span class="kw">T</span>(left <span class="op">:</span><span class="st"> </span>search_tree, value, right <span class="op">:</span><span class="st"> </span>search_tree)</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">search_tree <span class="op">:</span><span class="er">=</span><span class="st"> </span>E <span class="op">|</span><span class="st"> </span><span class="kw">T</span>(left <span class="op">:</span><span class="st"> </span>search_tree, value, right <span class="op">:</span><span class="st"> </span>search_tree)</a></code></pre></div>
 <p>Here, we use an empty tree, <code>E</code>, for leaves. We only store values in inner nodes, created with the constructor <code>T</code>.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">tree &lt;-<span class="st"> </span><span class="kw">T</span>(<span class="kw">T</span>(E,<span class="dv">1</span>,E), <span class="dv">3</span>, <span class="kw">T</span>(E,<span class="dv">4</span>,E))</a>
-<a class="sourceLine" id="cb30-2" data-line-number="2">tree</a>
-<a class="sourceLine" id="cb30-3" data-line-number="3"><span class="co">#&gt; T(left = T(left = E, value = 1, right = E), value = 3, right = T(left = E, value = 4, right = E))</span></a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">tree &lt;-<span class="st"> </span><span class="kw">T</span>(<span class="kw">T</span>(E,<span class="dv">1</span>,E), <span class="dv">3</span>, <span class="kw">T</span>(E,<span class="dv">4</span>,E))</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">tree</a>
+<a class="sourceLine" id="cb31-3" data-line-number="3"><span class="co">#&gt; T(left = T(left = E, value = 1, right = E), value = 3, right = T(left = E, value = 4, right = E))</span></a></code></pre></div>
 <p>Because of the invariant, we know where values should be found if they are in a tree. We can look at the value in the root of a subtree. If it is larger than the value we are searching for, we need to search to the left. If it is smaller, we need to search to the right. Otherwise, it must be equal to the value. If we reach an empty tree in this search, then we know the value is no the tree.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">member &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
-<a class="sourceLine" id="cb31-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
-<a class="sourceLine" id="cb31-3" data-line-number="3">        E -&gt;<span class="st"> </span><span class="ot">FALSE</span>,</a>
-<a class="sourceLine" id="cb31-4" data-line-number="4">        <span class="kw">T</span>(left, val, right) -&gt;<span class="st"> </span>{</a>
-<a class="sourceLine" id="cb31-5" data-line-number="5">          <span class="cf">if</span> (x <span class="op">&lt;</span><span class="st"> </span>val) <span class="kw">member</span>(left, x)</a>
-<a class="sourceLine" id="cb31-6" data-line-number="6">          <span class="cf">else</span> <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span>val) <span class="kw">member</span>(right, x)</a>
-<a class="sourceLine" id="cb31-7" data-line-number="7">          <span class="cf">else</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb31-8" data-line-number="8">        })</a>
-<a class="sourceLine" id="cb31-9" data-line-number="9">}</a>
-<a class="sourceLine" id="cb31-10" data-line-number="10"><span class="kw">member</span>(tree, <span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb31-11" data-line-number="11"><span class="co">#&gt; [1] FALSE</span></a>
-<a class="sourceLine" id="cb31-12" data-line-number="12"><span class="kw">member</span>(tree, <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb31-13" data-line-number="13"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb31-14" data-line-number="14"><span class="kw">member</span>(tree, <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb31-15" data-line-number="15"><span class="co">#&gt; [1] FALSE</span></a>
-<a class="sourceLine" id="cb31-16" data-line-number="16"><span class="kw">member</span>(tree, <span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb31-17" data-line-number="17"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb31-18" data-line-number="18"><span class="kw">member</span>(tree, <span class="dv">4</span>)</a>
-<a class="sourceLine" id="cb31-19" data-line-number="19"><span class="co">#&gt; [1] TRUE</span></a></code></pre></div>
-<p>Since data in R, in general, are immutable, we cannot update search trees. We can, however, create copies with updated structure, and because R implements “copy-on-write”, this is an efficient way of updating the structure of data we work on. If we insert elements into a search tree, what we will really be doing is to create a new tree that holds all the values the old tree held plus the new values. If the value is already in the old tree we do not add it again, but we will be returning a new tree. We create the new tree in a recursion. Whenever we call recursively, we create a new inner node that will contain one subtree that is an exact copy of one of the subtrees from the old tree–shared with the old tree so no actual copying takes place–and one subtree that is created in the recursive insertion. The recursion goes left or right using the same logic as in the <code>member</code> function. If we find that the element is already in the tree, we terminate the recursion with the tree that contains the value. If we reach an empty tree, the element was not in the old tree, but we have found the place where it should be in the new tree, so we create an inner tree with two empty subtrees and the value.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">insert &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">member &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
 <a class="sourceLine" id="cb32-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
-<a class="sourceLine" id="cb32-3" data-line-number="3">        E -&gt;<span class="st"> </span><span class="kw">T</span>(E, x, E),</a>
-<a class="sourceLine" id="cb32-4" data-line-number="4">        <span class="kw">T</span>(left, val, right) -&gt;</a>
-<a class="sourceLine" id="cb32-5" data-line-number="5"><span class="st">          </span><span class="cf">if</span> (x <span class="op">&lt;</span><span class="st"> </span>val)</a>
-<a class="sourceLine" id="cb32-6" data-line-number="6">            <span class="kw">T</span>(<span class="kw">insert</span>(left, x), val, right)</a>
-<a class="sourceLine" id="cb32-7" data-line-number="7">          <span class="cf">else</span> <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span>val)</a>
-<a class="sourceLine" id="cb32-8" data-line-number="8">            <span class="kw">T</span>(left, val, <span class="kw">insert</span>(right, x))</a>
-<a class="sourceLine" id="cb32-9" data-line-number="9">          <span class="cf">else</span></a>
-<a class="sourceLine" id="cb32-10" data-line-number="10">            <span class="kw">T</span>(left, x, right)</a>
-<a class="sourceLine" id="cb32-11" data-line-number="11">        )</a>
-<a class="sourceLine" id="cb32-12" data-line-number="12">}</a>
-<a class="sourceLine" id="cb32-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb32-14" data-line-number="14">tree &lt;-<span class="st"> </span>E</a>
-<a class="sourceLine" id="cb32-15" data-line-number="15"><span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">sample</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>))</a>
-<a class="sourceLine" id="cb32-16" data-line-number="16">  tree &lt;-<span class="st"> </span><span class="kw">insert</span>(tree, i)</a>
-<a class="sourceLine" id="cb32-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb32-18" data-line-number="18"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>) {</a>
-<a class="sourceLine" id="cb32-19" data-line-number="19">  <span class="kw">cat</span>(i, <span class="st">" : "</span>, <span class="kw">member</span>(tree, i), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb32-20" data-line-number="20">}</a>
-<a class="sourceLine" id="cb32-21" data-line-number="21"><span class="co">#&gt; 1  :  FALSE </span></a>
-<a class="sourceLine" id="cb32-22" data-line-number="22"><span class="co">#&gt; 2  :  TRUE </span></a>
-<a class="sourceLine" id="cb32-23" data-line-number="23"><span class="co">#&gt; 3  :  TRUE </span></a>
-<a class="sourceLine" id="cb32-24" data-line-number="24"><span class="co">#&gt; 4  :  TRUE </span></a>
-<a class="sourceLine" id="cb32-25" data-line-number="25"><span class="co">#&gt; 5  :  FALSE </span></a>
-<a class="sourceLine" id="cb32-26" data-line-number="26"><span class="co">#&gt; 6  :  FALSE</span></a></code></pre></div>
+<a class="sourceLine" id="cb32-3" data-line-number="3">        E -&gt;<span class="st"> </span><span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb32-4" data-line-number="4">        <span class="kw">T</span>(left, val, right) -&gt;<span class="st"> </span>{</a>
+<a class="sourceLine" id="cb32-5" data-line-number="5">          <span class="cf">if</span> (x <span class="op">&lt;</span><span class="st"> </span>val) <span class="kw">member</span>(left, x)</a>
+<a class="sourceLine" id="cb32-6" data-line-number="6">          <span class="cf">else</span> <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span>val) <span class="kw">member</span>(right, x)</a>
+<a class="sourceLine" id="cb32-7" data-line-number="7">          <span class="cf">else</span> <span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb32-8" data-line-number="8">        })</a>
+<a class="sourceLine" id="cb32-9" data-line-number="9">}</a>
+<a class="sourceLine" id="cb32-10" data-line-number="10"><span class="kw">member</span>(tree, <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb32-11" data-line-number="11"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb32-12" data-line-number="12"><span class="kw">member</span>(tree, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb32-13" data-line-number="13"><span class="co">#&gt; [1] TRUE</span></a>
+<a class="sourceLine" id="cb32-14" data-line-number="14"><span class="kw">member</span>(tree, <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb32-15" data-line-number="15"><span class="co">#&gt; [1] FALSE</span></a>
+<a class="sourceLine" id="cb32-16" data-line-number="16"><span class="kw">member</span>(tree, <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb32-17" data-line-number="17"><span class="co">#&gt; [1] TRUE</span></a>
+<a class="sourceLine" id="cb32-18" data-line-number="18"><span class="kw">member</span>(tree, <span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb32-19" data-line-number="19"><span class="co">#&gt; [1] TRUE</span></a></code></pre></div>
+<p>Since data in R, in general, are immutable, we cannot update search trees. We can, however, create copies with updated structure, and because R implements “copy-on-write”, this is an efficient way of updating the structure of data we work on. If we insert elements into a search tree, what we will really be doing is to create a new tree that holds all the values the old tree held plus the new values. If the value is already in the old tree we do not add it again, but we will be returning a new tree. We create the new tree in a recursion. Whenever we call recursively, we create a new inner node that will contain one subtree that is an exact copy of one of the subtrees from the old tree–shared with the old tree so no actual copying takes place–and one subtree that is created in the recursive insertion. The recursion goes left or right using the same logic as in the <code>member</code> function. If we find that the element is already in the tree, we terminate the recursion with the tree that contains the value. If we reach an empty tree, the element was not in the old tree, but we have found the place where it should be in the new tree, so we create an inner tree with two empty subtrees and the value.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">insert &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
+<a class="sourceLine" id="cb33-3" data-line-number="3">        E -&gt;<span class="st"> </span><span class="kw">T</span>(E, x, E),</a>
+<a class="sourceLine" id="cb33-4" data-line-number="4">        <span class="kw">T</span>(left, val, right) -&gt;</a>
+<a class="sourceLine" id="cb33-5" data-line-number="5"><span class="st">          </span><span class="cf">if</span> (x <span class="op">&lt;</span><span class="st"> </span>val)</a>
+<a class="sourceLine" id="cb33-6" data-line-number="6">            <span class="kw">T</span>(<span class="kw">insert</span>(left, x), val, right)</a>
+<a class="sourceLine" id="cb33-7" data-line-number="7">          <span class="cf">else</span> <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span>val)</a>
+<a class="sourceLine" id="cb33-8" data-line-number="8">            <span class="kw">T</span>(left, val, <span class="kw">insert</span>(right, x))</a>
+<a class="sourceLine" id="cb33-9" data-line-number="9">          <span class="cf">else</span></a>
+<a class="sourceLine" id="cb33-10" data-line-number="10">            <span class="kw">T</span>(left, x, right)</a>
+<a class="sourceLine" id="cb33-11" data-line-number="11">        )</a>
+<a class="sourceLine" id="cb33-12" data-line-number="12">}</a>
+<a class="sourceLine" id="cb33-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb33-14" data-line-number="14">tree &lt;-<span class="st"> </span>E</a>
+<a class="sourceLine" id="cb33-15" data-line-number="15"><span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">sample</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb33-16" data-line-number="16">  tree &lt;-<span class="st"> </span><span class="kw">insert</span>(tree, i)</a>
+<a class="sourceLine" id="cb33-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb33-18" data-line-number="18"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>) {</a>
+<a class="sourceLine" id="cb33-19" data-line-number="19">  <span class="kw">cat</span>(i, <span class="st">" : "</span>, <span class="kw">member</span>(tree, i), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
+<a class="sourceLine" id="cb33-20" data-line-number="20">}</a>
+<a class="sourceLine" id="cb33-21" data-line-number="21"><span class="co">#&gt; 1  :  FALSE </span></a>
+<a class="sourceLine" id="cb33-22" data-line-number="22"><span class="co">#&gt; 2  :  TRUE </span></a>
+<a class="sourceLine" id="cb33-23" data-line-number="23"><span class="co">#&gt; 3  :  TRUE </span></a>
+<a class="sourceLine" id="cb33-24" data-line-number="24"><span class="co">#&gt; 4  :  TRUE </span></a>
+<a class="sourceLine" id="cb33-25" data-line-number="25"><span class="co">#&gt; 5  :  FALSE </span></a>
+<a class="sourceLine" id="cb33-26" data-line-number="26"><span class="co">#&gt; 6  :  FALSE</span></a></code></pre></div>
 </div>
 <div id="red-black-search-trees" class="section level3">
 <h3 class="hasAnchor">
 <a href="#red-black-search-trees" class="anchor"></a>Red-black search trees</h3>
 <p>The worst-case time usage for both of these functions is proportional to the depth of the tree, and that can be linear in the number of elements stored in the tree. If we keep the tree balanced, though, the time is reduced to logarithmic in the size of the tree. A classical data structure for keeping search trees balanced is so-called <em>red-black</em> search trees. Implementing these using pointer or reference manipulation in languages such as C/C++ or Java can be quite challenging, but in a functional language, balancing such trees is a simple matter of transforming trees based on local structure.</p>
 <p>Red-black search trees are binary search trees where each tree has a colour associated, either red or black. We can define colours using constant constructors and define a red-black search tree by extending the plain search tree:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">colour <span class="op">:</span><span class="er">=</span><span class="st"> </span>R <span class="op">|</span><span class="st"> </span>B</a>
-<a class="sourceLine" id="cb33-2" data-line-number="2">rb_tree <span class="op">:</span><span class="er">=</span><span class="st"> </span>E <span class="op">|</span><span class="st"> </span><span class="kw">T</span>(col <span class="op">:</span><span class="st"> </span>colour, left <span class="op">:</span><span class="st"> </span>rb_tree, value, right <span class="op">:</span><span class="st"> </span>rb_tree)</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">colour <span class="op">:</span><span class="er">=</span><span class="st"> </span>R <span class="op">|</span><span class="st"> </span>B</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">rb_tree <span class="op">:</span><span class="er">=</span><span class="st"> </span>E <span class="op">|</span><span class="st"> </span><span class="kw">T</span>(col <span class="op">:</span><span class="st"> </span>colour, left <span class="op">:</span><span class="st"> </span>rb_tree, value, right <span class="op">:</span><span class="st"> </span>rb_tree)</a></code></pre></div>
 <p>Except for including the colour in the pattern matching, the <code>member</code> function for this data structure is the same as for the plain search tree.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">member &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
-<a class="sourceLine" id="cb34-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">        E -&gt;<span class="st"> </span><span class="ot">FALSE</span>,</a>
-<a class="sourceLine" id="cb34-4" data-line-number="4">        <span class="kw">T</span>(col, left, val, right) -&gt;<span class="st"> </span>{</a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">          <span class="cf">if</span> (x <span class="op">&lt;</span><span class="st"> </span>val) <span class="kw">member</span>(left, x)</a>
-<a class="sourceLine" id="cb34-6" data-line-number="6">          <span class="cf">else</span> <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span>val) <span class="kw">member</span>(right, x)</a>
-<a class="sourceLine" id="cb34-7" data-line-number="7">          <span class="cf">else</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb34-8" data-line-number="8">        })</a>
-<a class="sourceLine" id="cb34-9" data-line-number="9">}</a>
-<a class="sourceLine" id="cb34-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb34-11" data-line-number="11">tree &lt;-<span class="st"> </span><span class="kw">T</span>(R, E, <span class="dv">2</span>, <span class="kw">T</span>(B, E, <span class="dv">5</span>, E))</a>
-<a class="sourceLine" id="cb34-12" data-line-number="12"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>) {</a>
-<a class="sourceLine" id="cb34-13" data-line-number="13">  <span class="kw">cat</span>(i, <span class="st">" : "</span>, <span class="kw">member</span>(tree, i), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
-<a class="sourceLine" id="cb34-14" data-line-number="14">}</a>
-<a class="sourceLine" id="cb34-15" data-line-number="15"><span class="co">#&gt; 1  :  FALSE </span></a>
-<a class="sourceLine" id="cb34-16" data-line-number="16"><span class="co">#&gt; 2  :  TRUE </span></a>
-<a class="sourceLine" id="cb34-17" data-line-number="17"><span class="co">#&gt; 3  :  FALSE </span></a>
-<a class="sourceLine" id="cb34-18" data-line-number="18"><span class="co">#&gt; 4  :  FALSE </span></a>
-<a class="sourceLine" id="cb34-19" data-line-number="19"><span class="co">#&gt; 5  :  TRUE </span></a>
-<a class="sourceLine" id="cb34-20" data-line-number="20"><span class="co">#&gt; 6  :  FALSE</span></a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">member &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
+<a class="sourceLine" id="cb35-3" data-line-number="3">        E -&gt;<span class="st"> </span><span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb35-4" data-line-number="4">        <span class="kw">T</span>(col, left, val, right) -&gt;<span class="st"> </span>{</a>
+<a class="sourceLine" id="cb35-5" data-line-number="5">          <span class="cf">if</span> (x <span class="op">&lt;</span><span class="st"> </span>val) <span class="kw">member</span>(left, x)</a>
+<a class="sourceLine" id="cb35-6" data-line-number="6">          <span class="cf">else</span> <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span>val) <span class="kw">member</span>(right, x)</a>
+<a class="sourceLine" id="cb35-7" data-line-number="7">          <span class="cf">else</span> <span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb35-8" data-line-number="8">        })</a>
+<a class="sourceLine" id="cb35-9" data-line-number="9">}</a>
+<a class="sourceLine" id="cb35-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb35-11" data-line-number="11">tree &lt;-<span class="st"> </span><span class="kw">T</span>(R, E, <span class="dv">2</span>, <span class="kw">T</span>(B, E, <span class="dv">5</span>, E))</a>
+<a class="sourceLine" id="cb35-12" data-line-number="12"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">6</span>) {</a>
+<a class="sourceLine" id="cb35-13" data-line-number="13">  <span class="kw">cat</span>(i, <span class="st">" : "</span>, <span class="kw">member</span>(tree, i), <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</a>
+<a class="sourceLine" id="cb35-14" data-line-number="14">}</a>
+<a class="sourceLine" id="cb35-15" data-line-number="15"><span class="co">#&gt; 1  :  FALSE </span></a>
+<a class="sourceLine" id="cb35-16" data-line-number="16"><span class="co">#&gt; 2  :  TRUE </span></a>
+<a class="sourceLine" id="cb35-17" data-line-number="17"><span class="co">#&gt; 3  :  FALSE </span></a>
+<a class="sourceLine" id="cb35-18" data-line-number="18"><span class="co">#&gt; 4  :  FALSE </span></a>
+<a class="sourceLine" id="cb35-19" data-line-number="19"><span class="co">#&gt; 5  :  TRUE </span></a>
+<a class="sourceLine" id="cb35-20" data-line-number="20"><span class="co">#&gt; 6  :  FALSE</span></a></code></pre></div>
 <p>Red-black search trees are kept balanced because we enforce these two invariants:</p>
 <ol style="list-style-type: decimal">
 <li>No red node has a red parent.</li>
@@ -453,34 +473,34 @@
 </ol>
 <p>If every path from root to a leaf has the same number of black nodes, then the tree is perfectly balanced if we ignored the red nodes. Since no red node has a red parent, the longest path, when red nodes are considered, can be no longer than twice the length of the shortest path.</p>
 <p>These invariants can be guaranteed by always inserting new values in red leaves, potentially invalidating the first invariant, and then rebalancing all sub-trees that invalidate this invariant, and at the end setting the root to be black. The rebalancing is done when returning from the recursive insertion calls that otherwise work as insertion in the plain search tree.</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">insert_rec &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
-<a class="sourceLine" id="cb35-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
-<a class="sourceLine" id="cb35-3" data-line-number="3">        E -&gt;<span class="st"> </span><span class="kw">T</span>(R, E, x, E),</a>
-<a class="sourceLine" id="cb35-4" data-line-number="4">        <span class="kw">T</span>(col, left, val, right) -&gt;<span class="st"> </span>{</a>
-<a class="sourceLine" id="cb35-5" data-line-number="5">          <span class="cf">if</span> (x <span class="op">&lt;</span><span class="st"> </span>val)</a>
-<a class="sourceLine" id="cb35-6" data-line-number="6">            <span class="kw">balance</span>(<span class="kw">T</span>(col, <span class="kw">insert_rec</span>(left, x), val, right))</a>
-<a class="sourceLine" id="cb35-7" data-line-number="7">          <span class="cf">else</span> <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span>val)</a>
-<a class="sourceLine" id="cb35-8" data-line-number="8">            <span class="kw">balance</span>(<span class="kw">T</span>(col, left, val, <span class="kw">insert_rec</span>(right, x)))</a>
-<a class="sourceLine" id="cb35-9" data-line-number="9">          <span class="cf">else</span></a>
-<a class="sourceLine" id="cb35-10" data-line-number="10">            <span class="kw">T</span>(col, left, x, right) <span class="co"># already here</span></a>
-<a class="sourceLine" id="cb35-11" data-line-number="11">        })</a>
-<a class="sourceLine" id="cb35-12" data-line-number="12">}</a>
-<a class="sourceLine" id="cb35-13" data-line-number="13">insert &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
-<a class="sourceLine" id="cb35-14" data-line-number="14">  tree &lt;-<span class="st"> </span><span class="kw">insert_rec</span>(tree, x)</a>
-<a class="sourceLine" id="cb35-15" data-line-number="15">  tree<span class="op">$</span>col &lt;-<span class="st"> </span>B</a>
-<a class="sourceLine" id="cb35-16" data-line-number="16">  tree</a>
-<a class="sourceLine" id="cb35-17" data-line-number="17">}</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">insert_rec &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">        E -&gt;<span class="st"> </span><span class="kw">T</span>(R, E, x, E),</a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">        <span class="kw">T</span>(col, left, val, right) -&gt;<span class="st"> </span>{</a>
+<a class="sourceLine" id="cb36-5" data-line-number="5">          <span class="cf">if</span> (x <span class="op">&lt;</span><span class="st"> </span>val)</a>
+<a class="sourceLine" id="cb36-6" data-line-number="6">            <span class="kw">balance</span>(<span class="kw">T</span>(col, <span class="kw">insert_rec</span>(left, x), val, right))</a>
+<a class="sourceLine" id="cb36-7" data-line-number="7">          <span class="cf">else</span> <span class="cf">if</span> (x <span class="op">&gt;</span><span class="st"> </span>val)</a>
+<a class="sourceLine" id="cb36-8" data-line-number="8">            <span class="kw">balance</span>(<span class="kw">T</span>(col, left, val, <span class="kw">insert_rec</span>(right, x)))</a>
+<a class="sourceLine" id="cb36-9" data-line-number="9">          <span class="cf">else</span></a>
+<a class="sourceLine" id="cb36-10" data-line-number="10">            <span class="kw">T</span>(col, left, x, right) <span class="co"># already here</span></a>
+<a class="sourceLine" id="cb36-11" data-line-number="11">        })</a>
+<a class="sourceLine" id="cb36-12" data-line-number="12">}</a>
+<a class="sourceLine" id="cb36-13" data-line-number="13">insert &lt;-<span class="st"> </span><span class="cf">function</span>(tree, x) {</a>
+<a class="sourceLine" id="cb36-14" data-line-number="14">  tree &lt;-<span class="st"> </span><span class="kw">insert_rec</span>(tree, x)</a>
+<a class="sourceLine" id="cb36-15" data-line-number="15">  tree<span class="op">$</span>col &lt;-<span class="st"> </span>B</a>
+<a class="sourceLine" id="cb36-16" data-line-number="16">  tree</a>
+<a class="sourceLine" id="cb36-17" data-line-number="17">}</a></code></pre></div>
 <p>The transformation rules for the <code>balance</code> function are shown in the figure below:</p>
 <p><img src="http://users-cs.au.dk/mailund/RBT-transformations.png"></p>
 <p>Every time we see one of the trees around the edges, we must transform it into the tree in the middle. We can implement these transformations as simple as this:</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">balance &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
-<a class="sourceLine" id="cb36-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
-<a class="sourceLine" id="cb36-3" data-line-number="3">        <span class="kw">T</span>(B,<span class="kw">T</span>(R,a,x,<span class="kw">T</span>(R,b,y,c)),z,d) -&gt;<span class="st"> </span><span class="kw">T</span>(R,<span class="kw">T</span>(B,a,x,b),y,<span class="kw">T</span>(B,c,z,d)),</a>
-<a class="sourceLine" id="cb36-4" data-line-number="4">        <span class="kw">T</span>(B,<span class="kw">T</span>(R,<span class="kw">T</span>(R,a,x,b),y,c),z,d) -&gt;<span class="st"> </span><span class="kw">T</span>(R,<span class="kw">T</span>(B,a,x,b),y,<span class="kw">T</span>(B,c,z,d)),</a>
-<a class="sourceLine" id="cb36-5" data-line-number="5">        <span class="kw">T</span>(B,a,x,<span class="kw">T</span>(R,b,y,<span class="kw">T</span>(R,c,z,d))) -&gt;<span class="st"> </span><span class="kw">T</span>(R,<span class="kw">T</span>(B,a,x,b),y,<span class="kw">T</span>(B,c,z,d)),</a>
-<a class="sourceLine" id="cb36-6" data-line-number="6">        <span class="kw">T</span>(B,a,x,<span class="kw">T</span>(R,<span class="kw">T</span>(R,b,y,c),z,d)) -&gt;<span class="st"> </span><span class="kw">T</span>(R,<span class="kw">T</span>(B,a,x,b),y,<span class="kw">T</span>(B,c,z,d)),</a>
-<a class="sourceLine" id="cb36-7" data-line-number="7">        otherwise -&gt;<span class="st"> </span>tree)</a>
-<a class="sourceLine" id="cb36-8" data-line-number="8">}</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">balance &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
+<a class="sourceLine" id="cb37-2" data-line-number="2">  <span class="kw"><a href="reference/cases.html">cases</a></span>(tree,</a>
+<a class="sourceLine" id="cb37-3" data-line-number="3">        <span class="kw">T</span>(B,<span class="kw">T</span>(R,a,x,<span class="kw">T</span>(R,b,y,c)),z,d) -&gt;<span class="st"> </span><span class="kw">T</span>(R,<span class="kw">T</span>(B,a,x,b),y,<span class="kw">T</span>(B,c,z,d)),</a>
+<a class="sourceLine" id="cb37-4" data-line-number="4">        <span class="kw">T</span>(B,<span class="kw">T</span>(R,<span class="kw">T</span>(R,a,x,b),y,c),z,d) -&gt;<span class="st"> </span><span class="kw">T</span>(R,<span class="kw">T</span>(B,a,x,b),y,<span class="kw">T</span>(B,c,z,d)),</a>
+<a class="sourceLine" id="cb37-5" data-line-number="5">        <span class="kw">T</span>(B,a,x,<span class="kw">T</span>(R,b,y,<span class="kw">T</span>(R,c,z,d))) -&gt;<span class="st"> </span><span class="kw">T</span>(R,<span class="kw">T</span>(B,a,x,b),y,<span class="kw">T</span>(B,c,z,d)),</a>
+<a class="sourceLine" id="cb37-6" data-line-number="6">        <span class="kw">T</span>(B,a,x,<span class="kw">T</span>(R,<span class="kw">T</span>(R,b,y,c),z,d)) -&gt;<span class="st"> </span><span class="kw">T</span>(R,<span class="kw">T</span>(B,a,x,b),y,<span class="kw">T</span>(B,c,z,d)),</a>
+<a class="sourceLine" id="cb37-7" data-line-number="7">        otherwise -&gt;<span class="st"> </span>tree)</a>
+<a class="sourceLine" id="cb37-8" data-line-number="8">}</a></code></pre></div>
 </div>
 </div>
 </div>
@@ -524,8 +544,8 @@
 <li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="http://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="lifecycle"></a></li>
 <li><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active"></a></li>
-<li><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2018--03--29-green.svg" alt="Last-changedate"></a></li>
-<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-0.1.3.9001-orange.svg?style=flat-square" alt="packageversion"></a></li>
+<li><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2018--03--30-green.svg" alt="Last-changedate"></a></li>
+<li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-0.1.3.9003-orange.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://travis-ci.org/mailund/pmatch"><img src="http://travis-ci.org/mailund/pmatch.svg?branch=master" alt="Travis-CI Build Status"></a></li>
 <li><a href="https://ci.appveyor.com/project/mailund/pmatch"><img src="http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true" alt="AppVeyor Build Status"></a></li>
 <li><a href="https://codecov.io/github/mailund/pmatch?branch=master"><img src="http://img.shields.io/codecov/c/github/mailund/pmatch/master.svg" alt="Coverage Status"></a></li>

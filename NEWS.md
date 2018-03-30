@@ -1,3 +1,17 @@
+
+# pmatch 0.1.3.9002
+
+ * Pattern matching on multiple patterns and values using
+   `..` notation.
+
+# pmatch 0.1.3.9001
+
+ * Fixed a rewrite bug when using qualified names.
+
+# pmatch 0.1.3.9000
+
+ * Uses `foolbox` for a safer rewrite function.
+
 # pmatch 0.1.3
 
  * Formula syntax in cases as an alternative: cases(f(x), foo ~ bar, baz ~ qux).

@@ -184,6 +184,24 @@ left
 right
 ```
 
+### Testing more than one pattern
+
+If you want to test more than one pattern at a time, you can use the `..` function:
+
+```{r}
+f <- function(t1,t2) 
+    cases(..(t1, t2),
+          ..(L(.),L(.)) -> "Both leaves",
+          ..(L(.),.)    -> "Left leaf",
+          ..(.,L(.))    -> "Right leaf",
+          ..(.,.)       -> "None are leaves")
+
+f(L(0), L(2))
+f(L(0), x)
+f(x, L(42))
+f(x, x)
+```
+
 ### Function transformations
 
 Since this package provides its functionality through a DSL, you *can* get into trouble when other parts of R tries to make sense of it.

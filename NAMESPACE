@@ -3,6 +3,7 @@
 S3method("[<-",pmatch_bind)
 export("%>%")
 export(":=")
+export(..)
 export(bind)
 export(cases)
 export(cases_expr)

@@ -1,30 +1,80 @@
 
+# FIXME: More documentation
+#' Function for specifying a sequence of patterns/expressions
+#'
+#' This function is used when you want to test for more than one pattern
+#' in parallel
+#'
+#' @param ... The patterns/expressions to combine
+#' @name `..`
+#'
+#' @export
+`..` <- function(...) structure(list(...), class = "..")
+
 #' Recursive comparison of expression and pattern.
 #'
-#' @param escape     Continuation from callCC, used to escape if we cannot match.
+#' @param escape     Continuation from callCC, used to escape if we cannot
+#'   match.
 #' @param expr       The expression to match again.
 #' @param test_expr  The pattern we are trying to match.
 #' @param eval_env   The environment where we get constructors from.
 #' @param match_env  The environment to put matched variables in.
 #'
-#' @return An environment containing bound variables from the expression, if matching.
-#'         If the pattern doesn't match, the function escapes through the \code{escape}
-#'         continuation.
+#' @return An environment containing bound variables from the expression, if
+#'   matching. If the pattern doesn't match, the function escapes through the
+#'   \code{escape} continuation.
 test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
+    if (rlang::is_call(test_expr) && rlang::call_name(test_expr) == "..") {
+        # trying to match more than one pattern.
+        if (!rlang::is_list(expr) || !inherits(expr, "..")) {
+            stop(simpleError(
+                glue::glue(
+                    "When matching against .. the expression ",
+                    "must be a list created using .. ",
+                    "of the same length as the ..-pattern."
+                ),
+                call = test_expr
+            ))
+        }
+        sub_expr <- rlang::call_args(test_expr)
+        if (length(expr) != length(sub_expr)) {
+            stop(simpleError(
+                glue::glue(
+                    "When matching against .. the expression ",
+                    "must be a ..-created list of the same length as the ",
+                    "..-pattern."
+                ),
+                call = test_expr
+            ))
+        }
+
+        for (i in seq_along(sub_expr)) {
+            test_pattern_rec(
+                escape, expr[[i]], sub_expr[[i]],
+                eval_env, match_env
+            )
+        }
+        return(match_env)
+    }
+
     # Is this a function-constructor?
-    if (rlang::is_lang(test_expr)) {
+    if (rlang::is_call(test_expr)) {
         func <- get(rlang::as_string(test_expr[[1]]), eval_env)
         if (inherits(func, "constructor")) {
             # This is a constructor.  Check if it is the right kind
             constructor <- rlang::as_string(test_expr[[1]])
             expr_constructor <- attr(expr, "constructor")
-            if (rlang::is_null(expr_constructor) || constructor != expr_constructor) {
+            if (rlang::is_null(expr_constructor) ||
+                constructor != expr_constructor) {
                 escape(NULL)
             } # wrong type
 
             # Now check recursively
             for (i in seq_along(expr)) {
-                test_pattern_rec(escape, expr[[i]], test_expr[[i + 1]], eval_env, match_env)
+                test_pattern_rec(
+                    escape, expr[[i]], test_expr[[i + 1]],
+                    eval_env, match_env
+                )
             }
 
             # If we get here, the matching was successfull
@@ -33,7 +83,8 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
     }
 
     # Is this a constant-constructor?
-    if (rlang::is_symbol(test_expr) && exists(rlang::as_string(test_expr), eval_env)) {
+    if (rlang::is_symbol(test_expr) &&
+        exists(rlang::as_string(test_expr), eval_env)) {
         constructor <- rlang::as_string(test_expr)
         val <- get(constructor, eval_env)
         val_constructor <- attr(val, "constructor_constant")
@@ -44,7 +95,8 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
                 # we treat it as such -- if it wasn't, we treat it
                 # as a variable below.
                 expr_constructor <- attr(expr, "constructor")
-                if (rlang::is_null(expr_constructor) || constructor != expr_constructor) {
+                if (rlang::is_null(expr_constructor) ||
+                    constructor != expr_constructor) {
                     escape(NULL) # wrong type
                 } else {
                     return(match_env) # Successfull match
@@ -53,7 +105,8 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
         }
     }
 
-    # Not a constructor.  Must be a value to compare with or a variable to bind to
+    # Not a constructor.  Must be a value to compare with or a variable to bind
+    # to
     if (rlang::is_symbol(test_expr)) {
         assign(rlang::as_string(test_expr), expr, match_env)
     } else {
@@ -130,8 +183,8 @@ assert_correctly_formed_pattern_expression <- function(match_expr) {
             (match_expr[[1]] == "~") # formula syntax
     ))) {
         error_msg <- glue::glue(
-            "Malformed matching rule. Rules must be on the form 'pattern -> expression' ",
-            "or pattern ~ expression."
+            "Malformed matching rule. Rules must be on the form ",
+            "'pattern -> expression' or pattern ~ expression."
         )
         stop(simpleError(error_msg, call = match_expr))
     }
@@ -266,7 +319,10 @@ cases_expr_ <- function(expr, ...) {
 #' @examples
 #' linked_list := NIL | CONS(car, cdr : linked_list)
 #'
-#' length_body <- cases_expr(lst, NIL -> acc, CONS(car, cdr) -> ll_length(cdr, acc + 1))
+#' length_body <- cases_expr(
+#'                   lst,
+#'                   NIL -> acc,
+#'                   CONS(car, cdr) -> ll_length(cdr, acc + 1))
 #' length_body
 #'
 #' ll_length <- rlang::new_function(alist(lst=, acc = 0), length_body)

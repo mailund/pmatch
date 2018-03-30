@@ -1,9 +1,28 @@
 
-# FIXME: More documentation id:2 gh:40 ic:gh
 #' Function for specifying a sequence of patterns/expressions
 #'
 #' This function is used when you want to test for more than one pattern
-#' in parallel
+#' in parallel.
+#'
+#' If you want to test two or more patterns against the same number of values,
+#' then you can use this function to combine the values and expressions
+#' in a [cases()] (or related) function.
+#'
+#' @examples
+#' llist := NIL | CONS(car, cdr : llist)
+#' compare_llists <- function(l1, l2) {
+#'     cases(..(l1, l2),
+#'           ..(NIL, NIL) -> TRUE,
+#'           ..(NIL, .)   -> FALSE,
+#'           ..(., NIL)   -> FALSE,
+#'           ..(CONS(car1,cdr1), CONS(car2,cdr2)) ->
+#'               car1 == car2 && compare_llists(cdr1, cdr2)
+#'           )
+#' }
+#' compare_llists(NIL, NIL)
+#' compare_llists(CONS(1, NIL), CONS(1, NIL))
+#' compare_llists(CONS(1, NIL), NIL)
+#' compare_llists(CONS(1, NIL), CONS(2, NIL))
 #'
 #' @param ... The patterns/expressions to combine
 #' @name `..`

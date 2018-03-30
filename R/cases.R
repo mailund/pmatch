@@ -1,5 +1,5 @@
 
-# FIXME: More documentation
+# FIXME: More documentation id:2 gh:40 ic:gh
 #' Function for specifying a sequence of patterns/expressions
 #'
 #' This function is used when you want to test for more than one pattern

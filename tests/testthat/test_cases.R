@@ -206,3 +206,33 @@ test_that("We can build a function using cases_expr", {
     expect_equal(fun(ONE(12)), 12)
     expect_equal(fun(TWO(21, 21)), 42)
 })
+
+
+
+test_that("We can match on more than one pattern", {
+    llist := NIL | CONS(car, cdr)
+    l1 <- CONS(1, NIL)
+    l2 <- CONS(2, l1)
+    expect_error(
+        cases(l1, ..(NIL, NIL) -> FALSE),
+        "When matching against \\.\\. .*"
+    )
+    expect_error(
+        cases(..(l1), ..(NIL, NIL) -> FALSE),
+        "When matching against \\.\\. .*"
+    )
+
+    expect_true(cases(
+        ..(NIL, NIL),
+        ..(NIL, NIL) -> TRUE,
+        otherwise -> FALSE
+    ))
+    expect_equal(
+        cases(
+            ..(l1, l2),
+            ..(CONS(x, .), CONS(y, .)) -> x + y,
+            otherwise -> FALSE
+        ),
+        1 + 2
+    )
+})

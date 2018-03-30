@@ -30,7 +30,10 @@ for meta-programming rather than usual pattern matching.
 \examples{
 linked_list := NIL | CONS(car, cdr : linked_list)
 
-length_body <- cases_expr(lst, NIL -> acc, CONS(car, cdr) -> ll_length(cdr, acc + 1))
+length_body <- cases_expr(
+                  lst,
+                  NIL -> acc,
+                  CONS(car, cdr) -> ll_length(cdr, acc + 1))
 length_body
 
 ll_length <- rlang::new_function(alist(lst=, acc = 0), length_body)

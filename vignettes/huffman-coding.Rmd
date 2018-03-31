@@ -39,6 +39,7 @@ Bit := L | R
 
 ```{r}
 llist := NIL | CONS(car, cdr : llist)
+single <- function(val) CONS(val, NIL)
 ```
 
 ```{r}
@@ -325,7 +326,7 @@ insTree t1 (t2 : rest) =
 ins_tree <- function(t, ts) {
     cases(
         ..(t, ts),
-        ..(t, NIL) -> CONS(t, NIL),
+        ..(t, NIL) -> single(t),
         ..(t1, CONS(t2, rest)) -> {
             v1 <- value(t1)
             v2 <- value(t2)
@@ -353,3 +354,176 @@ make_tree <- . %>%
 ```{r}
 "foo" %>% frequency() %>% make_tree()
 ```
+
+
+## Code tables
+
+```{r}
+as.list.llist <- function(x, all.names = FALSE, sorted = FALSE, ...) {
+    n <- llength(x)
+    v <- vector("list", length = n)
+    i <- 1
+    while (i <= n) {
+        v[i] <- x$car
+        i <- i + 1
+        x <- x$cdr
+    }
+    v
+}
+as.vector.llist <- function(x, mode = "any") {
+    unlist(as.list(x))
+}
+
+toString.code <- function(x, ...) {
+    x %>% llmap(toString) %>% as.vector() %>% paste0(collapse = "")
+}
+
+code <- llist_from_list(
+    list(L, L, R, L)
+)
+code
+class(code) <- "code"
+cat(toString(code))
+```
+
+```haskell
+convert :: HCode -> Tree -> Table
+convert cd (Leaf c n) = [(c,cd)]
+convert cd (Node n t1 t2) = (convert (cd++[L]) t1) ++
+                            (convert (cd++[R]) t2)
+
+codeTable :: Tree -> Table
+codeTable = convert []
+```
+
+```{r}
+convert <- function(code, tree) {
+    cases(
+        tree,
+        Leaf(char, count) -> single(
+            PAIR(char,structure(code, class = c("code", class(code))))
+        ),
+        Node(count, t1, t2) -> llconcat(
+            convert(llconcat(code, single(L)), t1),
+            convert(llconcat(code, single(R)), t2)
+        )
+    )
+}
+
+code_table <- . %>% convert(NIL, .) %>% 
+    structure(class = c("code_table", class(.)))
+```
+
+```{r}
+toString.code_table <- function(x, ...) {
+    x %>% llmap(function(p) 
+        cases(p, PAIR(x,y) ~ paste0(x, " => ", toString(y)))
+    ) %>% as.vector() %>% paste0(collapse = "\n")
+}
+```
+
+```{r}
+tree <- "foobaar" %>% frequency() %>% make_tree()
+table <- tree %>% code_table()
+cat(toString(table))
+
+tree <- "foobarbaz" %>% frequency() %>% make_tree()
+table <- tree %>% code_table()
+cat(toString(table))
+```
+
+## Coding and decoding
+
+```haskell
+codes :: [Char] -> Tree
+codes = makeTree . frequency
+```
+
+```{r}
+codes <- . %>% frequency() %>% make_tree()
+```
+
+```{r}
+tree <- codes("foobarbaz")
+tree %>% code_table() %>% toString() %>% cat()
+```
+
+
+```haskell
+lookupTable :: Table -> Char -> HCode
+lookupTable []            c = error "lookupTable"
+lookupTable ((ch,n) : tb) c
+  | ch == c                 = n
+  | otherwise               = lookupTable tb c
+
+codeMessage :: Table -> [Char] -> HCode
+codeMessage tbl = concat . map (lookupTable tbl)
+```
+
+```{r}
+lookup_table <- function(table, char) {
+   cases(
+       table,
+       NIL -> stop(paste(char, "was not found in the table")),
+       CONS(PAIR(ch,n), tb) -> {
+           if (ch == char) {
+               n
+           } else {
+               lookup_table(tb, char)
+           }
+       }
+   ) 
+}
+
+llreduce <- function(llist, f, acc) {
+    cases(
+        llist,
+        NIL -> acc,
+        CONS(val, rest) -> llreduce(rest, f, f(acc, val))  
+    )
+}
+
+code_message <- function(message, table) {
+    message %>% string_to_list() %>%
+        llmap(function(char) lookup_table(table, char)) %>%
+        llreduce(llconcat, NIL) %>% 
+        structure(class = c("code", class(.)))
+}
+
+tree <- codes("foobarbaz")
+table <- tree %>% code_table()
+code <- "foobar" %>% code_message(table)
+code %>% toString() %>% cat()
+```
+
+```haskell
+decodeMessage :: Tree -> HCode -> [Char]
+decodeMessage tr =
+  decodeByTree tr
+  where
+    decodeByTree (Node n t1 t2) (L : rest) = decodeByTree t1 rest
+    decodeByTree (Node n t1 t2) (R : rest) = decodeByTree t2 rest
+    decodeByTree (Leaf c n)     rest       = c : decodeByTree tr rest
+    decodeByTree t              []         = []
+```
+
+```{r}
+decode_message <- function(tree, code) {
+    decode_by_tree <- function(tr, code) {
+        cases(
+            ..(tr, code),
+            ..(Node(n, t1, t2), CONS(L, rest)) -> decode_by_tree(t1, rest),
+            ..(Node(n, t1, t2), CONS(R, rest)) -> decode_by_tree(t2, rest),
+            ..(Leaf(char, n), rest) -> CONS(char, decode_by_tree(tree, rest)),
+            ..(t, NIL) -> NIL,
+        )
+    }
+    decode_by_tree(tree, code) %>% as.vector() %>% paste0(collapse = "")
+}
+
+decode_message(tree, code)
+```
+
+
+
+

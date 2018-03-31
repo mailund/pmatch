@@ -66,6 +66,7 @@ process_constructor_function <- function(constructor, data_type_name, env) {
             arg <- args[[constructor_arguments$arg[i]]]
             type <- constructor_arguments$type[i]
             if (!rlang::is_na(type) && !inherits(arg, type)) {
+                # FIXME: how do I get a "bad error message" error here?
                 error_msg <- glue::glue(
                     "The argument {arg} is of type {class(arg)} ",
                     "but should be of type {type}."

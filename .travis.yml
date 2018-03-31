@@ -8,12 +8,11 @@ apt_packages:
   - libudunits2-dev
 
 r:
-- 3.2
 - 3.3
 - 3.4
 - oldrel
 - release
-- devel
+# - devel
 
 after_success:
   - Rscript -e 'covr::codecov()'

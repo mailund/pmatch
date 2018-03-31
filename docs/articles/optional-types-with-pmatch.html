@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Optional Types with pmatch • pmatch</title>
+<title>“Optional” Types with pmatch • pmatch</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Optional Types with pmatch">
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="“Optional” Types with pmatch">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
@@ -54,6 +54,12 @@
 <li>
       <a href="../articles/getting-started-with-pmatch-.html">Getting Started</a>
     </li>
+    <li>
+      <a href="../articles/huffman-coding.html">Huffman coding</a>
+    </li>
+    <li>
+      <a href="../articles/optional-types-with-pmatch.html">Optional types</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -88,10 +94,10 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Optional Types with pmatch</h1>
+      <h1>“Optional” Types with pmatch</h1>
                         <h4 class="author">Thomas Mailund</h4>
             
-            <h4 class="date">2018-03-30</h4>
+            <h4 class="date">2018-03-31</h4>
       
       <small>Source: <a href="https://github.com/mailund/pmatch/blob/master/vignettes/optional-types-with-pmatch.Rmd"><code>vignettes/optional-types-with-pmatch.Rmd</code></a></small>
 
@@ -100,12 +106,16 @@
     
     
 <div class="contents">
+<p>Some programming languages, e.g. Swift, have special “optional” types. These are types the represent elements that either contain a value of some other type or contain nothing at all. It is a way of computing with the possibility that some operations cannot be done and then propagating that along in the computations.</p>
+<p>We can use <code>pmatch</code> to implement something similar in R. I will use three types instead of two, to represent no value, <code>NONE</code>, some value, <code>VALUE(val)</code>, or some error <code>ERROR(err)</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">OPT <span class="op">:</span><span class="er">=</span><span class="st"> </span>NONE <span class="op">|</span><span class="st"> </span><span class="kw">VALUE</span>(val) <span class="op">|</span><span class="st"> </span><span class="kw">ERROR</span>(err)</a></code></pre></div>
+<p>We can now define a function that catches exceptions and translate them into <code>ERROR()</code> objects:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">try &lt;-<span class="st"> </span><span class="cf">function</span>(expr) {</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">    rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/quotation">enquo</a></span>(expr)</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">    <span class="kw">tryCatch</span>(<span class="kw">VALUE</span>(rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/eval_tidy">eval_tidy</a></span>(expr)), </a>
 <a class="sourceLine" id="cb2-4" data-line-number="4">             <span class="dt">error =</span> <span class="cf">function</span>(e) <span class="kw">ERROR</span>(e))</a>
 <a class="sourceLine" id="cb2-5" data-line-number="5">}</a></code></pre></div>
+<p>With this function the control flow when we want to compute something that might go wrong can be made a bit simpler. We no longer need a callback error handler; instead we can inspect the value returned by <code>try</code> in a <code>cases</code> call:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/cases.html">cases</a></span>(<span class="kw">try</span>(<span class="dv">42</span>),</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">      <span class="kw">VALUE</span>(val) -&gt;<span class="st"> </span>val,</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">      <span class="kw">ERROR</span>(err) -&gt;<span class="st"> </span>err,</a>
@@ -116,18 +126,78 @@
 <a class="sourceLine" id="cb4-3" data-line-number="3">      <span class="kw">ERROR</span>(err) -&gt;<span class="st"> </span>err,</a>
 <a class="sourceLine" id="cb4-4" data-line-number="4">      NONE -&gt;<span class="st"> "NOTHING"</span>)</a>
 <a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; &lt;simpleError in rlang::eval_tidy(expr): object 'x' not found&gt;</span></a></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">Ops.OPT &lt;-<span class="st"> </span><span class="cf">function</span>(e1, e2) {</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">    <span class="kw"><a href="../reference/cases.html">cases</a></span>(.(e1, e2),</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">          .(NONE, .) -&gt;<span class="st"> </span>NONE,</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">          .(., NONE) -&gt;<span class="st"> </span>NONE,</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">          .(<span class="kw">ERROR</span>(err), .) -&gt;<span class="st"> </span><span class="kw">ERROR</span>(err),</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">          .(., <span class="kw">ERROR</span>(err)) -&gt;<span class="st"> </span><span class="kw">ERROR</span>(err),</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">          .(<span class="kw">VALUE</span>(v1), <span class="kw">VALUE</span>(v2)) -&gt;<span class="st"> </span><span class="kw">VALUE</span>(<span class="kw">.Generic</span>(v1, v2)))</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8">}</a></code></pre></div>
+<p>To extract the value of an expression after we have computed on optional values we can define this function:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">value &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">    quoted_x &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/quotation">enexpr</a></span>(x)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">    <span class="kw"><a href="../reference/cases.html">cases</a></span>(x,</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">          <span class="kw">VALUE</span>(val) -&gt;<span class="st"> </span>val,</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">          . -&gt;<span class="st"> </span><span class="kw">stop</span>(<span class="kw">simpleError</span>(</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">                <span class="kw">paste</span>(<span class="kw">deparse</span>(quoted_x), <span class="st">" is not a value."</span>), </a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">              <span class="dt">call =</span> quoted_x</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">        )))</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9">}</a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">    </a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="kw">value</span>(<span class="kw">try</span>(<span class="dv">42</span>))</a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; [1] 42</span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="kw">value</span>(<span class="kw">try</span>(<span class="dv">42</span> <span class="op">+</span><span class="st"> </span>x))</a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; Error in try(42 + x): try(42 + x)  is not a value.</span></a></code></pre></div>
+<div id="computing-with-optional-values" class="section level2">
+<h2 class="hasAnchor">
+<a href="#computing-with-optional-values" class="anchor"></a>Computing with optional values</h2>
+<p>Computing on optional values is more interesting if we can make it relatively transparent that this is what we are doing. For arithmetic expressions we can do this by defining operations on these types. A sensible way is to return errors if we see those, then <code>NONE</code> if we see one of those, and otherwise use <code>VALUE</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">Ops.OPT &lt;-<span class="st"> </span><span class="cf">function</span>(e1, e2) {</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">    <span class="kw"><a href="../reference/cases.html">cases</a></span>(<span class="kw"><a href="../reference/dotdot.html">..</a></span>(e1, e2),</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">          <span class="kw"><a href="../reference/dotdot.html">..</a></span>(<span class="kw">ERROR</span>(err), .)        -&gt;<span class="st"> </span><span class="kw">ERROR</span>(err),</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">          <span class="kw"><a href="../reference/dotdot.html">..</a></span>(., <span class="kw">ERROR</span>(err))        -&gt;<span class="st"> </span><span class="kw">ERROR</span>(err),</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">          <span class="kw"><a href="../reference/dotdot.html">..</a></span>(NONE, .)              -&gt;<span class="st"> </span>NONE,</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">          <span class="kw"><a href="../reference/dotdot.html">..</a></span>(., NONE)              -&gt;<span class="st"> </span>NONE,</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">          <span class="kw"><a href="../reference/dotdot.html">..</a></span>(<span class="kw">VALUE</span>(v1), <span class="kw">VALUE</span>(v2)) -&gt;<span class="st"> </span><span class="kw">VALUE</span>(<span class="kw">do.call</span>(.Generic, <span class="kw">list</span>(v1, v2))),</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">          <span class="kw"><a href="../reference/dotdot.html">..</a></span>(<span class="kw">VALUE</span>(v1), v2)        -&gt;<span class="st"> </span><span class="kw">VALUE</span>(<span class="kw">do.call</span>(.Generic, <span class="kw">list</span>(v1, v2))),</a>
+<a class="sourceLine" id="cb6-9" data-line-number="9">          <span class="kw"><a href="../reference/dotdot.html">..</a></span>(v1, <span class="kw">VALUE</span>(v2))        -&gt;<span class="st"> </span><span class="kw">VALUE</span>(<span class="kw">do.call</span>(.Generic, <span class="kw">list</span>(v1, v2)))</a>
+<a class="sourceLine" id="cb6-10" data-line-number="10">    )</a>
+<a class="sourceLine" id="cb6-11" data-line-number="11">}</a></code></pre></div>
+<p>The last two cases here handles when we combine an optional value with a value from the underlying type. Because of the last two cases we do not need to explicitly translate a value into a <code>VALUE()</code>. With this group function defined we can use optional values in expressions.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">VALUE</span>(<span class="dv">12</span>) <span class="op">+</span><span class="st"> </span><span class="kw">VALUE</span>(<span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; VALUE(val = 18)</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">NONE <span class="op">+</span><span class="st"> </span><span class="kw">VALUE</span>(<span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt; NONE</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="kw">ERROR</span>(<span class="st">"foo"</span>) <span class="op">+</span><span class="st"> </span>NONE</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; ERROR(err = foo)</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="kw">VALUE</span>(<span class="dv">12</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ERROR</span>(<span class="st">"bar"</span>)</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; ERROR(err = bar)</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="kw">VALUE</span>(<span class="dv">12</span>) <span class="op">+</span><span class="st"> </span><span class="dv">12</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; VALUE(val = 24)</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="dv">12</span> <span class="op">+</span><span class="st"> </span>NONE</a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; NONE</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="dv">12</span> <span class="op">+</span><span class="st"> </span><span class="kw">try</span>(<span class="dv">42</span> <span class="op">+</span><span class="st"> </span>x)</a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; ERROR(err = Error in rlang::eval_tidy(expr): object 'x' not found</span></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; )</span></a></code></pre></div>
+<p>For mathematical functions, such as <code>log</code> or <code>exp</code>, we can also define versions for optional types:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">Math.OPT &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">    <span class="kw"><a href="../reference/cases.html">cases</a></span>(x,</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">          <span class="kw">ERROR</span>(err) -&gt;<span class="st"> </span><span class="kw">ERROR</span>(err),</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">          NONE       -&gt;<span class="st"> </span>NONE,</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">          <span class="kw">VALUE</span>(v)   -&gt;<span class="st"> </span><span class="kw">do.call</span>(.Generic, <span class="kw">list</span>(x)),</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">          v          -&gt;<span class="st"> </span><span class="kw">do.call</span>(.Generic, <span class="kw">list</span>(x))</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7">    )</a>
+<a class="sourceLine" id="cb8-8" data-line-number="8">}</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">log</span>(<span class="kw">ERROR</span>(<span class="st">"foo"</span>))</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; ERROR(err = foo)</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw">exp</span>(NONE)</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; NONE</span></a></code></pre></div>
+</div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#computing-with-optional-values">Computing with optional values</a></li>
+      </ul>
+</div>
       </div>
 
 </div>

@@ -25,7 +25,7 @@
 #' compare_llists(CONS(1, NIL), CONS(2, NIL))
 #'
 #' @param ... The patterns/expressions to combine
-#' @name `..`
+#' @rdname dotdot
 #'
 #' @export
 `..` <- function(...) structure(list(...), class = "..")

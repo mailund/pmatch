@@ -18,9 +18,11 @@ knitr::opts_chunk$set(
 
 [Huffman coding](https://en.wikipedia.org/wiki/Huffman_coding) is a compression approach based on character frequencies. To code a string, we work out the frequency of each letter in the string and then build a tree where we put the letters in the leaves and structure the tree such that the most frequent letters are closest to the root. We then encode each letter by the path we must take in that tree to get to the leaf that contain that letter. We need one bit for each edge we follow; zero, say, if we go left and one if we go right.
 
-In [Haskell: the Craft of Functional Programming](https://amzn.to/2GHf6b6), there is an example of implementing Huffman coding in Haskell. In this vignette, I will adapt that to R with `pmatch` patterns.
+In [Haskell: the Craft of Functional Programming](https://amzn.to/2GHf6b6), there is an example of implementing Huffman coding in Haskell. In this vignette, I will adapt that to R with `pmatch` patterns. I have structured the vignette such that I switch between showing the original Haskell code and then the corresponding R code. If you are not familiar with Haskell, I think you should still be able to follow along.
 
 ## Data types
+
+The data structures used in the Haskell implementation are these:
 
 ```haskell
 data Tree = Leaf Char Int | Node Int Tree Tree
@@ -28,6 +30,8 @@ data Bit = L | R deriving (Eq, Show)
 type HCode = [ Bit ]
 type Table = [ (Char, HCode) ]
 ```
+
+The first two are data types created from constructors, and we can define the corresponding R data structures using a `:=` declaration:
 
 ```{r}
 library(pmatch)
@@ -37,16 +41,24 @@ Tree := Leaf(char : character, count : integer) |
 Bit := L | R
 ```
 
-```{r}
-llist := NIL | CONS(car, cdr : llist)
-single <- function(val) CONS(val, NIL)
-```
+The other two, `HCode` and `Table` are lists over `Bit` and pairs of characters and `HCode`, respectively. We won't define types for these. In R, we don't have static types so we don't really name types. We need a list representation, however, and to make one that matches lists in Haskell, we define a linked list:
 
 ```{r}
+llist := NIL | CONS(car, cdr : llist)
+```
+
+On occasions, we have to create singleton lists, and rather than writing `CONS(val,NIL)` for those, I will define a function for it. I will define a type to handle pairs in pattern matching.
+
+```{r}
+single <- function(val) CONS(val, NIL)
 pair := PAIR(x, y)
 ```
 
 ## Computing frequencies
+
+Before we can encode a string we need to calculate the frequency of the characters in it. In the Haskell implementation this is done using two merge sorts, one that sorts the string characters alphabetically and count the number of occurrences of each and then another sort that orders the characters according to their frequency. Later on, we will build a tree from a list of characters, and by having the least frequent characters at the front of the list, and building from that end, we will propagate the less frequent characters to the bottom of the tree and the more frequent characters to the top.
+
+The Haskell `mergeSort` function is implemented like this:
 
 ```haskell
 mergeSort :: ([a] -> [a] -> [a]) -> [a] -> [a]
@@ -60,6 +72,10 @@ mergeSort merge xs
           half = (length xs) `div` 2
 ```
 
+This function takes another function, `merge`, as a parameter. It is via this function we will implement the two different sort functions we need.
+
+We don't have `where` blocks in R, so we need to compute `first`, `second` and `half` before the recursion, but otherwise the the R implementation follows the Haskell implementation. We need some list functions first, though, for `length`, `take` and `drop`. We can implement them like this:
+
 ```{r}
 llength <- function(llist, acc = 0) {
     cases(
@@ -70,7 +86,7 @@ llength <- function(llist, acc = 0) {
 }
 
 llrev <- function(llist, acc = NIL) {
-    pmatch::cases(
+    cases(
         llist,
         NIL -> acc,
         CONS(car, cdr) -> llrev(cdr, CONS(car, acc))
@@ -95,6 +111,10 @@ lldrop <- function(llist, k, acc = NIL) {
 }
 ```
 
+The `llrev` function, for reversing a linked list, is a helper function that lets us write tail-recursive take and drop functions. It isn't terribly important here since we do not use any tail-recursion optimisation, but once you get into the habit of writing your functions tail recurse it is hard not to. Later on in the vignette I will use simpler functions rather than tail-recursive ones to make the examples easier to follow.
+
+Anyway, with the list functions in place, the merge sort can be implemented like this:
+
 ```{r}
 merge_sort <- function(merge, xs) {
     n <- llength(xs)
@@ -106,6 +126,10 @@ merge_sort <- function(merge, xs) {
 }
 ```
 
+### Sorting alphabetically and counting characters
+
+To sort characters alphabetically and at the same time count the number of occurrences for each, we need a merge function. The Haskell function looks like this:
+
 ```haskell
 alphaMerge :: [(Char,Int)] -> [(Char,Int)] -> [(Char,Int)]
 alphaMerge xs [] = xs
@@ -116,7 +140,7 @@ alphaMerge ((p,n) : xs) ((q,m) : ys)
   | otherwise = (q,m) : alphaMerge ((p,n) : xs) ys
 ```
 
-### Sorting alphabetically and counting characters
+We do not have conditions like `| (p == q)` in R, so we handle those using `if`-`else`-statements, but otherwise we translate the function statement by statement into this:
 
 ```{r}
 alpha_merge <- function(xs, ys) {
@@ -137,6 +161,8 @@ alpha_merge <- function(xs, ys) {
 }
 ```
 
+To test the function I want to make it a little easier to build linked lists, so I have written this helper function:
+
 ```{r}
 llist_from_list <- function(x) {
     llist <- NIL
@@ -149,6 +175,8 @@ llist_from_list <- function(x) {
 }
 ```
 
+Ok, let us see if we can merge two lists:
+
 ```{r}
 xs <- llist_from_list(list(
     PAIR("a", 1), PAIR("b", 2)
@@ -159,16 +187,36 @@ ys <- llist_from_list(list(
 alpha_merge(xs, ys)
 ```
 
+Yup, that went okay.
+
+What about sorting? First I want a function for concatenating two linked lists, and then I will test it on the concatenation of `xs` and `ys` from above.
+
+Concatenation can look like this:
+
 ```{r}
 llconcat <- function(xs, ys) {
     cases(xs, 
           NIL -> ys,
           CONS(x,xs) -> CONS(x, llconcat(xs, ys)))
 }
+```
+
+(Here, I did choose a simple version over a tail-recursive one).
+
+Onwards to the test:
+
+```{r}
 zs <- llconcat(xs, ys)
 merge_sort(alpha_merge, zs)
 merge_sort(alpha_merge, llrev(zs))
 ```
+
+Yup, that works.
+
+
+### Sorting based on character frequency
+
+To compute the character frequency we need to write this function:
 
 ```haskell
 freqMerge :: [(Char,Int)] -> [(Char,Int)] -> [(Char,Int)]
@@ -179,7 +227,7 @@ freqMerge ((p,n):xs) ((q,m):ys)
   | otherwise                    = (q,m) : freqMerge((p,n):xs) ys
 ```
 
-### Sorting based on character frequency
+The translation is done statement by statement and with `if`-statements instead of `|` conditions:
 
 ```{r}
 freq_merge <- function(xs, ys) {
@@ -207,6 +255,8 @@ merge_sort(freq_merge, xs)
 
 ### Computing frequencies
 
+To compute a list of character frequencies for a string, we need to combine the sort and merge functions. In Haskell, the `frequency` function looks like this:
+
 ```haskell
 frequency :: [Char] -> [(Char,Int)]
 frequency
@@ -215,15 +265,19 @@ frequency
       start ch = (ch, 1)
 ```
 
+We see that we need another list function, `map`. I have implemented it this way:
+
 ```{r}
 llmap <- function(llist, f, acc = NIL) {
-    pmatch::cases(
+    cases(
         llist,
         NIL -> llrev(acc),
         CONS(car, cdr) -> llmap(cdr, f, CONS(f(car), acc))
     )
 }
 ```
+
+I want to work on lists of characters, so as a helper function I have written `string_to_list` that translates a string into a list containing the characters in the string:
 
 ```{r}
 string_to_list <- function(x)
@@ -232,6 +286,14 @@ string_to_list <- function(x)
 string_to_list("foobar")
 ```
 
+For composing functions, we can use `magrittr` pipelines. If we do, we just have to remember that the functions are evaluated from left-to-right, whereas in the Haskell code, they are evaluated right-to-left. So
+
+```Haskell
+mergeSort freqMerge . mergeSort alphaMerge . map start
+```
+
+becomes
+
 ```{r}
 library(magrittr)
 frequency = . %>% 
@@ -239,11 +301,17 @@ frequency = . %>%
     llmap(function(char) PAIR(char, 1L)) %>%
     merge_sort(alpha_merge, .) %>%
     merge_sort(freq_merge, .)
+```
 
+If we call `frequency` on a string, we get a list of pairs of characters and integers. We should interpret that as a list of characters and the number of occurrences each have in the string.
+
+```{r}
 frequency("foo")
 ```
 
 ## Building trees
+
+From a frequency list we need to build tree. This is the Haskell code:
 
 ```haskell
 makeTree :: [ (Char,Int) ] -> Tree
@@ -253,6 +321,8 @@ toTreeList :: [ (Char,Int) ] -> [Tree]
 toTreeList = map (uncurry Leaf)
 ```
 
+The `uncurl Leaf` stuff is a technicality needed in Haskell. To translate a list of character-count pairs into a list of trees, we simply do this:
+
 ```{r}
 to_tree_list <- . %>% llmap(
     function(x) cases(x, PAIR(char,count) -> Leaf(char, count))
@@ -261,11 +331,15 @@ xs <- "foo" %>% string_to_list() %>% llmap(function(char) PAIR(char, 1L))
 to_tree_list(xs)
 ```
 
+The `makeCodes` function looks like this in Haskell:
+
 ```haskell
 makeCodes :: [ Tree ] -> Tree
 makeCodes [t] = t
 makeCodes ts = makeCodes (amalgamate ts)
 ```
+
+and we can translate it almost mechanically:
 
 ```{r}
 make_codes <- function(ts) {
@@ -276,6 +350,8 @@ make_codes <- function(ts) {
     )
 }
 ```
+
+The same goes for `amalgamate`:
 
 ```haskell
 amalgamate :: [ Tree ] -> [ Tree ]
@@ -290,6 +366,8 @@ amalgamate <- function(ts) {
     )
 }
 ```
+
+We can see that we need functions `pair` and `ins_tree` for these functions. The `pair` function shouldn't be confused with the `PAIR` constructor—one of the reasons I put the latter in all uppercase. Other than that, the entire translation of the Haskell code is just done statement by statement:
 
 ```haskell
 pair :: Tree -> Tree -> Tree
@@ -340,10 +418,14 @@ ins_tree <- function(t, ts) {
 }
 ```
 
+The `makeTree` function was defined as a composition:
+
 ```haskell
 makeTree :: [ (Char,Int) ] -> Tree
 makeTree = makeCodes . toTreeList
 ```
+
+We do the same using a pipeline:
 
 ```{r}
 make_tree <- . %>%
@@ -352,11 +434,86 @@ make_tree <- . %>%
 ```
 
 ```{r}
-"foo" %>% frequency() %>% make_tree()
+tree <- "foo" %>% frequency() %>% make_tree()
+tree
 ```
 
+I have written some code for plotting trees, in the function `plot_tree`. I don't show it here, it is a simple translation of the data structure into a table I can plot using `tidy graph` and `ggraph`, but we can use it to display trees:
+
+```{r, echo=FALSE}
+library(tidygraph)
+library(ggraph)
+
+plot_tree <- function(tree) {
+    dfn <- function(tree, n) {
+        cases(
+            tree,
+            Leaf(char,count) ->
+                list(structure(Leaf(char,count), number = n), n + 1L),
+            Node(count, left, right) -> {
+                bind[left,n] <- dfn(left, n)
+                bind[right,n] <- dfn(right, n)
+                list(structure(Node(count, left, right), number = n), n + 1L)
+            }
+        )
+    }
+    bind[tree,size] <- dfn(tree, 0L)
+    
+    node_label <- rep("", size)
+    
+    from <- vector("integer", length = size - 1)
+    to <-  vector("integer", length = size - 1)
+    edge_label <- vector("character", length = size - 1)
+    
+    index <- 1
+    populate_table <- function(tree) {
+        cases(
+            tree,
+            Leaf(char, count) ~ {
+                node_label[attr(tree, "number") + 1] <<- char
+            },
+            Node(., left, right) ~ {
+                this_node_n <- attr(tree, "number")
+                left_node_n <- attr(left, "number")
+                right_node_n <- attr(right, "number")
+                from[index] <<- this_node_n ; to[index] <<- left_node_n
+                edge_label[index] <<- "L"
+                index <<- index + 1
+                from[index] <<- this_node_n ; to[index] <<- right_node_n
+                edge_label[index] <<- "R"
+                
+                index <<- index + 1
+                populate_table(left)
+                populate_table(right)
+            }
+        )
+    }
+    populate_table(tree)
+    
+    nodes <- data.frame(node_label = node_label, 
+                        stringsAsFactors = FALSE)
+    # add one because ggraph doesn't like zero
+    edges <- data.frame(from = from + 1, to = to + 1, 
+                        edge_label = edge_label,
+                        stringsAsFactors = FALSE)
+    tidygraph::tbl_graph(nodes, edges) %>%
+        ggraph(layout = "tree") +
+        geom_node_point(aes(filter = (node_label == "")), size = 5) +
+        geom_node_text(aes(filter = (node_label != ""), label = node_label)) +
+        geom_edge_link(aes(label = edge_label, hjust = 2),
+                       arrow = arrow(length = unit(4, 'mm')), 
+                       end_cap = circle(3, 'mm')) +
+        theme_graph()
+}
+```
+
+```{r}
+"foobarbaz" %>% frequency() %>% make_tree() %>% plot_tree()
+```
 
 ## Code tables
+
+The result of an encoding will be a sequence of `L` and `R` bits. We will represent these in linked lists, so to make it simpler to display these I have written these helper functions:
 
 ```{r}
 as.list.llist <- function(x, all.names = FALSE, sorted = FALSE, ...) {
@@ -382,9 +539,13 @@ code <- llist_from_list(
     list(L, L, R, L)
 )
 code
-class(code) <- "code"
-cat(toString(code))
+class(code) <- c("code", class(code))
+code %>% toString() %>% cat()
 ```
+
+I do not simply set the class of a list to `"code"`. I could, and most of the time that wouldn't be a problem. However, in the specification of linked lists we required that `cdr` should be of type `llist`, so if we want to concatenate two codes—and I can reveal that we do later—then we need codes to have that type. I therefore make codes specialisations of `llist` with `c("code", class(code))`.
+
+The encoding of a string will be implemented as follows: for each character in the string, we look up the code for that character, i.e. the sequence of left and right edges we need to reach the character in a tree, and we concatenate all these. In the implementation of the encoding we want a table that maps characters to their code, and in Haskell that table is computed using this function:
 
 ```haskell
 convert :: HCode -> Tree -> Table
@@ -395,6 +556,8 @@ convert cd (Node n t1 t2) = (convert (cd++[L]) t1) ++
 codeTable :: Tree -> Table
 codeTable = convert []
 ```
+
+We can implement it in R like this:
 
 ```{r}
 convert <- function(code, tree) {
@@ -414,6 +577,8 @@ code_table <- . %>% convert(NIL, .) %>%
     structure(class = c("code_table", class(.)))
 ```
 
+I have added a class to tables to make them easier to print.
+
 ```{r}
 toString.code_table <- function(x, ...) {
     x %>% llmap(function(p) 
@@ -425,14 +590,18 @@ toString.code_table <- function(x, ...) {
 ```{r}
 tree <- "foobaar" %>% frequency() %>% make_tree()
 table <- tree %>% code_table()
-cat(toString(table))
+tree %>% plot_tree()
+table %>% toString() %>% cat()
 
 tree <- "foobarbaz" %>% frequency() %>% make_tree()
 table <- tree %>% code_table()
-cat(toString(table))
+tree %>% plot_tree()
+table %>% toString() %>% cat()
 ```
 
 ## Coding and decoding
+
+Now, we have everything we need in order to encode and decode strings/codes. Both encoding and decoding requires a tree, so we define a function for building a tree from a string:
 
 ```haskell
 codes :: [Char] -> Tree
@@ -448,6 +617,7 @@ tree <- codes("foobarbaz")
 tree %>% code_table() %>% toString() %>% cat()
 ```
 
+As I have already explained, encoding combines looking up the code for individual characters and concatenating all of them. The lookup is implemented in Haskell like this:
 
 ```haskell
 lookupTable :: Table -> Char -> HCode
@@ -455,10 +625,9 @@ lookupTable []            c = error "lookupTable"
 lookupTable ((ch,n) : tb) c
   | ch == c                 = n
   | otherwise               = lookupTable tb c
-
-codeMessage :: Table -> [Char] -> HCode
-codeMessage tbl = concat . map (lookupTable tbl)
 ```
+
+And in R like this:
 
 ```{r}
 lookup_table <- function(table, char) {
@@ -474,7 +643,18 @@ lookup_table <- function(table, char) {
        }
    ) 
 }
+```
 
+The encoding combines that with concatenation. We map over the characters and look up their code. We then concatenate the result.
+
+```Haskell
+codeMessage :: Table -> [Char] -> HCode
+codeMessage tbl = concat . map (lookupTable tbl)
+```
+
+Our `llconcat` function only works on two linked lists, however, so we need to handle concatenation slightly differently. I have handled it by writing a reduce function that I can use to concatenate lists pairwise:
+
+```{r}
 llreduce <- function(llist, f, acc) {
     cases(
         llist,
@@ -482,7 +662,11 @@ llreduce <- function(llist, f, acc) {
         CONS(val, rest) -> llreduce(rest, f, f(acc, val))  
     )
 }
+```
 
+The `code_message` is very similar to the Haskell version, but I have added a translation from strings to lists before the main code (this isn't needed in Haskell because strings are already lists of characters) and I set the class of the result to make it easier to print coded messages.
+
+```{r}
 code_message <- function(message, table) {
     message %>% string_to_list() %>%
         llmap(function(char) lookup_table(table, char)) %>%
@@ -496,6 +680,8 @@ code <- "foobar" %>% code_message(table)
 code %>% toString() %>% cat()
 ```
 
+Decoding works by following paths down the tree until we get to a character, which we then add to the list as the decoding of a part of the code, and doing this as long as we have path-bits in our encoded message.
+
 ```haskell
 decodeMessage :: Tree -> HCode -> [Char]
 decodeMessage tr =
@@ -506,6 +692,8 @@ decodeMessage tr =
     decodeByTree (Leaf c n)     rest       = c : decodeByTree tr rest
     decodeByTree t              []         = []
 ```
+
+For this function, the R code closely follows the Haskell code, except that we have to put the `decode_by_tree` function at the beginning of the function instead of in a `where` block:
 
 ```{r}
 decode_message <- function(tree, code) {
@@ -524,6 +712,5 @@ decode_message <- function(tree, code) {
 decode_message(tree, code)
 ```
 
-
-
+That's it. Huffman coding in R.
 

@@ -14,6 +14,11 @@ navbar:
       menu:
         - text: "Getting Started"
           href: articles/getting-started-with-pmatch-.html
+        - text: "Huffman coding"
+          href: articles/huffman-coding.html
+        - text: "Optional types"
+          href: articles/optional-types-with-pmatch.html
+
     - text: "Functions"
       href: reference/index.html
     - text: "Changelog"
@@ -42,6 +47,7 @@ reference:
         - cases_expr_
         - test_pattern
         - test_pattern_
+        - ..
 
     - title: Function rewriting
       desc: >

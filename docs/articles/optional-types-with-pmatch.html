@@ -97,7 +97,7 @@
       <h1>“Optional” Types with pmatch</h1>
                         <h4 class="author">Thomas Mailund</h4>
             
-            <h4 class="date">2018-03-31</h4>
+            <h4 class="date">2018-04-01</h4>
       
       <small>Source: <a href="https://github.com/mailund/pmatch/blob/master/vignettes/optional-types-with-pmatch.Rmd"><code>vignettes/optional-types-with-pmatch.Rmd</code></a></small>
 
@@ -187,6 +187,86 @@
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw">exp</span>(NONE)</a>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; NONE</span></a></code></pre></div>
 </div>
+<div id="function-calls" class="section level2">
+<h2 class="hasAnchor">
+<a href="#function-calls" class="anchor"></a>Function calls</h2>
+<p>Arithmetic is one thing, but we are probably more likely to use optional values for more complex computations? We can wrap expressions in a function to propagate options:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">with_values &lt;-<span class="st"> </span><span class="cf">function</span>(...) {</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">    optionals &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/quotation">enquos</a></span>(...)</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">    n &lt;-<span class="st"> </span><span class="kw">length</span>(optionals)</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">    body &lt;-<span class="st"> </span>optionals[[n]]</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">    optionals &lt;-<span class="st"> </span>optionals[<span class="op">-</span>n]</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">    ev &lt;-<span class="st"> </span>rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/env">child_env</a></span>(rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/get_env">get_env</a></span>(body))</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">    </a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">    try_ &lt;-<span class="st"> </span><span class="cf">function</span>(q, ev) {</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9">        <span class="kw">suppressWarnings</span>(</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10">            <span class="kw">tryCatch</span>(<span class="kw">VALUE</span>(rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/eval_tidy">eval_tidy</a></span>(q, <span class="dt">data =</span> ev)), </a>
+<a class="sourceLine" id="cb10-11" data-line-number="11">                 <span class="dt">error =</span> <span class="cf">function</span>(e) <span class="kw">ERROR</span>(e))</a>
+<a class="sourceLine" id="cb10-12" data-line-number="12">        )</a>
+<a class="sourceLine" id="cb10-13" data-line-number="13">    }</a>
+<a class="sourceLine" id="cb10-14" data-line-number="14">    to_val &lt;-<span class="st"> </span><span class="cf">function</span>(opt, escape) {</a>
+<a class="sourceLine" id="cb10-15" data-line-number="15">        <span class="kw"><a href="../reference/cases.html">cases</a></span>(</a>
+<a class="sourceLine" id="cb10-16" data-line-number="16">            opt,</a>
+<a class="sourceLine" id="cb10-17" data-line-number="17">            <span class="kw">ERROR</span>(err) -&gt;<span class="st"> </span><span class="kw">escape</span>(<span class="kw">ERROR</span>(err)),</a>
+<a class="sourceLine" id="cb10-18" data-line-number="18">            NONE       -&gt;<span class="st"> </span><span class="kw">escape</span>(NONE),</a>
+<a class="sourceLine" id="cb10-19" data-line-number="19">            <span class="kw">VALUE</span>(val) -&gt;<span class="st"> </span>val,</a>
+<a class="sourceLine" id="cb10-20" data-line-number="20">            val        -&gt;<span class="st"> </span>val</a>
+<a class="sourceLine" id="cb10-21" data-line-number="21">        )</a>
+<a class="sourceLine" id="cb10-22" data-line-number="22">    }</a>
+<a class="sourceLine" id="cb10-23" data-line-number="23">    to_opt &lt;-<span class="st"> </span><span class="cf">function</span>(val) {</a>
+<a class="sourceLine" id="cb10-24" data-line-number="24">        <span class="kw"><a href="../reference/cases.html">cases</a></span>(</a>
+<a class="sourceLine" id="cb10-25" data-line-number="25">            val,</a>
+<a class="sourceLine" id="cb10-26" data-line-number="26">            <span class="kw">ERROR</span>(err) -&gt;<span class="st"> </span><span class="kw">ERROR</span>(err),</a>
+<a class="sourceLine" id="cb10-27" data-line-number="27">            NONE       -&gt;<span class="st"> </span>NONE,</a>
+<a class="sourceLine" id="cb10-28" data-line-number="28">            <span class="kw">VALUE</span>(val) -&gt;<span class="st"> </span><span class="kw">VALUE</span>(val),</a>
+<a class="sourceLine" id="cb10-29" data-line-number="29">            val        -&gt;<span class="st"> </span><span class="kw">VALUE</span>(val)</a>
+<a class="sourceLine" id="cb10-30" data-line-number="30">        )</a>
+<a class="sourceLine" id="cb10-31" data-line-number="31">    }</a>
+<a class="sourceLine" id="cb10-32" data-line-number="32">    </a>
+<a class="sourceLine" id="cb10-33" data-line-number="33">    <span class="kw">callCC</span>(<span class="cf">function</span>(escape) {</a>
+<a class="sourceLine" id="cb10-34" data-line-number="34">        <span class="cf">for</span> (q <span class="cf">in</span> optionals) {</a>
+<a class="sourceLine" id="cb10-35" data-line-number="35">            <span class="cf">if</span> (rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/quosure">quo_is_symbol</a></span>(q)) {</a>
+<a class="sourceLine" id="cb10-36" data-line-number="36">                var_name &lt;-<span class="st"> </span><span class="kw">as.character</span>(q[[<span class="dv">2</span>]])</a>
+<a class="sourceLine" id="cb10-37" data-line-number="37">                ev[[var_name]] &lt;-<span class="st"> </span><span class="kw">to_val</span>(</a>
+<a class="sourceLine" id="cb10-38" data-line-number="38">                    rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/eval_tidy">eval_tidy</a></span>(q, <span class="dt">data =</span> ev), </a>
+<a class="sourceLine" id="cb10-39" data-line-number="39">                    escape</a>
+<a class="sourceLine" id="cb10-40" data-line-number="40">                )</a>
+<a class="sourceLine" id="cb10-41" data-line-number="41">                </a>
+<a class="sourceLine" id="cb10-42" data-line-number="42">            } <span class="cf">else</span> <span class="cf">if</span> (rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/quosure">quo_is_call</a></span>(q)) {</a>
+<a class="sourceLine" id="cb10-43" data-line-number="43">                <span class="kw">stopifnot</span>(rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/call_name">call_name</a></span>(q) <span class="op">==</span><span class="st"> "&lt;-"</span> <span class="op">||</span></a>
+<a class="sourceLine" id="cb10-44" data-line-number="44"><span class="st">                          </span>rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/call_name">call_name</a></span>(q) <span class="op">==</span><span class="st"> "=="</span>)</a>
+<a class="sourceLine" id="cb10-45" data-line-number="45">                var_name &lt;-<span class="st"> </span><span class="kw">as.character</span>(q[[<span class="dv">2</span>]][[<span class="dv">2</span>]])</a>
+<a class="sourceLine" id="cb10-46" data-line-number="46">                val_expr &lt;-<span class="st"> </span>q[[<span class="dv">2</span>]][[<span class="dv">3</span>]]</a>
+<a class="sourceLine" id="cb10-47" data-line-number="47">                ev[[var_name]] &lt;-<span class="st"> </span><span class="kw">to_val</span>(</a>
+<a class="sourceLine" id="cb10-48" data-line-number="48">                    <span class="kw">try_</span>(val_expr, ev),</a>
+<a class="sourceLine" id="cb10-49" data-line-number="49">                    escape</a>
+<a class="sourceLine" id="cb10-50" data-line-number="50">                )</a>
+<a class="sourceLine" id="cb10-51" data-line-number="51">                </a>
+<a class="sourceLine" id="cb10-52" data-line-number="52">            }  <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb10-53" data-line-number="53">                <span class="kw">stop</span>(<span class="st">"Optional values must be names of assignments."</span>)</a>
+<a class="sourceLine" id="cb10-54" data-line-number="54">            }</a>
+<a class="sourceLine" id="cb10-55" data-line-number="55">        }</a>
+<a class="sourceLine" id="cb10-56" data-line-number="56">        <span class="kw">to_opt</span>(rlang<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/rlang/topics/eval_tidy">eval_tidy</a></span>(body, <span class="dt">data =</span> ev))</a>
+<a class="sourceLine" id="cb10-57" data-line-number="57">    })</a>
+<a class="sourceLine" id="cb10-58" data-line-number="58">    </a>
+<a class="sourceLine" id="cb10-59" data-line-number="59">}</a>
+<a class="sourceLine" id="cb10-60" data-line-number="60"></a>
+<a class="sourceLine" id="cb10-61" data-line-number="61">x &lt;-<span class="st"> </span><span class="kw">VALUE</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb10-62" data-line-number="62">y &lt;-<span class="st"> </span><span class="kw">VALUE</span>(<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb10-63" data-line-number="63"><span class="kw">with_values</span>(</a>
+<a class="sourceLine" id="cb10-64" data-line-number="64">    x, y,</a>
+<a class="sourceLine" id="cb10-65" data-line-number="65">    z &lt;-<span class="st"> </span><span class="kw">VALUE</span>(<span class="dv">3</span>),</a>
+<a class="sourceLine" id="cb10-66" data-line-number="66">    w &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span>y <span class="op">+</span><span class="st"> </span>z,</a>
+<a class="sourceLine" id="cb10-67" data-line-number="67">    (w <span class="op">-</span><span class="st"> </span>x <span class="op">-</span><span class="st"> </span>y) <span class="op">/</span><span class="st"> </span>z</a>
+<a class="sourceLine" id="cb10-68" data-line-number="68">)</a>
+<a class="sourceLine" id="cb10-69" data-line-number="69"><span class="co">#&gt; VALUE(val = 1)</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">with_values</span>(</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">    f &lt;-<span class="st"> </span><span class="kw">file</span>(<span class="st">"no such file"</span>, <span class="st">"r"</span>),</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">    <span class="kw">readLines</span>(f)</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">)</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; ERROR(err = Error in file("no such file", "r"): cannot open the connection</span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; )</span></a></code></pre></div>
+</div>
 </div>
   </div>
 
@@ -196,6 +276,7 @@
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#computing-with-optional-values">Computing with optional values</a></li>
+      <li><a href="#function-calls">Function calls</a></li>
       </ul>
 </div>
       </div>

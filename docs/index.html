@@ -274,7 +274,7 @@
 <a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">#&gt;           L(x) ~ TRUE,</span></a>
 <a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#&gt;           otherwise ~ FALSE)</span></a>
 <a class="sourceLine" id="cb20-6" data-line-number="6"><span class="co">#&gt; }</span></a>
-<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">#&gt; &lt;bytecode: 0x7fd0c6d07a30&gt;</span></a></code></pre></div>
+<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="co">#&gt; &lt;bytecode: 0x7faaeb293f48&gt;</span></a></code></pre></div>
 <p>The <code>pmatch</code> package makes no distinction betwen the <code>~</code> or the <code>-&gt;</code> syntax; you can use them interchangeable.</p>
 <p>Alternatively, we can transform the body of functions that calls <code>cases</code> to replace the DSL with <code>if</code>-statements.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">is_leaf_tr &lt;-<span class="st"> </span><span class="kw"><a href="reference/transform_cases_function.html">transform_cases_function</a></span>(is_leaf)</a>
@@ -299,10 +299,10 @@
 <a class="sourceLine" id="cb23-2" data-line-number="2">    <span class="kw">is_leaf</span>(<span class="kw">L</span>(<span class="dv">1</span>)), <span class="kw">is_leaf_tr</span>(<span class="kw">L</span>(<span class="dv">1</span>)), <span class="kw">is_leaf_tr_bc</span>(<span class="kw">L</span>(<span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb23-3" data-line-number="3">)</a>
 <a class="sourceLine" id="cb23-4" data-line-number="4"><span class="co">#&gt; Unit: microseconds</span></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt;                 expr     min      lq     mean   median       uq      max</span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt;        is_leaf(L(1)) 432.632 463.580 574.5120 492.3425 587.2470 1951.479</span></a>
-<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;     is_leaf_tr(L(1)) 321.931 348.286 482.8631 377.3885 448.0295 3810.187</span></a>
-<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt;  is_leaf_tr_bc(L(1)) 321.624 351.811 425.8588 379.1540 429.1230  880.218</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt;                 expr     min       lq     mean   median       uq      max</span></a>
+<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt;        is_leaf(L(1)) 509.198 570.5450 687.7141 604.4450 671.2215 2594.550</span></a>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt;     is_leaf_tr(L(1)) 387.648 426.0090 606.7336 468.4085 604.9855 5237.390</span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt;  is_leaf_tr_bc(L(1)) 380.770 415.6775 506.2467 438.2970 520.4230 1260.979</span></a>
 <a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt;  neval</span></a>
 <a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">#&gt;    100</span></a>
 <a class="sourceLine" id="cb23-11" data-line-number="11"><span class="co">#&gt;    100</span></a>
@@ -550,7 +550,7 @@
 <li><a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/licence-GPL--3-blue.svg" alt="Licence"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="http://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="lifecycle"></a></li>
 <li><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active"></a></li>
-<li><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2018--03--31-green.svg" alt="Last-changedate"></a></li>
+<li><a href="/commits/master"><img src="https://img.shields.io/badge/last%20change-2018--04--01-green.svg" alt="Last-changedate"></a></li>
 <li><a href="commits/master"><img src="https://img.shields.io/badge/Package%20version-0.1.3.9003-orange.svg?style=flat-square" alt="packageversion"></a></li>
 <li><a href="https://travis-ci.org/mailund/pmatch"><img src="http://travis-ci.org/mailund/pmatch.svg?branch=master" alt="Travis-CI Build Status"></a></li>
 <li><a href="https://ci.appveyor.com/project/mailund/pmatch"><img src="http://ci.appveyor.com/api/projects/status/wvyqe7bfp4a2rm77?svg=true" alt="AppVeyor Build Status"></a></li>

@@ -41,5 +41,3 @@ Suggests:
 URL: https://github.com/mailund/pmatch
 BugReports: https://github.com/mailund/pmatch/issues
 VignetteBuilder: knitr
-Remotes:
-    mailund/foolbox

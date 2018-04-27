@@ -37,7 +37,7 @@ Suggests:
     microbenchmark,
     ggraph,
     tidygraph,
-    tailr (>= 0.1.0)
+    tailr
 URL: https://github.com/mailund/pmatch
 BugReports: https://github.com/mailund/pmatch/issues
 VignetteBuilder: knitr

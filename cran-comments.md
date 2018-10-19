@@ -1,17 +1,15 @@
 
-# Update to 0.1.3
 
- * Formula syntax in cases as an alternative: 
- 
-      cases(f(x), foo ~ bar, baz ~ qux).
-   
-   This is easier to get to static code checkes such as lintr and through the
-   byte compiler that can complain about "assignments" to literals.
-   
- * bind[x,y,z] <- 1:3 syntax for binding variables.
- 
- * transformation function transform_cases_function for modifying a function
-   instead of calling `cases`.
+
+# Update to 0.1.4
+
+ * New constructor code. This gives an substantial speedup when generating objects.
+ * Added `case_func` as a much faster replacement for using the `cases` function. 
+ * Suggests `ggraph` and `tidygraph` for vignettes
+ * Pattern matching on multiple patterns and values using
+   `..` notation.
+ * Fixed a rewrite bug when using qualified names.
+ * Uses `foolbox` for a safer rewrite function.
 
 ## Test environments
 

@@ -13,7 +13,7 @@ License: GPL-3
 ByteCompile: true
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Language: en-GB
 Depends:
     R (>= 3.2)

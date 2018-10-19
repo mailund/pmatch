@@ -40,7 +40,7 @@ test_that("we can translate a function that call cases into one that doesn't", {
 
 test_that("we get appropriate error messages when translating", {
     expect_error(transform_cases_function(1))
-    expect_error(transform_cases_function(~ .x))
+    expect_error(transform_cases_function(~.x))
 })
 
 ## Transformation for the `tailr` package ###################################

@@ -161,9 +161,14 @@ case_func <- function(...) {
     for (i in rev(seq_along(matchings))) {
         match_expr <- rlang::quo_expr(matchings[[i]])
         if (rlang::is_symbol(match_expr)) {
-            x <- list(rlang::missing_arg())
-            names(x) <- rlang::as_string(match_expr)
-            func_args <- c(func_args, x)
+            if (names(matchings[i]) == "") {
+                x <- list(rlang::missing_arg())
+                names(x) <- rlang::as_string(match_expr)
+                func_args <- c(func_args, x)
+            } else {
+                func_args <- c(func_args, matchings[i])
+            }
+
             next
         }
         # the order of test and result depend on the syntax... for `->` the
@@ -176,8 +181,7 @@ case_func <- function(...) {
             "~" = {
                 pattern_expr <- match_expr[[2]]
                 eval_expr <- match_expr[[3]]
-            },
-            {
+            }, {
                 # not a pattern, make it an argument
                 func_args <- c(func_args, matchings[i])
                 next # not a pattern

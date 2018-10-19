@@ -13,19 +13,17 @@
 
 ## Test environments
 
-* local OS X install, R 3.4.4
-* ubuntu 14.04 (on travis-ci), R 3.4.4
+* local OS X (Mojave) install, R 3.4.4
+* ubuntu 14.04 (on travis-ci), R 3.3, 3.4, 3.5
 * win-builder (devel and release)
 * RHub:
   
-  - Debian Linux, R-release, GCC
-  - Ubuntu Linux 16.04 LTS, R-release, GCC
-  - Fedora Linux, R-devel, clang, gfortran
   - Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+  - Ubuntu Linux 16.04 LTS, R-release, GCC
   
   On Windows and Fedora, I get a Pandoc warning because 
   it cannot find the README badges. Other than that, the 
-  checks passes.
+  checks pass.
 
 ## R CMD check results
 

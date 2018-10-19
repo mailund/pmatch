@@ -177,11 +177,18 @@ test_that("We can do quasi-quoting", {
 })
 
 
-test_that ("We can add arguments to a case_func", {
-  f <- case_func(default, . -> default)
-  expect_equal(f("foo", "bar"), "bar")
+test_that("We can add arguments to a case_func", {
+    f <- case_func(default, . -> default)
+    expect_equal(f("foo", "bar"), "bar")
 
-  f <- case_func(default = "qux", . -> default)
-  expect_equal(f("foo", "bar"), "bar")
-  expect_equal(f("foo"), "qux")
+    f <- case_func(default = "qux", . -> default)
+    expect_equal(f("foo", "bar"), "bar")
+    expect_equal(f("foo"), "qux")
+
+    x <- 42
+    f <- case_func(x, . -> x)
+    expect_equal(f("foo", "bar"), "bar")
+
+    f <- case_func(y = x, . -> y)
+    expect_equal(f("foo", "bar"), "bar")
 })

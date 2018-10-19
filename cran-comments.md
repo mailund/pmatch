@@ -13,13 +13,19 @@
 
 ## Test environments
 
-* local OS X (Mojave) install, R 3.4.4
+* local OS X (Mojave) install, R 3.5.1
 * ubuntu 14.04 (on travis-ci), R 3.3, 3.4, 3.5
-* win-builder (devel and release)
+* win-builder (devel)
 * RHub:
   
-  - Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+  -	Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+  - Windows Server 2008 R2 SP1, R-release, 32/64 bit
+  - CentOS 6, stock R from EPEL
   - Ubuntu Linux 16.04 LTS, R-release, GCC
+  - Fedora Linux, R-devel, clang, gfortran
+  - Fedora Linux, R-devel, GCC
+  - Debian Linux, R-release, GCC
+  - macOS 10.11 El Capitan, R-release (experimental)
   
   On Windows and Fedora, I get a Pandoc warning because 
   it cannot find the README badges. Other than that, the 

@@ -8,7 +8,7 @@
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-2018--10--19-green.svg)](/commits/master)
-[![packageversion](https://img.shields.io/badge/Package%20version-0.1.3.9003-orange.svg?style=flat-square)](commits/master)
+[![packageversion](https://img.shields.io/badge/Package%20version-0.1.4.9000-orange.svg?style=flat-square)](commits/master)
 [![Travis-CI Build
 Status](http://travis-ci.org/mailund/pmatch.svg?branch=master)](https://travis-ci.org/mailund/pmatch)
 [![AppVeyor Build
@@ -181,12 +181,12 @@ microbenchmark::microbenchmark(
     g(TWO(ONE(10),ONE(-10)))
 )
 #> Unit: microseconds
-#>                       expr     min       lq      mean  median      uq
-#>  f(TWO(ONE(10), ONE(-10))) 812.583 864.5305 1413.7400 913.962 987.142
-#>  g(TWO(ONE(10), ONE(-10)))   9.386  12.2300  123.1576  16.962  19.426
+#>                       expr     min       lq      mean  median       uq
+#>  f(TWO(ONE(10), ONE(-10))) 812.089 865.8360 1403.7213 908.585 997.4645
+#>  g(TWO(ONE(10), ONE(-10)))   9.430  12.6035  123.4374  17.781  20.1865
 #>       max neval
-#>  43292.57   100
-#>  10681.78   100
+#>  41700.26   100
+#>  10593.11   100
 ```
 
 A variable will match any pattern, so you can use one as a default case.
@@ -357,7 +357,7 @@ compiler::cmpfun(other_is_leaf)
 #>           L(x) ~ TRUE,
 #>           otherwise ~ FALSE)
 #> }
-#> <bytecode: 0x7f85dd540840>
+#> <bytecode: 0x7fc48dc52850>
 ```
 
 The `pmatch` package makes no distinction betwen the `~` or the `->`
@@ -399,10 +399,10 @@ microbenchmark::microbenchmark(
     is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
 )
 #> Unit: microseconds
-#>                 expr     min       lq     mean   median      uq      max
-#>        is_leaf(L(1)) 264.228 275.4965 314.7998 290.6590 305.721 2134.119
-#>     is_leaf_tr(L(1)) 204.092 214.2180 289.6069 224.9885 234.918 3765.645
-#>  is_leaf_tr_bc(L(1)) 205.923 212.4610 229.7888 221.8180 237.637  370.995
+#>                 expr     min       lq     mean   median       uq      max
+#>        is_leaf(L(1)) 264.638 285.4025 345.4518 305.2955 343.5740 2378.924
+#>     is_leaf_tr(L(1)) 204.748 219.4650 277.7080 235.3515 248.6810 3646.077
+#>  is_leaf_tr_bc(L(1)) 203.491 218.4660 262.1024 234.5310 251.1315 2318.887
 #>  neval
 #>    100
 #>    100

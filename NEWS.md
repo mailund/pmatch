@@ -1,3 +1,8 @@
+# pmatch 0.1.3.9004
+
+ * New constructor code. This gives an substantial speedup when generating objects.
+ 
+
 # pmatch 0.1.3.9003
 
  * Suggests `ggraph` and `tidygraph` for vignettes

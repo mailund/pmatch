@@ -4,7 +4,7 @@
 #' @param from  The environment we want to copy from.
 #' @param to    The environment where we want to bind the variables.
 #' @param names Names of the variables to copy. By default, all of them.
-copy_env <- function(from, to, names=ls(from, all.names = TRUE)) {
+copy_env <- function(from, to, names = ls(from, all.names = TRUE)) {
     mapply(
         assign, names, mget(names, from), list(to),
         SIMPLIFY = FALSE, USE.NAMES = FALSE

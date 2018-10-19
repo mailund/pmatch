@@ -30,6 +30,7 @@
 #' @export
 `..` <- function(...) structure(list(...), class = "..")
 
+
 #' Recursive comparison of expression and pattern.
 #'
 #' @param escape     Continuation from callCC, used to escape if we cannot

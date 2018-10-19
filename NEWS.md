@@ -1,7 +1,7 @@
 # pmatch 0.1.3.9004
 
  * New constructor code. This gives an substantial speedup when generating objects.
- 
+ * Added `case_func` as a much faster replacement for using the `cases` function. 
 
 # pmatch 0.1.3.9003
 

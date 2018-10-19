@@ -1,4 +1,4 @@
-context("Transforation for eliminating DSL syntax")
+context("Transformation for eliminating DSL syntax")
 
 test_that("we can translate a function that call cases into one that doesn't", {
     if (!requireNamespace("compiler", quietly = TRUE)) {

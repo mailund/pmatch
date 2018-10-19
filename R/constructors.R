@@ -45,19 +45,11 @@ process_constructor_function <- function(constructor, data_type_name, env) {
     constructor_name <- rlang::quo_name(constructor[[1]])
     constructor_arguments <- process_arguments(constructor[-1])
 
+    vars <- constructor_arguments$arg
+    list_expr <- rlang::expr(list(!!!rlang::syms(rlang::set_names(vars))))
+
     # there is a bit of code involved here, but it doesn't matter
     # if it is slow. What matters is that the constructor is not.
-    vars <- constructor_arguments$arg
-
-    list_args <- character(length = length(vars))
-    for (i in seq_along(vars)) {
-        list_args[i] <- glue::glue("{vars[i]} = {vars[i]}")
-    }
-    list_expr_str <- paste0(list_args, collapse = ", ")
-    # To silent lint
-    list_expr_str
-    list_expr <- rlang::parse_expr(glue::glue("list({list_expr_str})"))
-
     no_typechecks <- 0
     typechecks <- list()
     for (i in seq_along(constructor_arguments)) {

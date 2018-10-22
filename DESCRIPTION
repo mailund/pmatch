@@ -17,15 +17,16 @@ RoxygenNote: 6.1.0
 Language: en-GB
 Depends:
     R (>= 3.2)
-Imports: 
+Imports:
     dplyr,
     purrr,
     rlang (>= 0.2.0),
     tibble,
     glue,
     foolbox,
-    magrittr
-Suggests: 
+    magrittr,
+    Rcpp
+Suggests:
     shiny,
     DT,
     covr,
@@ -41,3 +42,4 @@ Suggests:
 URL: https://github.com/mailund/pmatch
 BugReports: https://github.com/mailund/pmatch/issues
 VignetteBuilder: knitr
+LinkingTo: Rcpp

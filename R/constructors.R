@@ -103,7 +103,7 @@ process_constructor_function <- function(constructor, data_type_name, env) {
 process_constructor_constant <- function(constructor, data_type_name, env) {
     constructor_name <- rlang::as_string(constructor)
     constructor_object <- structure(
-        NA,
+        NA, # FIXME: should this be list() ?
         constructor_constant = constructor_name,
         class = data_type_name
     )

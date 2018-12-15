@@ -1,0 +1,202 @@
+---
+title: "\"Optional\" Types with pmatch"
+author: "Thomas Mailund"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{"Optional" Types with pmatch}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(pmatch)
+```
+
+Some programming languages, e.g. Swift, have special "optional" types. These are types the represent elements that either contain a value of some other type or contain nothing at all. It is a way of computing with the possibility that some operations cannot be done and then propagating that along in the computations.
+
+We can use `pmatch` to implement something similar in R. I will use three types instead of two, to represent no value, `NONE`, some value, `VALUE(val)`, or some error `ERROR(err)`:
+
+```{r}
+OPT := NONE | VALUE(val) | ERROR(err)
+```
+
+We can now define a function that catches exceptions and translate them into `ERROR()` objects:
+
+```{r}
+try <- function(expr) {
+    rlang::enquo(expr)
+    tryCatch(VALUE(rlang::eval_tidy(expr)), 
+             error = function(e) ERROR(e))
+}
+```
+
+With this function the control flow when we want to compute something that might go wrong can be made a bit simpler. We no longer need a callback error handler; instead we can inspect the value returned by `try` in a `cases` call:
+
+```{r}
+cases(try(42),
+      VALUE(val) -> val,
+      ERROR(err) -> err,
+      NONE -> "NOTHING")
+```
+
+```{r}
+cases(try(x + 42), # x isn't defined...
+      VALUE(val) -> val,
+      ERROR(err) -> err,
+      NONE -> "NOTHING")
+```
+
+To extract the value of an expression after we have computed on optional values we can define this function:
+
+```{r, error=TRUE}
+value <- function(x) {
+    quoted_x <- rlang::enexpr(x)
+    cases(x,
+          VALUE(val) -> val,
+          . -> stop(simpleError(
+                paste(deparse(quoted_x), " is not a value."), 
+              call = quoted_x
+        )))
+}
+    
+
+value(try(42))
+value(try(42 + x))
+```
+
+## Computing with optional values
+
+Computing on optional values is more interesting if we can make it relatively transparent that this is what we are doing. For arithmetic expressions we can do this by defining operations on these types. A sensible way is to return errors if we see those, then `NONE` if we see one of those, and otherwise use `VALUE`:
+
+```{r}
+Ops.OPT <- function(e1, e2) {
+    cases(..(e1, e2),
+          ..(ERROR(err), .)        -> ERROR(err),
+          ..(., ERROR(err))        -> ERROR(err),
+          ..(NONE, .)              -> NONE,
+          ..(., NONE)              -> NONE,
+          ..(VALUE(v1), VALUE(v2)) -> VALUE(do.call(.Generic, list(v1, v2))),
+          ..(VALUE(v1), v2)        -> VALUE(do.call(.Generic, list(v1, v2))),
+          ..(v1, VALUE(v2))        -> VALUE(do.call(.Generic, list(v1, v2)))
+    )
+}
+```
+
+The last two cases here handles when we combine an optional value with a value from the underlying type. Because of the last two cases we do not need to explicitly translate a value into a `VALUE()`. With this group function defined we can use optional values in expressions.
+
+```{r}
+VALUE(12) + VALUE(6)
+NONE + VALUE(6)
+ERROR("foo") + NONE
+VALUE(12) + ERROR("bar")
+VALUE(12) + 12
+12 + NONE
+12 + try(42 + x)
+```
+
+
+For mathematical functions, such as `log` or `exp`, we can also define versions for optional types:
+
+```{r}
+Math.OPT <- function(x, ...) {
+    cases(x,
+          ERROR(err) -> ERROR(err),
+          NONE       -> NONE,
+          VALUE(v)   -> do.call(.Generic, list(x)),
+          v          -> do.call(.Generic, list(x))
+    )
+}
+```
+
+```{r}
+log(ERROR("foo"))
+exp(NONE)
+```
+
+## Function calls
+
+Arithmetic is one thing, but we are probably more likely to use optional values for more complex computations? We can wrap expressions in a function to propagate options:
+
+```{r}
+with_values <- function(...) {
+    optionals <- rlang::enquos(...)
+    n <- length(optionals)
+    body <- optionals[[n]]
+    optionals <- optionals[-n]
+    ev <- rlang::child_env(rlang::get_env(body))
+    
+    try_ <- function(q, ev) {
+        suppressWarnings(
+            tryCatch(VALUE(rlang::eval_tidy(q, data = ev)), 
+                 error = function(e) ERROR(e))
+        )
+    }
+    to_val <- function(opt, escape) {
+        cases(
+            opt,
+            ERROR(err) -> escape(ERROR(err)),
+            NONE       -> escape(NONE),
+            VALUE(val) -> val,
+            val        -> val
+        )
+    }
+    to_opt <- function(val) {
+        cases(
+            val,
+            ERROR(err) -> ERROR(err),
+            NONE       -> NONE,
+            VALUE(val) -> VALUE(val),
+            val        -> VALUE(val)
+        )
+    }
+    
+    callCC(function(escape) {
+        for (q in optionals) {
+            if (rlang::quo_is_symbol(q)) {
+                var_name <- as.character(q[[2]])
+                ev[[var_name]] <- to_val(
+                    rlang::eval_tidy(q, data = ev), 
+                    escape
+                )
+                
+            } else if (rlang::quo_is_call(q)) {
+                stopifnot(rlang::call_name(q) == "<-" ||
+                          rlang::call_name(q) == "==")
+                var_name <- as.character(q[[2]][[2]])
+                val_expr <- q[[2]][[3]]
+                ev[[var_name]] <- to_val(
+                    try_(val_expr, ev),
+                    escape
+                )
+                
+            }  else {
+                stop("Optional values must be names of assignments.")
+            }
+        }
+        to_opt(rlang::eval_tidy(body, data = ev))
+    })
+    
+}
+
+x <- VALUE(1)
+y <- VALUE(2)
+with_values(
+    x, y,
+    z <- VALUE(3),
+    w <- x + y + z,
+    (w - x - y) / z
+)
+```
+
+```{r}
+with_values(
+    f <- file("no such file", "r"),
+    readLines(f)
+)
+```

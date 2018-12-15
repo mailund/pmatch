@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Thomas Mailund" />
+
+<meta name="date" content="2018-10-19" />
+
+<title>Huffman coding</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Huffman coding</h1>
+<h4 class="author"><em>Thomas Mailund</em></h4>
+<h4 class="date"><em>2018-10-19</em></h4>
+
+
+
+<p><a href="https://en.wikipedia.org/wiki/Huffman_coding">Huffman coding</a> is a compression approach based on character frequencies. To code a string, we work out the frequency of each letter in the string and then build a tree where we put the letters in the leaves and structure the tree such that the most frequent letters are closest to the root. We then encode each letter by the path we must take in that tree to get to the leaf that contain that letter. We need one bit for each edge we follow; zero, say, if we go left and one if we go right.</p>
+<p>In <a href="https://amzn.to/2GHf6b6">Haskell: the Craft of Functional Programming</a>, there is an example of implementing Huffman coding in Haskell. In this vignette, I will adapt that to R with <code>pmatch</code> patterns. I have structured the vignette such that I switch between showing the original Haskell code and then the corresponding R code. If you are not familiar with Haskell, I think you should still be able to follow along.</p>
+<div id="data-types" class="section level2">
+<h2>Data types</h2>
+<p>The data structures used in the Haskell implementation are these:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">data</span> <span class="dt">Tree</span> <span class="fu">=</span> <span class="dt">Leaf</span> <span class="dt">Char</span> <span class="dt">Int</span> <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">data</span> <span class="dt">Bit</span> <span class="fu">=</span> <span class="dt">L</span> <span class="fu">|</span> <span class="dt">R</span> <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">type</span> <span class="dt">HCode</span> <span class="fu">=</span> [ <span class="dt">Bit</span> ]</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">type</span> <span class="dt">Table</span> <span class="fu">=</span> [ (<span class="dt">Char</span>, <span class="dt">HCode</span>) ]</a></code></pre></div>
+<p>The first two are data types created from constructors, and we can define the corresponding R data structures using a <code>:=</code> declaration:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(pmatch)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">Tree <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">Leaf</span>(char <span class="op">:</span><span class="st"> </span>character, count <span class="op">:</span><span class="st"> </span>integer) <span class="op">|</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="st">        </span><span class="kw">Node</span>(count <span class="op">:</span><span class="st"> </span>integer, left <span class="op">:</span><span class="st"> </span>Tree, right <span class="op">:</span><span class="st"> </span>Tree)</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">Bit <span class="op">:</span><span class="er">=</span><span class="st"> </span>L <span class="op">|</span><span class="st"> </span>R</a></code></pre></div>
+<p>The other two, <code>HCode</code> and <code>Table</code> are lists over <code>Bit</code> and pairs of characters and <code>HCode</code>, respectively. We won’t define types for these. In R, we don’t have static types so we don’t really name types. We need a list representation, however, and to make one that matches lists in Haskell, we define a linked list:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">llist <span class="op">:</span><span class="er">=</span><span class="st"> </span>NIL <span class="op">|</span><span class="st"> </span><span class="kw">CONS</span>(car, cdr <span class="op">:</span><span class="st"> </span>llist)</a></code></pre></div>
+<p>On occasions, we have to create singleton lists, and rather than writing <code>CONS(val,NIL)</code> for those, I will define a function for it. I will define a type to handle pairs in pattern matching.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">single &lt;-<span class="st"> </span><span class="cf">function</span>(val) <span class="kw">CONS</span>(val, NIL)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">pair <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">PAIR</span>(x, y)</a></code></pre></div>
+</div>
+<div id="computing-frequencies" class="section level2">
+<h2>Computing frequencies</h2>
+<p>Before we can encode a string we need to calculate the frequency of the characters in it. In the Haskell implementation this is done using two merge sorts, one that sorts the string characters alphabetically and count the number of occurrences of each and then another sort that orders the characters according to their frequency. Later on, we will build a tree from a list of characters, and by having the least frequent characters at the front of the list, and building from that end, we will propagate the less frequent characters to the bottom of the tree and the more frequent characters to the top.</p>
+<p>The Haskell <code>mergeSort</code> function is implemented like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="ot">mergeSort ::</span> ([a] <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">mergeSort merge xs</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">  <span class="fu">|</span> length xs <span class="fu">&lt;</span> <span class="dv">2</span> <span class="fu">=</span> xs</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">  <span class="fu">|</span> otherwise</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">      <span class="fu">=</span> merge (mergeSort merge first) (mergeSort merge second)</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">        <span class="kw">where</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">          first <span class="fu">=</span> take half xs</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">          second <span class="fu">=</span> drop half xs</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9">          half <span class="fu">=</span> (length xs) <span class="ot">`div`</span> <span class="dv">2</span></a></code></pre></div>
+<p>This function takes another function, <code>merge</code>, as a parameter. It is via this function we will implement the two different sort functions we need.</p>
+<p>We don’t have <code>where</code> blocks in R, so we need to compute <code>first</code>, <code>second</code> and <code>half</code> before the recursion, but otherwise the the R implementation follows the Haskell implementation. We need some list functions first, though, for <code>length</code>, <code>take</code> and <code>drop</code>. We can implement them like this:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">llength &lt;-<span class="st"> </span><span class="cf">function</span>(llist, <span class="dt">acc =</span> <span class="dv">0</span>) {</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">        llist,</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">        NIL -&gt;<span class="st"> </span>acc,</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">llength</span>(cdr, acc <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">    )</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">}</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9">llrev &lt;-<span class="st"> </span><span class="cf">function</span>(llist, <span class="dt">acc =</span> NIL) {</a>
+<a class="sourceLine" id="cb6-10" data-line-number="10">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb6-11" data-line-number="11">        llist,</a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">        NIL -&gt;<span class="st"> </span>acc,</a>
+<a class="sourceLine" id="cb6-13" data-line-number="13">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">llrev</span>(cdr, <span class="kw">CONS</span>(car, acc))</a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">    )</a>
+<a class="sourceLine" id="cb6-15" data-line-number="15">}</a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17">lltake &lt;-<span class="st"> </span><span class="cf">function</span>(llist, k, <span class="dt">acc =</span> NIL) {</a>
+<a class="sourceLine" id="cb6-18" data-line-number="18">    <span class="cf">if</span> (k <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="kw">return</span>(<span class="kw">llrev</span>(acc))</a>
+<a class="sourceLine" id="cb6-19" data-line-number="19">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb6-20" data-line-number="20">        llist,</a>
+<a class="sourceLine" id="cb6-21" data-line-number="21">        NIL -&gt;<span class="st"> </span><span class="kw">stop</span>(<span class="st">&quot;There were less than k elements in the list&quot;</span>),</a>
+<a class="sourceLine" id="cb6-22" data-line-number="22">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">lltake</span>(cdr, k <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, <span class="kw">CONS</span>(car, acc))</a>
+<a class="sourceLine" id="cb6-23" data-line-number="23">    )</a>
+<a class="sourceLine" id="cb6-24" data-line-number="24">}</a>
+<a class="sourceLine" id="cb6-25" data-line-number="25">lldrop &lt;-<span class="st"> </span><span class="cf">function</span>(llist, k, <span class="dt">acc =</span> NIL) {</a>
+<a class="sourceLine" id="cb6-26" data-line-number="26">    <span class="cf">if</span> (k <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="kw">return</span>(llist)</a>
+<a class="sourceLine" id="cb6-27" data-line-number="27">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb6-28" data-line-number="28">        llist,</a>
+<a class="sourceLine" id="cb6-29" data-line-number="29">        NIL -&gt;<span class="st"> </span><span class="kw">stop</span>(<span class="st">&quot;There were less than k elements in the list&quot;</span>),</a>
+<a class="sourceLine" id="cb6-30" data-line-number="30">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">lldrop</span>(cdr, k <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb6-31" data-line-number="31">    )</a>
+<a class="sourceLine" id="cb6-32" data-line-number="32">}</a></code></pre></div>
+<p>The <code>llrev</code> function, for reversing a linked list, is a helper function that lets us write tail-recursive take and drop functions. It isn’t terribly important here since we do not use any tail-recursion optimisation, but once you get into the habit of writing your functions tail recurse it is hard not to. Later on in the vignette I will use simpler functions rather than tail-recursive ones to make the examples easier to follow.</p>
+<p>Anyway, with the list functions in place, the merge sort can be implemented like this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">merge_sort &lt;-<span class="st"> </span><span class="cf">function</span>(merge, xs) {</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">    n &lt;-<span class="st"> </span><span class="kw">llength</span>(xs)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">    <span class="cf">if</span> (n <span class="op">&lt;</span><span class="st"> </span><span class="dv">2</span>) <span class="kw">return</span>(xs)</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">    half &lt;-<span class="st"> </span>n <span class="op">%/%</span><span class="st"> </span><span class="dv">2</span> </a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">    first &lt;-<span class="st"> </span><span class="kw">lltake</span>(xs, half)</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">    second &lt;-<span class="st"> </span><span class="kw">lldrop</span>(xs, half)</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">    <span class="kw">merge</span>(<span class="kw">merge_sort</span>(merge, first), <span class="kw">merge_sort</span>(merge, second))</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">}</a></code></pre></div>
+<div id="sorting-alphabetically-and-counting-characters" class="section level3">
+<h3>Sorting alphabetically and counting characters</h3>
+<p>To sort characters alphabetically and at the same time count the number of occurrences for each, we need a merge function. The Haskell function looks like this:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="ot">alphaMerge ::</span> [(<span class="dt">Char</span>,<span class="dt">Int</span>)] <span class="ot">-&gt;</span> [(<span class="dt">Char</span>,<span class="dt">Int</span>)] <span class="ot">-&gt;</span> [(<span class="dt">Char</span>,<span class="dt">Int</span>)]</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">alphaMerge xs [] <span class="fu">=</span> xs</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">alphaMerge [] ys <span class="fu">=</span> ys</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">alphaMerge ((p,n) <span class="fu">:</span> xs) ((q,m) <span class="fu">:</span> ys)</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">  <span class="fu">|</span> (p <span class="fu">==</span> q)  <span class="fu">=</span> (p,n<span class="fu">+</span>m) <span class="fu">:</span> alphaMerge xs ys</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">  <span class="fu">|</span> (p <span class="fu">&lt;</span> q)   <span class="fu">=</span> (p,n) <span class="fu">:</span> alphaMerge xs ((q,m) <span class="fu">:</span> ys)</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7">  <span class="fu">|</span> otherwise <span class="fu">=</span> (q,m) <span class="fu">:</span> alphaMerge ((p,n) <span class="fu">:</span> xs) ys</a></code></pre></div>
+<p>We do not have conditions like <code>| (p == q)</code> in R, so we handle those using <code>if</code>-<code>else</code>-statements, but otherwise we translate the function statement by statement into this:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">alpha_merge &lt;-<span class="st"> </span><span class="cf">function</span>(xs, ys) {</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">        <span class="kw">..</span>(xs, ys),</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">        <span class="kw">..</span>(xs, NIL) -&gt;<span class="st"> </span>xs,</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">        <span class="kw">..</span>(NIL, ys) -&gt;<span class="st"> </span>ys,</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">        <span class="kw">..</span>(<span class="kw">CONS</span>(<span class="kw">PAIR</span>(p,n), xs), <span class="kw">CONS</span>(<span class="kw">PAIR</span>(q,m), ys)) -&gt;<span class="st"> </span>{</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">            <span class="cf">if</span> (p <span class="op">==</span><span class="st"> </span>q) {</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">                <span class="kw">CONS</span>(<span class="kw">PAIR</span>(p,n<span class="op">+</span>m), <span class="kw">alpha_merge</span>(xs, ys))</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">            } <span class="cf">else</span> <span class="cf">if</span> (p <span class="op">&lt;</span><span class="st"> </span>q) {</a>
+<a class="sourceLine" id="cb9-10" data-line-number="10">                <span class="kw">CONS</span>(<span class="kw">PAIR</span>(p,n), <span class="kw">alpha_merge</span>(xs, <span class="kw">CONS</span>(<span class="kw">PAIR</span>(q,m), ys)))</a>
+<a class="sourceLine" id="cb9-11" data-line-number="11">            } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb9-12" data-line-number="12">                <span class="kw">CONS</span>(<span class="kw">PAIR</span>(q,m), <span class="kw">alpha_merge</span>(<span class="kw">CONS</span>(<span class="kw">PAIR</span>(p,n), xs), ys))</a>
+<a class="sourceLine" id="cb9-13" data-line-number="13">            }</a>
+<a class="sourceLine" id="cb9-14" data-line-number="14">        }</a>
+<a class="sourceLine" id="cb9-15" data-line-number="15">    )</a>
+<a class="sourceLine" id="cb9-16" data-line-number="16">}</a></code></pre></div>
+<p>To test the function I want to make it a little easier to build linked lists, so I have written this helper function:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">llist_from_list &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">    llist &lt;-<span class="st"> </span>NIL</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">    n &lt;-<span class="st"> </span><span class="kw">length</span>(x)</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">    <span class="cf">while</span> (n <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) {</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">        llist &lt;-<span class="st"> </span><span class="kw">CONS</span>(x[[n]], llist)</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">        n &lt;-<span class="st"> </span>n <span class="op">-</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">    }</a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">    llist</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9">}</a></code></pre></div>
+<p>Ok, let us see if we can merge two lists:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">xs &lt;-<span class="st"> </span><span class="kw">llist_from_list</span>(<span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">    <span class="kw">PAIR</span>(<span class="st">&quot;a&quot;</span>, <span class="dv">1</span>), <span class="kw">PAIR</span>(<span class="st">&quot;b&quot;</span>, <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">))</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">ys &lt;-<span class="st"> </span><span class="kw">llist_from_list</span>(<span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">    <span class="kw">PAIR</span>(<span class="st">&quot;a&quot;</span>, <span class="dv">3</span>), <span class="kw">PAIR</span>(<span class="st">&quot;c&quot;</span>, <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6">))</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="kw">alpha_merge</span>(xs, ys)</a>
+<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; CONS(car = PAIR(x = a, y = 4), cdr = CONS(car = PAIR(x = b, y = 2), cdr = CONS(car = PAIR(x = c, y = 3), cdr = NIL)))</span></a></code></pre></div>
+<p>Yup, that went okay.</p>
+<p>What about sorting? First I want a function for concatenating two linked lists, and then I will test it on the concatenation of <code>xs</code> and <code>ys</code> from above.</p>
+<p>Concatenation can look like this:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">llconcat &lt;-<span class="st"> </span><span class="cf">function</span>(xs, ys) {</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">    <span class="kw">cases</span>(xs, </a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">          NIL -&gt;<span class="st"> </span>ys,</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4">          <span class="kw">CONS</span>(x,xs) -&gt;<span class="st"> </span><span class="kw">CONS</span>(x, <span class="kw">llconcat</span>(xs, ys)))</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">}</a></code></pre></div>
+<p>(Here, I did choose a simple version over a tail-recursive one).</p>
+<p>Onwards to the test:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">zs &lt;-<span class="st"> </span><span class="kw">llconcat</span>(xs, ys)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw">merge_sort</span>(alpha_merge, zs)</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co">#&gt; CONS(car = PAIR(x = a, y = 4), cdr = CONS(car = PAIR(x = b, y = 2), cdr = CONS(car = PAIR(x = c, y = 3), cdr = NIL)))</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="kw">merge_sort</span>(alpha_merge, <span class="kw">llrev</span>(zs))</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; CONS(car = PAIR(x = a, y = 4), cdr = CONS(car = PAIR(x = b, y = 2), cdr = CONS(car = PAIR(x = c, y = 3), cdr = NIL)))</span></a></code></pre></div>
+<p>Yup, that works.</p>
+</div>
+<div id="sorting-based-on-character-frequency" class="section level3">
+<h3>Sorting based on character frequency</h3>
+<p>To compute the character frequency we need to write this function:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="ot">freqMerge ::</span> [(<span class="dt">Char</span>,<span class="dt">Int</span>)] <span class="ot">-&gt;</span> [(<span class="dt">Char</span>,<span class="dt">Int</span>)] <span class="ot">-&gt;</span> [(<span class="dt">Char</span>,<span class="dt">Int</span>)]</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">freqMerge xs [] <span class="fu">=</span> xs</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">freqMerge [] ys <span class="fu">=</span> ys</a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">freqMerge ((p,n)<span class="fu">:</span>xs) ((q,m)<span class="fu">:</span>ys)</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5">  <span class="fu">|</span> (n <span class="fu">&lt;</span> m <span class="fu">||</span> (n <span class="fu">==</span> m <span class="fu">&amp;&amp;</span> p <span class="fu">&lt;</span> q)) <span class="fu">=</span> (p,n) <span class="fu">:</span> freqMerge xs ((q,m)<span class="fu">:</span>ys)</a>
+<a class="sourceLine" id="cb14-6" data-line-number="6">  <span class="fu">|</span> otherwise                    <span class="fu">=</span> (q,m) <span class="fu">:</span> freqMerge((p,n)<span class="fu">:</span>xs) ys</a></code></pre></div>
+<p>The translation is done statement by statement and with <code>if</code>-statements instead of <code>|</code> conditions:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">freq_merge &lt;-<span class="st"> </span><span class="cf">function</span>(xs, ys) {</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">        <span class="kw">..</span>(xs, ys),</a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">        <span class="kw">..</span>(xs, NIL) -&gt;<span class="st"> </span>xs,</a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">        <span class="kw">..</span>(NIL, ys) -&gt;<span class="st"> </span>ys,</a>
+<a class="sourceLine" id="cb15-6" data-line-number="6">        <span class="kw">..</span>(<span class="kw">CONS</span>(<span class="kw">PAIR</span>(p,n), xs), <span class="kw">CONS</span>(<span class="kw">PAIR</span>(q,m), ys)) -&gt;<span class="st"> </span>{</a>
+<a class="sourceLine" id="cb15-7" data-line-number="7">            <span class="cf">if</span> (n <span class="op">&lt;</span><span class="st"> </span>m <span class="op">||</span><span class="st"> </span>(n <span class="op">==</span><span class="st"> </span>m <span class="op">&amp;&amp;</span><span class="st"> </span>p <span class="op">&lt;</span><span class="st"> </span>q)) {</a>
+<a class="sourceLine" id="cb15-8" data-line-number="8">                <span class="kw">CONS</span>(<span class="kw">PAIR</span>(p,n), <span class="kw">freq_merge</span>(xs, <span class="kw">CONS</span>(<span class="kw">PAIR</span>(q,m), ys)))</a>
+<a class="sourceLine" id="cb15-9" data-line-number="9">            } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb15-10" data-line-number="10">                <span class="kw">CONS</span>(<span class="kw">PAIR</span>(q,m), <span class="kw">freq_merge</span>(<span class="kw">CONS</span>(<span class="kw">PAIR</span>(p,n), xs), ys))</a>
+<a class="sourceLine" id="cb15-11" data-line-number="11">            }      </a>
+<a class="sourceLine" id="cb15-12" data-line-number="12">        }</a>
+<a class="sourceLine" id="cb15-13" data-line-number="13">    )</a>
+<a class="sourceLine" id="cb15-14" data-line-number="14">}</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">xs &lt;-<span class="st"> </span><span class="kw">llist_from_list</span>(<span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">    <span class="kw">PAIR</span>(<span class="st">&quot;a&quot;</span>, <span class="dv">5</span>), <span class="kw">PAIR</span>(<span class="st">&quot;b&quot;</span>, <span class="dv">3</span>), <span class="kw">PAIR</span>(<span class="st">&quot;c&quot;</span>, <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">))</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="kw">merge_sort</span>(freq_merge, xs)</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="co">#&gt; CONS(car = PAIR(x = c, y = 2), cdr = CONS(car = PAIR(x = b, y = 3), cdr = CONS(car = PAIR(x = a, y = 5), cdr = NIL)))</span></a></code></pre></div>
+</div>
+<div id="computing-frequencies-1" class="section level3">
+<h3>Computing frequencies</h3>
+<p>To compute a list of character frequencies for a string, we need to combine the sort and merge functions. In Haskell, the <code>frequency</code> function looks like this:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="ot">frequency ::</span> [<span class="dt">Char</span>] <span class="ot">-&gt;</span> [(<span class="dt">Char</span>,<span class="dt">Int</span>)]</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">frequency</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">  <span class="fu">=</span> mergeSort freqMerge <span class="fu">.</span> mergeSort alphaMerge <span class="fu">.</span> map start</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">    <span class="kw">where</span></a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">      start ch <span class="fu">=</span> (ch, <span class="dv">1</span>)</a></code></pre></div>
+<p>We see that we need another list function, <code>map</code>. I have implemented it this way:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">llmap &lt;-<span class="st"> </span><span class="cf">function</span>(llist, f, <span class="dt">acc =</span> NIL) {</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">        llist,</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4">        NIL -&gt;<span class="st"> </span><span class="kw">llrev</span>(acc),</a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">        <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="kw">llmap</span>(cdr, f, <span class="kw">CONS</span>(<span class="kw">f</span>(car), acc))</a>
+<a class="sourceLine" id="cb18-6" data-line-number="6">    )</a>
+<a class="sourceLine" id="cb18-7" data-line-number="7">}</a></code></pre></div>
+<p>I want to work on lists of characters, so as a helper function I have written <code>string_to_list</code> that translates a string into a list containing the characters in the string:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">string_to_list &lt;-<span class="st"> </span><span class="cf">function</span>(x)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">    <span class="kw">llist_from_list</span>(<span class="kw">strsplit</span>(x, <span class="st">&quot;&quot;</span>)[[<span class="dv">1</span>]])</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="kw">string_to_list</span>(<span class="st">&quot;foobar&quot;</span>)</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="co">#&gt; CONS(car = f, cdr = CONS(car = o, cdr = CONS(car = o, cdr = CONS(car = b, cdr = CONS(car = a, cdr = CONS(car = r, cdr = NIL))))))</span></a></code></pre></div>
+<p>For composing functions, we can use <code>magrittr</code> pipelines. If we do, we just have to remember that the functions are evaluated from left-to-right, whereas in the Haskell code, they are evaluated right-to-left. So</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb20-1" data-line-number="1">mergeSort freqMerge <span class="fu">.</span> mergeSort alphaMerge <span class="fu">.</span> map start</a></code></pre></div>
+<p>becomes</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">library</span>(magrittr)</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">frequency =<span class="st"> </span>. <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">    </span><span class="kw">string_to_list</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">    </span><span class="kw">llmap</span>(<span class="cf">function</span>(char) <span class="kw">PAIR</span>(char, 1L)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="st">    </span><span class="kw">merge_sort</span>(alpha_merge, .) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="st">    </span><span class="kw">merge_sort</span>(freq_merge, .)</a></code></pre></div>
+<p>If we call <code>frequency</code> on a string, we get a list of pairs of characters and integers. We should interpret that as a list of characters and the number of occurrences each have in the string.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">frequency</span>(<span class="st">&quot;foo&quot;</span>)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="co">#&gt; CONS(car = PAIR(x = f, y = 1), cdr = CONS(car = PAIR(x = o, y = 2), cdr = NIL))</span></a></code></pre></div>
+</div>
+</div>
+<div id="building-trees" class="section level2">
+<h2>Building trees</h2>
+<p>From a frequency list we need to build tree. This is the Haskell code:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="ot">makeTree ::</span> [ (<span class="dt">Char</span>,<span class="dt">Int</span>) ] <span class="ot">-&gt;</span> <span class="dt">Tree</span></a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">makeTree <span class="fu">=</span> makeCodes <span class="fu">.</span> toTreeList</a>
+<a class="sourceLine" id="cb23-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="ot">toTreeList ::</span> [ (<span class="dt">Char</span>,<span class="dt">Int</span>) ] <span class="ot">-&gt;</span> [<span class="dt">Tree</span>]</a>
+<a class="sourceLine" id="cb23-5" data-line-number="5">toTreeList <span class="fu">=</span> map (uncurry <span class="dt">Leaf</span>)</a></code></pre></div>
+<p>The <code>uncurl Leaf</code> stuff is a technicality needed in Haskell. To translate a list of character-count pairs into a list of trees, we simply do this:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">to_tree_list &lt;-<span class="st"> </span>. <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">llmap</span>(</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">    <span class="cf">function</span>(x) <span class="kw">cases</span>(x, <span class="kw">PAIR</span>(char,count) -&gt;<span class="st"> </span><span class="kw">Leaf</span>(char, count))</a>
+<a class="sourceLine" id="cb24-3" data-line-number="3">)</a>
+<a class="sourceLine" id="cb24-4" data-line-number="4">xs &lt;-<span class="st"> &quot;foo&quot;</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">string_to_list</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">llmap</span>(<span class="cf">function</span>(char) <span class="kw">PAIR</span>(char, 1L))</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="kw">to_tree_list</span>(xs)</a>
+<a class="sourceLine" id="cb24-6" data-line-number="6"><span class="co">#&gt; CONS(car = Leaf(char = f, count = 1), cdr = CONS(car = Leaf(char = o, count = 1), cdr = CONS(car = Leaf(char = o, count = 1), cdr = NIL)))</span></a></code></pre></div>
+<p>The <code>makeCodes</code> function looks like this in Haskell:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="ot">makeCodes ::</span> [ <span class="dt">Tree</span> ] <span class="ot">-&gt;</span> <span class="dt">Tree</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">makeCodes [t] <span class="fu">=</span> t</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">makeCodes ts <span class="fu">=</span> makeCodes (amalgamate ts)</a></code></pre></div>
+<p>and we can translate it almost mechanically:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">make_codes &lt;-<span class="st"> </span><span class="cf">function</span>(ts) {</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb26-3" data-line-number="3">        ts,</a>
+<a class="sourceLine" id="cb26-4" data-line-number="4">        <span class="kw">CONS</span>(t, NIL) -&gt;<span class="st"> </span>t,</a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">        ts -&gt;<span class="st"> </span><span class="kw">make_codes</span>(<span class="kw">amalgamate</span>(ts))</a>
+<a class="sourceLine" id="cb26-6" data-line-number="6">    )</a>
+<a class="sourceLine" id="cb26-7" data-line-number="7">}</a></code></pre></div>
+<p>The same goes for <code>amalgamate</code>:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="ot">amalgamate ::</span> [ <span class="dt">Tree</span> ] <span class="ot">-&gt;</span> [ <span class="dt">Tree</span> ]</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">amalgamate (t1<span class="fu">:</span>t2<span class="fu">:</span>ts) <span class="fu">=</span> insTree (pair t1 t2) ts</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">amalgamate &lt;-<span class="st"> </span><span class="cf">function</span>(ts) {</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3">        ts,</a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">        <span class="kw">CONS</span>(t1, <span class="kw">CONS</span>(t2, ts)) -&gt;<span class="st"> </span><span class="kw">ins_tree</span>(<span class="kw">pair</span>(t1, t2), ts)</a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">    )</a>
+<a class="sourceLine" id="cb28-6" data-line-number="6">}</a></code></pre></div>
+<p>We can see that we need functions <code>pair</code> and <code>ins_tree</code> for these functions. The <code>pair</code> function shouldn’t be confused with the <code>PAIR</code> constructor—one of the reasons I put the latter in all uppercase. Other than that, the entire translation of the Haskell code is just done statement by statement:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="ot">pair ::</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span></a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">pair t1 t2 <span class="fu">=</span> <span class="dt">Node</span> (v1 <span class="fu">+</span> v2) t1 t2</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">             <span class="kw">where</span> v1 <span class="fu">=</span> value t1</a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">                   v2 <span class="fu">=</span> value t2</a>
+<a class="sourceLine" id="cb29-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb29-6" data-line-number="6"><span class="ot">value ::</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb29-7" data-line-number="7">value (<span class="dt">Leaf</span> _ n)   <span class="fu">=</span> n</a>
+<a class="sourceLine" id="cb29-8" data-line-number="8">value (<span class="dt">Node</span> n _ _) <span class="fu">=</span> n</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">value &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
+<a class="sourceLine" id="cb30-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb30-3" data-line-number="3">        tree,</a>
+<a class="sourceLine" id="cb30-4" data-line-number="4">        <span class="kw">Leaf</span>(., n) -&gt;<span class="st"> </span>n,</a>
+<a class="sourceLine" id="cb30-5" data-line-number="5">        <span class="kw">Node</span>(n, ., .) -&gt;<span class="st"> </span>n</a>
+<a class="sourceLine" id="cb30-6" data-line-number="6">    )</a>
+<a class="sourceLine" id="cb30-7" data-line-number="7">}</a>
+<a class="sourceLine" id="cb30-8" data-line-number="8">pair &lt;-<span class="st"> </span><span class="cf">function</span>(t1, t2) <span class="kw">Node</span>(<span class="kw">value</span>(t1) <span class="op">+</span><span class="st"> </span><span class="kw">value</span>(t2), t1, t2)</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="ot">insTree ::</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> [ <span class="dt">Tree</span> ] <span class="ot">-&gt;</span> [ <span class="dt">Tree</span> ]</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">insTree t1 []          <span class="fu">=</span> [t1]</a>
+<a class="sourceLine" id="cb31-3" data-line-number="3">insTree t1 (t2 <span class="fu">:</span> rest) <span class="fu">=</span></a>
+<a class="sourceLine" id="cb31-4" data-line-number="4">  <span class="kw">if</span> v1 <span class="fu">&lt;</span> v2 <span class="kw">then</span> t1 <span class="fu">:</span> t2 <span class="fu">:</span> rest <span class="kw">else</span> t2 <span class="fu">:</span> insTree t1 rest</a>
+<a class="sourceLine" id="cb31-5" data-line-number="5">  <span class="kw">where</span> v1 <span class="fu">=</span> value t1</a>
+<a class="sourceLine" id="cb31-6" data-line-number="6">        v2 <span class="fu">=</span> value t2</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">ins_tree &lt;-<span class="st"> </span><span class="cf">function</span>(t, ts) {</a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb32-3" data-line-number="3">        <span class="kw">..</span>(t, ts),</a>
+<a class="sourceLine" id="cb32-4" data-line-number="4">        <span class="kw">..</span>(t, NIL) -&gt;<span class="st"> </span><span class="kw">single</span>(t),</a>
+<a class="sourceLine" id="cb32-5" data-line-number="5">        <span class="kw">..</span>(t1, <span class="kw">CONS</span>(t2, rest)) -&gt;<span class="st"> </span>{</a>
+<a class="sourceLine" id="cb32-6" data-line-number="6">            v1 &lt;-<span class="st"> </span><span class="kw">value</span>(t1)</a>
+<a class="sourceLine" id="cb32-7" data-line-number="7">            v2 &lt;-<span class="st"> </span><span class="kw">value</span>(t2)</a>
+<a class="sourceLine" id="cb32-8" data-line-number="8">            <span class="cf">if</span> (v1 <span class="op">&lt;</span><span class="st"> </span>v2) {</a>
+<a class="sourceLine" id="cb32-9" data-line-number="9">                <span class="kw">CONS</span>(t1, <span class="kw">CONS</span>(t2, rest))</a>
+<a class="sourceLine" id="cb32-10" data-line-number="10">            } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb32-11" data-line-number="11">                <span class="kw">CONS</span>(t2, <span class="kw">ins_tree</span>(t1, rest))</a>
+<a class="sourceLine" id="cb32-12" data-line-number="12">            }</a>
+<a class="sourceLine" id="cb32-13" data-line-number="13">        }</a>
+<a class="sourceLine" id="cb32-14" data-line-number="14">    )</a>
+<a class="sourceLine" id="cb32-15" data-line-number="15">}</a></code></pre></div>
+<p>The <code>makeTree</code> function was defined as a composition:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="ot">makeTree ::</span> [ (<span class="dt">Char</span>,<span class="dt">Int</span>) ] <span class="ot">-&gt;</span> <span class="dt">Tree</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">makeTree <span class="fu">=</span> makeCodes <span class="fu">.</span> toTreeList</a></code></pre></div>
+<p>We do the same using a pipeline:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">make_tree &lt;-<span class="st"> </span>. <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="st">    </span><span class="kw">to_tree_list</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb34-3" data-line-number="3"><span class="st">    </span><span class="kw">make_codes</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">tree &lt;-<span class="st"> &quot;foo&quot;</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">frequency</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">make_tree</span>()</a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">tree</a>
+<a class="sourceLine" id="cb35-3" data-line-number="3"><span class="co">#&gt; Node(count = 3, left = Leaf(char = f, count = 1), right = Leaf(char = o, count = 2))</span></a></code></pre></div>
+<p>I have written some code for plotting trees, in the function <code>plot_tree</code>. I don’t show it here, it is a simple translation of the data structure into a table I can plot using <code>tidy graph</code> and <code>ggraph</code>, but we can use it to display trees:</p>
+<pre><code>#&gt; 
+#&gt; Attaching package: 'tidygraph'
+#&gt; The following object is masked from 'package:stats':
+#&gt; 
+#&gt;     filter
+#&gt; Loading required package: ggplot2</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="st">&quot;foobarbaz&quot;</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">frequency</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">make_tree</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">plot_tree</span>()</a></code></pre></div>
+<p><img src="data:image/png;base64,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Y6uttprMMcccQgaUxOi0rk1uxWgC1u5H4mVA5Xu87r777kT3eDWhm02vAnvG3njjDTnssMOka9eu0q1bt1Ib6tZDlltuOTKgEiL5POEMqAnjCgYE74ErrbRSqbaia7xKQNQ5qaUZA0PH2hpTfhEgA2rC2IIBgfmo065SbUXXeJWAqHNSSzMGBuRml3Wq4eOMIkAG1ISB82rAsHt8+PDhdvtC7969m9BCvquophkDA/r8888Fa2xM+USADKjBcVXLdruO4dZ/oPE66qij5MADD5QBAwb41j5jxgx5+umnfZ/l+SbWe+A32y/5acbWWGMNm5WzID/EcnIvZVtDMkeOarnsHiddZLa+oKvt8YKP5NGjR5sDDjjALLDAAmbeeeet62M5c2DUIVhng0Y1W0Y3uBrsCfv6668rSpTvGVM3sGbuuec2Gq2jIh9v5AMByUc3kuuFbqmwDOjll182q6yyiunSpYv55JNPSgS9+eabZuDAgaZz5842n3oaNKeccop56623SnmKcqJOzszll19uNMSPxWK++eYz++67rxk1alSbTa59+/a1TvB1e4tRdbzp169fUSAqXD/JgBoc8nPOOcfOZrbbbjujLlUNdpWrTZC59NJLjdr+2B8aZjwqkhnslv/5558bbDEfxSdOnGgGDx5sGbYKE2bppZc2Gk/NqLhlvv32W7PRRhuZxRZbzKirWotjPnrNXngR4G74BkVp/VqLilYC5+0nn3yy6IxHHnjgAYEafuuttxYVuWTXXXcV/do32FI+i+sLadfDrr/+elGXJQLbqfXWW0/69OkjOluyOGo4IFFxzRom5hOF4vaKDKjBse/UqZN8+OGHoms6ol9ugQXv/vvvLypayFJLLdVg7cUqDvzuueceATN69NFHbed1xohZumisNVl++eWLBUgBeksG1OAgw1m7OhWz1rxgPAhfw9Q4AlC933TTTXLJJZdY1x3PPfecqEO0xitmDalCgAzIZzjggB1bJ+68807RaJ821HKHDh1k/fXXt7G7YNsDy2ck7AFr37596dqnOt5qEIGpU6fa8ECuGqjlb7zxRivqAv955plHdJHfOs/HRwDjwZQNBMiAPOP0yiuvyF577SWqyZJp06Z5nooNTwOxC6LCb3/724rnvBEfArCfUo2YqNZMsC7kjdSBdTZYVqtiQA4//PD4CGHNTUOADKgMSnxZ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" /><!-- --></p>
+</div>
+<div id="code-tables" class="section level2">
+<h2>Code tables</h2>
+<p>The result of an encoding will be a sequence of <code>L</code> and <code>R</code> bits. We will represent these in linked lists, so to make it simpler to display these I have written these helper functions:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">as.list.llist &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">all.names =</span> <span class="ot">FALSE</span>, <span class="dt">sorted =</span> <span class="ot">FALSE</span>, ...) {</a>
+<a class="sourceLine" id="cb38-2" data-line-number="2">    n &lt;-<span class="st"> </span><span class="kw">llength</span>(x)</a>
+<a class="sourceLine" id="cb38-3" data-line-number="3">    v &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">&quot;list&quot;</span>, <span class="dt">length =</span> n)</a>
+<a class="sourceLine" id="cb38-4" data-line-number="4">    i &lt;-<span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">    <span class="cf">while</span> (i <span class="op">&lt;=</span><span class="st"> </span>n) {</a>
+<a class="sourceLine" id="cb38-6" data-line-number="6">        v[i] &lt;-<span class="st"> </span>x<span class="op">$</span>car</a>
+<a class="sourceLine" id="cb38-7" data-line-number="7">        i &lt;-<span class="st"> </span>i <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb38-8" data-line-number="8">        x &lt;-<span class="st"> </span>x<span class="op">$</span>cdr</a>
+<a class="sourceLine" id="cb38-9" data-line-number="9">    }</a>
+<a class="sourceLine" id="cb38-10" data-line-number="10">    v</a>
+<a class="sourceLine" id="cb38-11" data-line-number="11">}</a>
+<a class="sourceLine" id="cb38-12" data-line-number="12">as.vector.llist &lt;-<span class="st"> </span><span class="cf">function</span>(x, <span class="dt">mode =</span> <span class="st">&quot;any&quot;</span>) {</a>
+<a class="sourceLine" id="cb38-13" data-line-number="13">    <span class="kw">unlist</span>(<span class="kw">as.list</span>(x))</a>
+<a class="sourceLine" id="cb38-14" data-line-number="14">}</a>
+<a class="sourceLine" id="cb38-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb38-16" data-line-number="16">toString.code &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
+<a class="sourceLine" id="cb38-17" data-line-number="17">    x <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">llmap</span>(toString) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">paste0</span>(<span class="dt">collapse =</span> <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb38-18" data-line-number="18">}</a>
+<a class="sourceLine" id="cb38-19" data-line-number="19"></a>
+<a class="sourceLine" id="cb38-20" data-line-number="20">code &lt;-<span class="st"> </span><span class="kw">llist_from_list</span>(</a>
+<a class="sourceLine" id="cb38-21" data-line-number="21">    <span class="kw">list</span>(L, L, R, L)</a>
+<a class="sourceLine" id="cb38-22" data-line-number="22">)</a>
+<a class="sourceLine" id="cb38-23" data-line-number="23">code</a>
+<a class="sourceLine" id="cb38-24" data-line-number="24"><span class="co">#&gt; CONS(car = L, cdr = CONS(car = L, cdr = CONS(car = R, cdr = CONS(car = L, cdr = NIL))))</span></a>
+<a class="sourceLine" id="cb38-25" data-line-number="25"><span class="kw">class</span>(code) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;code&quot;</span>, <span class="kw">class</span>(code))</a>
+<a class="sourceLine" id="cb38-26" data-line-number="26">code <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">toString</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">cat</span>()</a>
+<a class="sourceLine" id="cb38-27" data-line-number="27"><span class="co">#&gt; LLRL</span></a></code></pre></div>
+<p>I do not simply set the class of a list to <code>&quot;code&quot;</code>. I could, and most of the time that wouldn’t be a problem. However, in the specification of linked lists we required that <code>cdr</code> should be of type <code>llist</code>, so if we want to concatenate two codes—and I can reveal that we do later—then we need codes to have that type. I therefore make codes specialisations of <code>llist</code> with <code>c(&quot;code&quot;, class(code))</code>.</p>
+<p>The encoding of a string will be implemented as follows: for each character in the string, we look up the code for that character, i.e. the sequence of left and right edges we need to reach the character in a tree, and we concatenate all these. In the implementation of the encoding we want a table that maps characters to their code, and in Haskell that table is computed using this function:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="ot">convert ::</span> <span class="dt">HCode</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Table</span></a>
+<a class="sourceLine" id="cb39-2" data-line-number="2">convert cd (<span class="dt">Leaf</span> c n) <span class="fu">=</span> [(c,cd)]</a>
+<a class="sourceLine" id="cb39-3" data-line-number="3">convert cd (<span class="dt">Node</span> n t1 t2) <span class="fu">=</span> (convert (cd<span class="fu">++</span>[<span class="dt">L</span>]) t1) <span class="fu">++</span></a>
+<a class="sourceLine" id="cb39-4" data-line-number="4">                            (convert (cd<span class="fu">++</span>[<span class="dt">R</span>]) t2)</a>
+<a class="sourceLine" id="cb39-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb39-6" data-line-number="6"><span class="ot">codeTable ::</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Table</span></a>
+<a class="sourceLine" id="cb39-7" data-line-number="7">codeTable <span class="fu">=</span> convert []</a></code></pre></div>
+<p>We can implement it in R like this:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1">convert &lt;-<span class="st"> </span><span class="cf">function</span>(code, tree) {</a>
+<a class="sourceLine" id="cb40-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb40-3" data-line-number="3">        tree,</a>
+<a class="sourceLine" id="cb40-4" data-line-number="4">        <span class="kw">Leaf</span>(char, count) -&gt;<span class="st"> </span><span class="kw">single</span>(</a>
+<a class="sourceLine" id="cb40-5" data-line-number="5">            <span class="kw">PAIR</span>(char,<span class="kw">structure</span>(code, <span class="dt">class =</span> <span class="kw">c</span>(<span class="st">&quot;code&quot;</span>, <span class="kw">class</span>(code))))</a>
+<a class="sourceLine" id="cb40-6" data-line-number="6">        ),</a>
+<a class="sourceLine" id="cb40-7" data-line-number="7">        <span class="kw">Node</span>(count, t1, t2) -&gt;<span class="st"> </span><span class="kw">llconcat</span>(</a>
+<a class="sourceLine" id="cb40-8" data-line-number="8">            <span class="kw">convert</span>(<span class="kw">llconcat</span>(code, <span class="kw">single</span>(L)), t1),</a>
+<a class="sourceLine" id="cb40-9" data-line-number="9">            <span class="kw">convert</span>(<span class="kw">llconcat</span>(code, <span class="kw">single</span>(R)), t2)</a>
+<a class="sourceLine" id="cb40-10" data-line-number="10">        )</a>
+<a class="sourceLine" id="cb40-11" data-line-number="11">    )</a>
+<a class="sourceLine" id="cb40-12" data-line-number="12">}</a>
+<a class="sourceLine" id="cb40-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb40-14" data-line-number="14">code_table &lt;-<span class="st"> </span>. <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">convert</span>(NIL, .) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb40-15" data-line-number="15"><span class="st">    </span><span class="kw">structure</span>(<span class="dt">class =</span> <span class="kw">c</span>(<span class="st">&quot;code_table&quot;</span>, <span class="kw">class</span>(.)))</a></code></pre></div>
+<p>I have added a class to tables to make them easier to print.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1">toString.code_table &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</a>
+<a class="sourceLine" id="cb41-2" data-line-number="2">    x <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">llmap</span>(<span class="cf">function</span>(p) </a>
+<a class="sourceLine" id="cb41-3" data-line-number="3">        <span class="kw">cases</span>(p, <span class="kw">PAIR</span>(x,y) <span class="op">~</span><span class="st"> </span><span class="kw">paste0</span>(x, <span class="st">&quot; =&gt; &quot;</span>, <span class="kw">toString</span>(y)))</a>
+<a class="sourceLine" id="cb41-4" data-line-number="4">    ) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">paste0</span>(<span class="dt">collapse =</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</a>
+<a class="sourceLine" id="cb41-5" data-line-number="5">}</a></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1">tree &lt;-<span class="st"> &quot;foobaar&quot;</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">frequency</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">make_tree</span>()</a>
+<a class="sourceLine" id="cb42-2" data-line-number="2">table &lt;-<span class="st"> </span>tree <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">code_table</span>()</a>
+<a class="sourceLine" id="cb42-3" data-line-number="3">tree <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">plot_tree</span>()</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1">table <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">toString</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">cat</span>()</a>
+<a class="sourceLine" id="cb43-2" data-line-number="2"><span class="co">#&gt; r =&gt; LL</span></a>
+<a class="sourceLine" id="cb43-3" data-line-number="3"><span class="co">#&gt; a =&gt; LR</span></a>
+<a class="sourceLine" id="cb43-4" data-line-number="4"><span class="co">#&gt; o =&gt; RL</span></a>
+<a class="sourceLine" id="cb43-5" data-line-number="5"><span class="co">#&gt; b =&gt; RRL</span></a>
+<a class="sourceLine" id="cb43-6" data-line-number="6"><span class="co">#&gt; f =&gt; RRR</span></a>
+<a class="sourceLine" id="cb43-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb43-8" data-line-number="8">tree &lt;-<span class="st"> &quot;foobarbaz&quot;</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">frequency</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">make_tree</span>()</a>
+<a class="sourceLine" id="cb43-9" data-line-number="9">table &lt;-<span class="st"> </span>tree <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">code_table</span>()</a>
+<a class="sourceLine" id="cb43-10" data-line-number="10">tree <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">plot_tree</span>()</a></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAYAAAAUg66AAAAEGWlDQ1BrQ0dDb2xvclNwYWNlR2VuZXJpY1JHQgAAOI2NVV1oHFUUPrtzZyMkzlNsNIV0qD8NJQ2TVjShtLp/3d02bpZJNtoi6GT27s6Yyc44M7v9oU9FUHwx6psUxL+3gCAo9Q/bPrQvlQol2tQgKD60+INQ6Ium65k7M5lpurHeZe58853vnnvuuWfvBei5qliWkRQBFpquLRcy4nOHj4g9K5CEh6AXBqFXUR0rXalMAjZPC3e1W99Dwntf2dXd/p+tt0YdFSBxH2Kz5qgLiI8B8KdVy3YBevqRHz/qWh72Yui3MUDEL3q44WPXw3M+fo1pZuQs4tOIBVVTaoiXEI/MxfhGDPsxsNZfoE1q66ro5aJim3XdoLFw72H+n23BaIXzbcOnz5mfPoTvYVz7KzUl5+FRxEuqkp9G/Ajia219thzg25abkRE/BpDc3pqvphHvRFys2weqvp+krbWKIX7nhDbzLOItiM8358pTwdirqpPFnMF2xLc1WvLyOwTAibpbmvHHcvttU57y5+XqNZrLe3lE/Pq8eUj2fXKfOe3pfOjzhJYtB/yll5SDFcSDiH+hRkH25+L+sdxKEAMZahrlSX8ukqMOWy/jXW2m6M9LDBc31B9LFuv6gVKg/0Szi3KAr1kGq1GMjU/aLbnq6/lRxc4XfJ98hTargX++DbMJBSiYMIe9Ck1YAxFkKEAG3xbYaKmDDgYyFK0UGYpfoWYXG+fAPPI6tJnNwb7ClP7IyF+D+bjOtCpkhz6CFrIa/I6sFtNl8auFXGMTP34sNwI/JhkgEtmDz14ySfaRcTIBInmKPE32kxyyE2Tv+thKbEVePDfW/byMM1Kmm0XdObS7oGD/MypMXFPXrCwOtoYjyyn7BV29/MZfsVzpLDdRtuIZnbpXzvlf+ev8MvYr/Gqk4H/kV/G3csdazLuyTMPsbFhzd1UabQbjFvDRmcWJxR3zcfHkVw9GfpbJmeev9F08WW8uDkaslwX6avlWGU6NRKz0g/SHtCy9J30o/ca9zX3Kfc19zn3BXQKRO8ud477hLnAfc1/G9mrzGlrfexZ5GLdn6ZZrrEohI2wVHhZywjbhUWEy8icMCGNCUdiBlq3r+xafL549HQ5jH+an+1y+LlYBifuxAvRN/lVVVOlwlCkdVm9NOL5BE4wkQ2SMlDZU97hX86EilU/lUmkQUztTE6mx1EEPh7OmdqBtAvv8HdWpbrJS6tJj3n0CWdM6busNzRV3S9KTYhqvNiqWmuroiKgYhshMjmhTh9ptWhsF7970j/SbMrsPE1suR5z7DMC+P/Hs+y7ijrQAlhyAgccjbhjPygfeBTjzhNqy28EdkUh8C+DU9+z2v/oyeH791OncxHOs5y2AtTc7nb/f73TWPkD/qwBnjX8BoJ98VQNcC+8AAC9TSURBVHgB7V0H2BXF1T4qxliDiB0UI/beC6jYsCCKGqNixx6JJYqKCBbUWAmxxNii2LGX2FDUWJBgDdaASrCAHdEfFdv85x2cy/327r13d+/du+2d5/m+bVPOvLP37Jw5Z86Zw2gSJiJABIhAAgjMmUCbbJIIEAEiYBEgA+KLQASIQGIIkAElBj0bJgJEgAyI7wARIAKJIUAGlBj0bJgIEAEyIL4DRIAIJIYAGVBi0LNhIkAEyID4DhABIpAYAmRAiUHPhokAESAD4jtABIhAYgiQASUGPRsmAkSADIjvABEgAokhQAaUGPRsmAgQATIgvgNEgAgkhgAZUGLQs2EiQATIgPgOEAEikBgCZECJQc+GiQARIAPiO0AEiEBiCJABJQY9GyYCRIAMiO8AESACiSFABpQY9GyYCBABMiC+A0SACCSGABlQYtCzYSJABMiA+A4QASKQGAJkQIlBz4aJABEgA+I7QASIQGIIkAElBj0bJgJEgAyI7wARIAKJIUAGlBj0bJgIEAEyIL4DRIAIJIYAGVBi0LNhIkAEyID4DhABIpAYAmRAiUHPhokAESAD4jtABIhAYgiQASUGPRsmAkSADIjvABEgAokhQAaUGPRsmAgQATIgvgNEgAgkhgAZUGLQs2EiQATIgPgOEAEikBgCZECJQd+6hr/44gsZNmyYbLzxxtK5c2dZfPHFZbXVVpMTTjhBxo8f3zpC2BIR8CAwh9HkucfLHCFw8cUXy+mnny7fffedfPvtt216Ntdcc8mCCy4oxxxzjAwaNEjmnnvuNs95QQTiRoAMKG6EE6z/rLPOkqFDh8r3339fk4p27doJvkPTp0+X+eefv2ZePiQCzUSAIlgz0UxRXZdccokMHjy4LvMByT/++KPMMccc0rt3b/n5559T1AuSkncEOAPK4Qhjzadr164ybdq0UL1baKGFZMSIEdKnT59Q5ZiZCERFgDOgqMiluByYCNZ8wqavvvpKzj777LDFmJ8IREaADCgydOkteNttt1UsOAeldsKECYIZFBMRaAUCZECtQLnFbXz44YeRW8SC9NSpUyOXZ0EiEAYBMqAwaGUkbz2tV61uzDnnnJHEt1p18hkRqIYAGVA1ZDJ8v2PHjpGph0ZsscUWi1yeBYlAGATIgMKglZG8vXr1EhgZRknt27e31tJRyrIMEQiLABlQWMQykH/fffeVBRZYIDSlMELs169f6HIsQASiIkAGFBW5FJdbY401ZNttt5Vf//rXoaiEHdBRRx0VqgwzE4FGEKAhYiPopbjsjBkzZIUVVgil0ZoyZYosueSSKe4VScsbApwB5W1Ef+nPRx99JDNnzhTMarDhtFqC2OWejxo1qlo23icCsSBABhQLrMlWCotm7OsC85k4caLccMMNsuGGG9rrhRdeWBZZZBHBYnOXLl3k5JNPlsmTJ0vfvn3lsMMOk2effTZZ4tl6oRCgCJaz4f7pp59kp512sowEzATrQS59+eWXViTDNo1FF11UOnXq5B5Z258ePXrIpEmTZNy4cbLsssuWnvGECMSFABlQXMgmVO9xxx0n8AF0zz332FlQGDIgtmGmhNnRmDFjImnSwrTHvESAIliO3oGrr75ahg8fLueee25o5gMYllhiCbn33nvl3XfflX322YeuOXL0bqS1K2RAaR2ZkHT961//kj/84Q9y4IEHyoABA0KWnp19nXXWkeuvv17uv/9+GThw4OwHPCMCMSBAESwGUFtdJWYsEJ1WWWUVGT16tPzqV79qmAS45Tj11FPluuuukwMOOKDh+lgBEfBDgAzID5UM3YPGC87m4e8Zi8dYXG5Wghh2xx13yOOPPy7dunVrVrWshwiUECADKkGRvZNaGq9m9AbaMmrGmoEk66iGANeAqiGTgfsIqwPjwZtuuqmNur1ZpGMrB7Rp88wzj13U/r//+79mVc16iIBFgAwooy9CoxqvoN2mZiwoUswXBQEyoCioJVymWRqvoN2gZiwoUswXFgGuAYVFLOH877zzjmy00UZN1XgF7RI1Y0GRYr6gCJABBUUqBfni1HgF7R41Y0GRYr4gCJABBUEpBXni1ngF7SI1Y0GRYr4gCHANKAhKKcgTt8YraBepGQuKFPMFQYAMKAhKCedplcYraDepGQuKFPPVQ4AMqB5CCT9vtcYraHepGQuKFPPVQoBrQLXQSfhZHHu8mt0lasaajWix6iMDSul4p0HjFRQaasaCIsV8XgTIgLyINHANG50rr7xSTjzxROv2NGpVSWi84IzsL3/5SxuSEaZ5mWWWkTXXXFM22WSTNs/KL6gZK0eD52EQ4BpQGLTq5H3vvffk/PPPF7g+bSQlofH69NNPLe2vvfaafPzxx/YPIuDQoUNl0003tcdqfaJmrBoyvF8XAcPUNATUbYVRwM3bb78duc6rrrrK1qGMLHIdUQqOHz/etjt27NiK4v379zfqY8joZtSKZ+U3XnrpJaNRNszOO+9sdBZX/ojnRMAXAc6A6rLo1mVIq8YLTu6///57QdywWomasVro8JkfAmRAfqgkcA/izu677273eV1xxRUJUODfJESziy66SNZdd10b6NA/1+y7u+22mxXXIIqOGDFi9gOeEQEfBMiAfEBp9S1ovDDLQIDAu+66qykuVaP2QcUnu/CMxWfED0OkVMQXu+aaawJXOWjQIMYZC4xWsTO2K3b3k+89NF577rmnfPDBBzaWVzNdqkbpHcL6rLjiivLFF1/IsGHDBGKVrksJAhqGSWBY0ApiRsQ4Y2GQK1ZezoASHu8kNF61urzllltapnHIIYfIU089JRMmTJA99thDfvzxx1rFKp5RM1YBCW/4IEAG5ANKq26lbY+Xt98dO3a0UTHglP7MM8/0Pq57zT1jdSEqfAYyoBheAYgcmD2U/3322WdtWkqrxqsNkXqx1VZbyaGHHmqDHcJGKGyiZiwsYgXL76uc581ICDg7IH2FrE1N+fH2228v1alrI0YXeE337t3NzJkzS/eTPKllB6SGlUYXo42G/4ls33PWWWdZTDTOWJLdZNspQ4BbMVr8wcnSHq9mQ8M9Y81GNPv1UQRr0hg+88wzdh9YrerKNV733XdfU4MI1mo3Lc+gGYNIBs3Y5MmTa5L1xBNPyLXXXlszDx9mHwEyoCaN4ciRI+W8886rWVvaNF41iY3hYRjNGGLTDxkyJAYqWGWaECADatJovPrqq7L66qtXrS3tGq+qhDf5QVDNGLCEbdT06dObTAGrSxMCZEBNGo3XX3+9KgPKisarSVDUrSaIZswx8yiat7oEMENqECADasJQwJcO1OzuR1NepdvjteGGG0qa9niV05jEeb09Y6uttprMMcccQgaUxOi0rk1uxWgC1u5H4mVA5Xu87r777kT3eDWhm02vAnvG3njjDTnssMOka9eu0q1bt1Ib6tZDlltuOTKgEiL5POEMqAnjCgYE74ErrbRSqbaia7xKQNQ5qaUZA0PH2hpTfhEgA2rC2IIBgfmo065SbUXXeJWAqHNSSzMGBuRml3Wq4eOMIkAG1ISB82rAsHt8+PDhdvtC7969m9BCvquophkDA/r8888Fa2xM+USADKjBcVXLdruO4dZ/oPE66qij5MADD5QBAwb41j5jxgx5+umnfZ/l+SbWe+A32y/5acbWWGMNm5WzID/EcnIvZVtDMkeOarnsHiddZLa+oKvt8YKP5NGjR5sDDjjALLDAAmbeeeet62M5c2DUIVhng0Y1W0Y3uBrsCfv6668rSpTvGVM3sGbuuec2Gq2jIh9v5AMByUc3kuuFbqmwDOjll182q6yyiunSpYv55JNPSgS9+eabZuDAgaZz5842n3oaNKeccop56623SnmKcqJOzszll19uNMSPxWK++eYz++67rxk1alSbTa59+/a1TvB1e4tRdbzp169fUSAqXD/JgBoc8nPOOcfOZrbbbjujLlUNdpWrTZC59NJLjdr+2B8aZjwqkhnslv/5558bbDEfxSdOnGgGDx5sGbYKE2bppZc2Gk/NqLhlvv32W7PRRhuZxRZbzKirWotjPnrNXngR4G74BkVp/VqLilYC5+0nn3yy6IxHHnjgAYEafuuttxYVuWTXXXcV/do32FI+i+sLadfDrr/+elGXJQLbqfXWW0/69OkjOluyOGo4IFFxzRom5hOF4vaKDKjBse/UqZN8+OGHoms6ol9ugQXv/vvvLypayFJLLdVg7cUqDvzuueceATN69NFHbed1xohZumisNVl++eWLBUgBeksG1OAgw1m7OhWz1rxgPAhfw9Q4AlC933TTTXLJJZdY1x3PPfecqEO0xitmDalCgAzIZzjggB1bJ+68807RaJ821HKHDh1k/fXXt7G7YNsDy2ck7AFr37596dqnOt5qEIGpU6fa8ECuGqjlb7zxRivqAv955plHdJHfOs/HRwDjwZQNBMiAPOP0yiuvyF577SWqyZJp06Z5nooNTwOxC6LCb3/724rnvBEfArCfUo2YqNZMsC7kjdSBdTZYVqtiQA4//PD4CGHNTUOADKgMSnxZ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" /><!-- --></p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1">table <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">toString</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">cat</span>()</a>
+<a class="sourceLine" id="cb44-2" data-line-number="2"><span class="co">#&gt; b =&gt; LL</span></a>
+<a class="sourceLine" id="cb44-3" data-line-number="3"><span class="co">#&gt; o =&gt; LR</span></a>
+<a class="sourceLine" id="cb44-4" data-line-number="4"><span class="co">#&gt; f =&gt; RLL</span></a>
+<a class="sourceLine" id="cb44-5" data-line-number="5"><span class="co">#&gt; r =&gt; RLR</span></a>
+<a class="sourceLine" id="cb44-6" data-line-number="6"><span class="co">#&gt; z =&gt; RRL</span></a>
+<a class="sourceLine" id="cb44-7" data-line-number="7"><span class="co">#&gt; a =&gt; RRR</span></a></code></pre></div>
+</div>
+<div id="coding-and-decoding" class="section level2">
+<h2>Coding and decoding</h2>
+<p>Now, we have everything we need in order to encode and decode strings/codes. Both encoding and decoding requires a tree, so we define a function for building a tree from a string:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb45-1" data-line-number="1"><span class="ot">codes ::</span> [<span class="dt">Char</span>] <span class="ot">-&gt;</span> <span class="dt">Tree</span></a>
+<a class="sourceLine" id="cb45-2" data-line-number="2">codes <span class="fu">=</span> makeTree <span class="fu">.</span> frequency</a></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1">codes &lt;-<span class="st"> </span>. <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">frequency</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">make_tree</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1">tree &lt;-<span class="st"> </span><span class="kw">codes</span>(<span class="st">&quot;foobarbaz&quot;</span>)</a>
+<a class="sourceLine" id="cb47-2" data-line-number="2">tree <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">code_table</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">toString</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">cat</span>()</a>
+<a class="sourceLine" id="cb47-3" data-line-number="3"><span class="co">#&gt; b =&gt; LL</span></a>
+<a class="sourceLine" id="cb47-4" data-line-number="4"><span class="co">#&gt; o =&gt; LR</span></a>
+<a class="sourceLine" id="cb47-5" data-line-number="5"><span class="co">#&gt; f =&gt; RLL</span></a>
+<a class="sourceLine" id="cb47-6" data-line-number="6"><span class="co">#&gt; r =&gt; RLR</span></a>
+<a class="sourceLine" id="cb47-7" data-line-number="7"><span class="co">#&gt; z =&gt; RRL</span></a>
+<a class="sourceLine" id="cb47-8" data-line-number="8"><span class="co">#&gt; a =&gt; RRR</span></a></code></pre></div>
+<p>As I have already explained, encoding combines looking up the code for individual characters and concatenating all of them. The lookup is implemented in Haskell like this:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="ot">lookupTable ::</span> <span class="dt">Table</span> <span class="ot">-&gt;</span> <span class="dt">Char</span> <span class="ot">-&gt;</span> <span class="dt">HCode</span></a>
+<a class="sourceLine" id="cb48-2" data-line-number="2">lookupTable []            c <span class="fu">=</span> error <span class="st">&quot;lookupTable&quot;</span></a>
+<a class="sourceLine" id="cb48-3" data-line-number="3">lookupTable ((ch,n) <span class="fu">:</span> tb) c</a>
+<a class="sourceLine" id="cb48-4" data-line-number="4">  <span class="fu">|</span> ch <span class="fu">==</span> c                 <span class="fu">=</span> n</a>
+<a class="sourceLine" id="cb48-5" data-line-number="5">  <span class="fu">|</span> otherwise               <span class="fu">=</span> lookupTable tb c</a></code></pre></div>
+<p>And in R like this:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" data-line-number="1">lookup_table &lt;-<span class="st"> </span><span class="cf">function</span>(table, char) {</a>
+<a class="sourceLine" id="cb49-2" data-line-number="2">   <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb49-3" data-line-number="3">       table,</a>
+<a class="sourceLine" id="cb49-4" data-line-number="4">       NIL -&gt;<span class="st"> </span><span class="kw">stop</span>(<span class="kw">paste</span>(char, <span class="st">&quot;was not found in the table&quot;</span>)),</a>
+<a class="sourceLine" id="cb49-5" data-line-number="5">       <span class="kw">CONS</span>(<span class="kw">PAIR</span>(ch,n), tb) -&gt;<span class="st"> </span>{</a>
+<a class="sourceLine" id="cb49-6" data-line-number="6">           <span class="cf">if</span> (ch <span class="op">==</span><span class="st"> </span>char) {</a>
+<a class="sourceLine" id="cb49-7" data-line-number="7">               n</a>
+<a class="sourceLine" id="cb49-8" data-line-number="8">           } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb49-9" data-line-number="9">               <span class="kw">lookup_table</span>(tb, char)</a>
+<a class="sourceLine" id="cb49-10" data-line-number="10">           }</a>
+<a class="sourceLine" id="cb49-11" data-line-number="11">       }</a>
+<a class="sourceLine" id="cb49-12" data-line-number="12">   ) </a>
+<a class="sourceLine" id="cb49-13" data-line-number="13">}</a></code></pre></div>
+<p>The encoding combines that with concatenation. We map over the characters and look up their code. We then concatenate the result.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb50-1" data-line-number="1"><span class="ot">codeMessage ::</span> <span class="dt">Table</span> <span class="ot">-&gt;</span> [<span class="dt">Char</span>] <span class="ot">-&gt;</span> <span class="dt">HCode</span></a>
+<a class="sourceLine" id="cb50-2" data-line-number="2">codeMessage tbl <span class="fu">=</span> concat <span class="fu">.</span> map (lookupTable tbl)</a></code></pre></div>
+<p>Our <code>llconcat</code> function only works on two linked lists, however, so we need to handle concatenation slightly differently. I have handled it by writing a reduce function that I can use to concatenate lists pairwise:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1">llreduce &lt;-<span class="st"> </span><span class="cf">function</span>(llist, f, acc) {</a>
+<a class="sourceLine" id="cb51-2" data-line-number="2">    <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb51-3" data-line-number="3">        llist,</a>
+<a class="sourceLine" id="cb51-4" data-line-number="4">        NIL -&gt;<span class="st"> </span>acc,</a>
+<a class="sourceLine" id="cb51-5" data-line-number="5">        <span class="kw">CONS</span>(val, rest) -&gt;<span class="st"> </span><span class="kw">llreduce</span>(rest, f, <span class="kw">f</span>(acc, val))  </a>
+<a class="sourceLine" id="cb51-6" data-line-number="6">    )</a>
+<a class="sourceLine" id="cb51-7" data-line-number="7">}</a></code></pre></div>
+<p>The <code>code_message</code> is very similar to the Haskell version, but I have added a translation from strings to lists before the main code (this isn’t needed in Haskell because strings are already lists of characters) and I set the class of the result to make it easier to print coded messages.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1">code_message &lt;-<span class="st"> </span><span class="cf">function</span>(message, table) {</a>
+<a class="sourceLine" id="cb52-2" data-line-number="2">    message <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">string_to_list</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb52-3" data-line-number="3"><span class="st">        </span><span class="kw">llmap</span>(<span class="cf">function</span>(char) <span class="kw">lookup_table</span>(table, char)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb52-4" data-line-number="4"><span class="st">        </span><span class="kw">llreduce</span>(llconcat, NIL) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb52-5" data-line-number="5"><span class="st">        </span><span class="kw">structure</span>(<span class="dt">class =</span> <span class="kw">c</span>(<span class="st">&quot;code&quot;</span>, <span class="kw">class</span>(.)))</a>
+<a class="sourceLine" id="cb52-6" data-line-number="6">}</a>
+<a class="sourceLine" id="cb52-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb52-8" data-line-number="8">tree &lt;-<span class="st"> </span><span class="kw">codes</span>(<span class="st">&quot;foobarbaz&quot;</span>)</a>
+<a class="sourceLine" id="cb52-9" data-line-number="9">table &lt;-<span class="st"> </span>tree <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">code_table</span>()</a>
+<a class="sourceLine" id="cb52-10" data-line-number="10">code &lt;-<span class="st"> &quot;foobar&quot;</span> <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">code_message</span>(table)</a>
+<a class="sourceLine" id="cb52-11" data-line-number="11">code <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">toString</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">cat</span>()</a>
+<a class="sourceLine" id="cb52-12" data-line-number="12"><span class="co">#&gt; RLLLRLRLLRRRRLR</span></a></code></pre></div>
+<p>Decoding works by following paths down the tree until we get to a character, which we then add to the list as the decoding of a part of the code, and doing this as long as we have path-bits in our encoded message.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="ot">decodeMessage ::</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">HCode</span> <span class="ot">-&gt;</span> [<span class="dt">Char</span>]</a>
+<a class="sourceLine" id="cb53-2" data-line-number="2">decodeMessage tr <span class="fu">=</span></a>
+<a class="sourceLine" id="cb53-3" data-line-number="3">  decodeByTree tr</a>
+<a class="sourceLine" id="cb53-4" data-line-number="4">  <span class="kw">where</span></a>
+<a class="sourceLine" id="cb53-5" data-line-number="5">    decodeByTree (<span class="dt">Node</span> n t1 t2) (<span class="dt">L</span> <span class="fu">:</span> rest) <span class="fu">=</span> decodeByTree t1 rest</a>
+<a class="sourceLine" id="cb53-6" data-line-number="6">    decodeByTree (<span class="dt">Node</span> n t1 t2) (<span class="dt">R</span> <span class="fu">:</span> rest) <span class="fu">=</span> decodeByTree t2 rest</a>
+<a class="sourceLine" id="cb53-7" data-line-number="7">    decodeByTree (<span class="dt">Leaf</span> c n)     rest       <span class="fu">=</span> c <span class="fu">:</span> decodeByTree tr rest</a>
+<a class="sourceLine" id="cb53-8" data-line-number="8">    decodeByTree t              []         <span class="fu">=</span> []</a></code></pre></div>
+<p>For this function, the R code closely follows the Haskell code, except that we have to put the <code>decode_by_tree</code> function at the beginning of the function instead of in a <code>where</code> block:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">decode_message &lt;-<span class="st"> </span><span class="cf">function</span>(tree, code) {</a>
+<a class="sourceLine" id="cb54-2" data-line-number="2">    decode_by_tree &lt;-<span class="st"> </span><span class="cf">function</span>(tr, code) {</a>
+<a class="sourceLine" id="cb54-3" data-line-number="3">        <span class="kw">cases</span>(</a>
+<a class="sourceLine" id="cb54-4" data-line-number="4">            <span class="kw">..</span>(tr, code),</a>
+<a class="sourceLine" id="cb54-5" data-line-number="5">            <span class="kw">..</span>(<span class="kw">Node</span>(n, t1, t2), <span class="kw">CONS</span>(L, rest)) -&gt;<span class="st"> </span><span class="kw">decode_by_tree</span>(t1, rest),</a>
+<a class="sourceLine" id="cb54-6" data-line-number="6">            <span class="kw">..</span>(<span class="kw">Node</span>(n, t1, t2), <span class="kw">CONS</span>(R, rest)) -&gt;<span class="st"> </span><span class="kw">decode_by_tree</span>(t2, rest),</a>
+<a class="sourceLine" id="cb54-7" data-line-number="7">            <span class="kw">..</span>(<span class="kw">Leaf</span>(char, n), rest) -&gt;<span class="st"> </span><span class="kw">CONS</span>(char, <span class="kw">decode_by_tree</span>(tree, rest)),</a>
+<a class="sourceLine" id="cb54-8" data-line-number="8">            <span class="kw">..</span>(t, NIL) -&gt;<span class="st"> </span>NIL,</a>
+<a class="sourceLine" id="cb54-9" data-line-number="9">        )</a>
+<a class="sourceLine" id="cb54-10" data-line-number="10">    }</a>
+<a class="sourceLine" id="cb54-11" data-line-number="11">    <span class="kw">decode_by_tree</span>(tree, code) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.vector</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">paste0</span>(<span class="dt">collapse =</span> <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb54-12" data-line-number="12">}</a>
+<a class="sourceLine" id="cb54-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb54-14" data-line-number="14"><span class="kw">decode_message</span>(tree, code)</a>
+<a class="sourceLine" id="cb54-15" data-line-number="15"><span class="co">#&gt; [1] &quot;foobar&quot;</span></a></code></pre></div>
+<p>That’s it. Huffman coding in R.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

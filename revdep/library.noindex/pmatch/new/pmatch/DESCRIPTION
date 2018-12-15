@@ -15,30 +15,18 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Language: en-GB
-Depends:
-    R (>= 3.2)
-Imports:
-    dplyr,
-    purrr,
-    rlang (>= 0.3.0),
-    tibble,
-    glue,
-    foolbox,
-    magrittr,
-    Rcpp
-Suggests:
-    shiny,
-    DT,
-    covr,
-    styler,
-    lintr,
-    testthat,
-    knitr,
-    rmarkdown,
-    microbenchmark,
-    ggraph,
-    tidygraph,
-    tailr
+Depends: R (>= 3.2)
+Imports: dplyr, purrr, rlang (>= 0.3.0), tibble, glue, foolbox,
+        magrittr, Rcpp
+Suggests: shiny, DT, covr, styler, lintr, testthat, knitr, rmarkdown,
+        microbenchmark, ggraph, tidygraph, tailr
 URL: https://github.com/mailund/pmatch
 BugReports: https://github.com/mailund/pmatch/issues
 VignetteBuilder: knitr
+RemoteType: local
+RemoteUrl: /Users/mailund/Projects/pmatch
+NeedsCompilation: yes
+Packaged: 2018-12-15 10:17:41 UTC; mailund
+Author: Thomas Mailund [aut, cre]
+Maintainer: Thomas Mailund <mailund@birc.au.dk>
+Built: R 3.5.1; ; 2018-12-15 10:17:42 UTC; unix

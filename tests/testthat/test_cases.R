@@ -170,7 +170,7 @@ test_that("We can do quasi-quoting", {
     type := ONE | TWO(x)
     two_q <- rlang::expr(TWO(2))
 
-    expect_equal(cases(TWO(2), ONE -> 1, rlang::UQ(two_q) -> TWO(2)), TWO(2))
+    expect_equal(cases(TWO(2), ONE -> 1, !! two_q -> TWO(2)), TWO(2))
 })
 
 test_that("We handle syntax errors gracefully", {

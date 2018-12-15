@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Thomas Mailund" />
+
+<meta name="date" content="2018-10-19" />
+
+<title>Getting Started with pmatch</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Getting Started with pmatch</h1>
+<h4 class="author"><em>Thomas Mailund</em></h4>
+<h4 class="date"><em>2018-10-19</em></h4>
+
+
+
+<p>The <code>pmatch</code> package allows you to define and match against patterns using a syntax similar to <a href="https://en.wikipedia.org/wiki/Haskell_(programming_language)">Haskell</a> and <a href="https://en.wikipedia.org/wiki/Standard_ML">Standard ML</a>. In those two programming languages, you define new data types by specifying function-like constructors for creating values of those types, and you can then match actual values against constructors when you write functions, such that you can easily dispatch particular values to particular cases when defining functions.</p>
+<div id="a-simple-example-a-linked-list." class="section level2">
+<h2>A simple example: A linked list.</h2>
+<p>R has the <code>list</code> data type for handling sequences of values of any type, but despite its name it is not the kind of lists you see in most functional programming languages. In pure function programming languages you cannot modify data so whenever you want to update a data structure you have to construct a completely new one. (in R you have to jump through some loops to do so, but the language lets you fake it to some degree). The only way you can modify the kind of lists that <code>list</code> represent is to make a new copy of the entire object. With linked lists, however, lists are represented in a pointer-like structure so you can modify the beginning of lists and share the tail of lists between different instances.</p>
+<p>That is a lot of abstract discussion of lists. To make it concrete, consider a <code>list</code> such as this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">classical_list &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</a></code></pre></div>
+<p>This is a <code>list</code> with three values, 1, 2, and 3, and these are represented as a contiguous chunk of computer memory. If we construct a new list by prepending a value</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">another_classical_list &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, classical_list)</a></code></pre></div>
+<p>R will have to create a new list with four elements that are placed in contiguous memory. This can be visualised as the figure below, where the <code>list</code> objects are shown as boxes and the mapping from variables to values are shown as arrows.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>Because of the way R represent <code>list</code> objects, we need to make a copy of <code>classical_list</code> to create <code>another_classical_list</code>; after all, the elements have to be in contiguous memory.</p>
+<p>Consider as an alternative this <em>linked list</em>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">cons &lt;-<span class="st"> </span><span class="cf">function</span>(head, tail) {</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">    <span class="kw">list</span>(<span class="dt">head =</span> head, <span class="dt">tail =</span> tail)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">}</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">a_list &lt;-<span class="st"> </span><span class="kw">cons</span>(<span class="dv">1</span>, <span class="kw">cons</span>(<span class="dv">2</span>, <span class="kw">cons</span>(<span class="dv">3</span>, <span class="ot">NULL</span>)))</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">a_list</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; $head</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; [1] 1</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; $tail</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; $tail$head</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; [1] 2</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; $tail$tail</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; $tail$tail$head</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; [1] 3</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; $tail$tail$tail</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; NULL</span></a></code></pre></div>
+<p>By constructing objects with a head and a tail, we can let different variables refer to different <code>list</code> objects that share part of their tail. For example, with this <code>another_list</code>,</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">another_list &lt;-<span class="st"> </span><span class="kw">cons</span>(<span class="dv">0</span>, a_list)</a></code></pre></div>
+<p>we have one <code>list</code> object only used in <code>another_list</code> and three that are shared between <code>a_list</code> and <code>another_list</code>. In the figure below, I have illustrated how these lists are represented in memory. Again, the rectangles represent the <code>list</code> objects the data structures are constructed from and the arrows represent which data objects which variables refer to, where “variables”&quot; now refer both to named <code>list</code> components and the two variables <code>a_list</code> and <code>another_list</code>.</p>
+<p><img src="data:image/png;base64,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" /></p>
+<p>We cannot modify a <code>list</code> object without creating a new copy of them, but we do not need to when we create <code>another_list</code>. We just need to create the first <code>list</code> element; its <code>tail</code> can simply point to the same object that <code>a_list</code> points to.</p>
+<p>To work with this kind of lists, we need to be able to unpack the components of each <code>list</code> object they are constructed form. For example, to compute the length of a list, we can do something like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">list_length &lt;-<span class="st"> </span><span class="cf">function</span>(the_list) {</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">    n &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">    <span class="cf">while</span> (<span class="op">!</span><span class="kw">is.null</span>(the_list)) {</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">        n &lt;-<span class="st"> </span>n <span class="op">+</span><span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">        the_list &lt;-<span class="st"> </span>the_list<span class="op">$</span>tail</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">    }</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">    n</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">}</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="kw">list_length</span>(a_list)</a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; [1] 3</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="kw">list_length</span>(another_list)</a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; [1] 4</span></a></code></pre></div>
+<p>This is an imperative (or looping) implementation. In functional programming, a recursive version might be more natural</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">rec_list_length &lt;-<span class="st"> </span><span class="cf">function</span>(the_list) {</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">    <span class="cf">if</span> (<span class="kw">is.null</span>(the_list)) <span class="dv">0</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="cf">else</span> <span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">list_length</span>(the_list<span class="op">$</span>tail)</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">}</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw">rec_list_length</span>(a_list)</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; [1] 3</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="kw">rec_list_length</span>(another_list)</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt; [1] 4</span></a></code></pre></div>
+<p>In a case as simple as this, there is no particular benefit to the recursive function, but in many cases recursion leads to simpler implementations.</p>
+<p>What we have done so far in this example is this: we have defined a data structure with a constructor, <code>cons</code> that creates new elements from simpler instances of the same type, with <code>NULL</code> used as the simplest form of the type. To work with elements of the type we test whether we have our hands on the basic element, using <code>is.null</code>, or a more complex one.</p>
+<p>With the <code>pmatch</code> you can be more explicit in how you define types <em>and</em> in how you match which kind of instances you have.</p>
+<p>To define a linked list type we want to specify what the basic instances look like—we are more explicit about it than just using <code>NULL</code>—and what composite instances look like. We can define a linked list type like this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">linked_list <span class="op">:</span><span class="er">=</span><span class="st"> </span>NIL <span class="op">|</span><span class="st"> </span><span class="kw">CONS</span>(car, cdr <span class="op">:</span><span class="st"> </span>linked_list)</a></code></pre></div>
+<p>Here, I have used <code>car</code> for the head of a list and <code>cdr</code> for the tail. These are traditional names inherited from the <a href="https://en.wikipedia.org/wiki/CAR_and_CDR">lisp programming language that in turn inherited them from IBM 704</a>. I have chosen these names so we do not class with the R functions <code>head</code> and <code>tail</code>. This expression defines the type <code>linked_list</code>, specify that we can create objects of the type using one of the two constructores <code>NIL</code> or <code>CONS()</code>, where the former takes no arguments and the second two, of which the second argument must be another linked list.</p>
+<p>We can create <code>a_list</code> using these constructors like this:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">a_list &lt;-<span class="st"> </span><span class="kw">CONS</span>(<span class="dv">1</span>, <span class="kw">CONS</span>(<span class="dv">2</span>, <span class="kw">CONS</span>(<span class="dv">3</span>, NIL)))</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">a_list</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; CONS(car = 1, cdr = CONS(car = 2, cdr = CONS(car = 3, cdr = NIL)))</span></a></code></pre></div>
+<p>We can’t use <code>is.null</code> to check if a list is <code>NIL</code>, but instead we can use the function <code>cases</code>. It will match a value against a pattern, find the first pattern that matches, and evaluate the expression it is associated with. For list lengths, we can implement a version that works with this definition of the type like this:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">list_length &lt;-<span class="st"> </span><span class="cf">function</span>(the_list)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">    <span class="kw">cases</span>(the_list,</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">          NIL -&gt;<span class="st"> </span><span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">          <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">list_length</span>(cdr))</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6"><span class="kw">list_length</span>(a_list)</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; [1] 3</span></a></code></pre></div>
+<p>When we pattern-match like this, we also bind variables. In the <code>CONS(car, cdr)</code> pattern we didn’t have to name the variables <code>car</code> and <code>cdr</code> just because we called them in the constructor. In the pattern matching they are just variables and they get set to the corresponding values in the structor of <code>the_list</code>. This is why we can use <code>cdr</code> in the expression we evaluate when we match the pattern—<code>cdr</code> will be bound to the tail of the list.</p>
+<p>We can also see this in another example where we sum all the elements in a list:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">list_sum &lt;-<span class="st"> </span><span class="cf">function</span>(the_list)</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">    <span class="kw">cases</span>(the_list,</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">          NIL -&gt;<span class="st"> </span><span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">          <span class="kw">CONS</span>(car, cdr) -&gt;<span class="st"> </span>car <span class="op">+</span><span class="st"> </span><span class="kw">list_sum</span>(cdr))</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="kw">list_sum</span>(a_list)</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; [1] 6</span></a></code></pre></div>
+<p>Here, both <code>car</code> and <code>cdr</code> gets bound to components of <code>the_list</code>.</p>
+</div>
+<div id="rules-for-defining-functions-and-matching-patterns" class="section level2">
+<h2>Rules for defining functions and matching patterns</h2>
+<p>Creating types with <code>pmatch</code> follows these rules:</p>
+<ol style="list-style-type: decimal">
+<li>You define a new type using <code>:=</code> and name the type to the left-hand side of the operator and specify constructors on the right-hand side.</li>
+<li>Constructors are provided as one or more <code>|</code>-separated constructor-specifications.</li>
+<li>A constructor-specification can be a constant or be constructed from other values,
+<ol style="list-style-type: lower-alpha">
+<li>If it is a constant, you should specify a name, and</li>
+<li>if it constructs values from other elements you should provide its arguments as a comma-separated list after the constructor name.</li>
+</ol></li>
+<li>You can specify the type of a constructor argument by adding the type name after <code>:</code> after the argument name.</li>
+</ol>
+<p>It might look a bit complicated, but the rules simply mean that you write expressions like these</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">colours <span class="op">:</span><span class="er">=</span><span class="st"> </span>RED <span class="op">|</span><span class="st"> </span>GREEN <span class="op">|</span><span class="st"> </span>BLUE</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">counts <span class="op">:</span><span class="er">=</span><span class="st"> </span>ZERO <span class="op">|</span><span class="st"> </span>ONE <span class="op">|</span><span class="st"> </span>MANY</a></code></pre></div>
+<p>to define constants or</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">linked_list <span class="op">:</span><span class="er">=</span><span class="st"> </span>NIL <span class="op">|</span><span class="st"> </span><span class="kw">CONS</span>(car, cdr <span class="op">:</span><span class="st"> </span>linked_list)</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">tree <span class="op">:</span><span class="er">=</span><span class="st"> </span>Leaf <span class="op">|</span><span class="st"> </span><span class="kw">Tree</span>(left <span class="op">:</span><span class="st"> </span>tree, val, right <span class="op">:</span><span class="st"> </span>tree)</a></code></pre></div>
+<p>for recursive data structures.</p>
+<p>When you match on patterns you can match on constants or more complicated constructions. Variables in a pattern will be bound and can be used in the expression that a pattern match function will evaluate.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">f &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">    <span class="kw">cases</span>(tree,</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">          Leaf -&gt;<span class="st"> &quot;leaf&quot;</span>,</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">          <span class="kw">Tree</span>(left, <span class="dv">0</span>, right) -&gt;<span class="st"> &quot;zero&quot;</span>,</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">          <span class="kw">Tree</span>(left, v, right) -&gt;<span class="st"> </span>v)</a>
+<a class="sourceLine" id="cb13-6" data-line-number="6">}</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="kw">f</span>(Leaf)</a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; [1] &quot;leaf&quot;</span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="kw">f</span>(<span class="kw">Tree</span>(Leaf,<span class="dv">0</span>,Leaf))</a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; [1] &quot;zero&quot;</span></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="kw">f</span>(<span class="kw">Tree</span>(<span class="kw">Tree</span>(Leaf,<span class="dv">0</span>,Leaf), <span class="dv">42</span>, <span class="kw">Tree</span>(Leaf, <span class="dv">1</span>, Leaf)))</a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt; [1] 42</span></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="kw">f</span>(<span class="kw">Tree</span>(<span class="kw">Tree</span>(Leaf,<span class="dv">0</span>,Leaf), <span class="dv">1984</span>, <span class="kw">Tree</span>(Leaf, <span class="dv">1</span>, Leaf)))</a>
+<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt; [1] 1984</span></a></code></pre></div>
+<p>All variables that appear in a pattern and do not refer to a constructor will be assigned a value if the pattern matches. If you want to match against a value you have in a variable you can use quasi-quotation using the “bang-bang” operator, <code>!!</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">important &lt;-<span class="st"> </span><span class="dv">42</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">f &lt;-<span class="st"> </span><span class="cf">function</span>(tree) {</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">    <span class="kw">cases</span>(tree,</a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">          Leaf -&gt;<span class="st"> &quot;leaf&quot;</span>,</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5">          <span class="kw">Tree</span>(left, <span class="dv">0</span>, right) -&gt;<span class="st"> &quot;zero&quot;</span>,</a>
+<a class="sourceLine" id="cb14-6" data-line-number="6">          <span class="kw">Tree</span>(left, <span class="op">!!</span>important, right) -&gt;<span class="st"> &quot;The meaning of life!&quot;</span>,</a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">          <span class="kw">Tree</span>(left, v, right) -&gt;<span class="st"> </span>v)</a>
+<a class="sourceLine" id="cb14-8" data-line-number="8">}</a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="kw">f</span>(Leaf)</a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; [1] &quot;leaf&quot;</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="kw">f</span>(<span class="kw">Tree</span>(Leaf,<span class="dv">0</span>,Leaf))</a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; [1] &quot;zero&quot;</span></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="kw">f</span>(<span class="kw">Tree</span>(<span class="kw">Tree</span>(Leaf,<span class="dv">0</span>,Leaf), <span class="dv">42</span>, <span class="kw">Tree</span>(Leaf, <span class="dv">1</span>, Leaf)))</a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt; [1] &quot;The meaning of life!&quot;</span></a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="kw">f</span>(<span class="kw">Tree</span>(<span class="kw">Tree</span>(Leaf,<span class="dv">0</span>,Leaf), <span class="dv">1984</span>, <span class="kw">Tree</span>(Leaf, <span class="dv">1</span>, Leaf)))</a>
+<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co">#&gt; [1] 1984</span></a></code></pre></div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

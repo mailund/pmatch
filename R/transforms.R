@@ -1,5 +1,3 @@
-# FIXME: Replace these with `foolbox` code when going to 0.1.4 id:1 gh:34 ic:gh
-
 #' Recursive function for transforming a call `cases`.
 #'
 #' @param expr The expression to transform.

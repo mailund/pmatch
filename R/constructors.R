@@ -261,7 +261,7 @@ construction_printer <- function(x, ...) {
         stop(simpleError(error_msg, call = match.call()))
     }
 
-    data_type_name <- rlang::quo_name(data_type)
+    data_type_name <- rlang::as_string(rlang::quo_get_expr(data_type))
     process_alternatives(constructors, data_type_name, rlang::get_env(data_type))
 
     assign(paste0("toString.", data_type_name), deparse_construction, envir = rlang::get_env(data_type))

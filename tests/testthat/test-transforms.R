@@ -24,7 +24,7 @@ test_that("we can translate a function that call cases into one that doesn't", {
 
     lldrop <- function(llist, k, acc = NIL) {
         if (k == 0) return(llist)
-        pmatch::cases(
+        cases(
             llist,
             NIL -> stop("There were less than k elements in the list"),
             CONS(car, cdr) -> lldrop(cdr, k - 1)

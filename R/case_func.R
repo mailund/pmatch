@@ -1,9 +1,4 @@
 
-# I'm putting this here, since it is pattern matching C++ is likely to be used.
-
-# #' @useDynLib pmatch
-# #' @importFrom Rcpp sourceCpp
-NULL
 
 func_constructor_test <- function(pattern_expr, nesting, eval_env) {
     if (rlang::is_call(pattern_expr)) {
@@ -20,7 +15,8 @@ func_constructor_test <- function(pattern_expr, nesting, eval_env) {
             for (i in 2:length(pattern_expr)) {
                 var <- rlang::sym(constructor_vars[i - 1])
                 nesting_nesting <- call("$", nesting, var)
-                test_exprs <- c(
+                test_exprs <- call(
+                    "&&",
                     test_exprs,
                     transform_match(
                         pattern_expr[[i]],
@@ -29,7 +25,7 @@ func_constructor_test <- function(pattern_expr, nesting, eval_env) {
                     )
                 )
             }
-            return(as.call(c(quote(all), test_exprs)))
+            return(test_exprs)
         }
     }
     NULL
@@ -373,4 +369,15 @@ case_trfunc <- function(...) {
         body,
         eval_env
     )
+}
+
+
+# I'm putting this here, since it is pattern matching C++ is likely to be used.
+
+#' @useDynLib pmatch c_check_const
+NULL
+
+#' @export
+check_const <- function(expr, const_name, val_expr) {
+    .Call(c_check_const, expr, const_name, substitute(val_expr), environment())
 }

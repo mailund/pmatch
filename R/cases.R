@@ -266,9 +266,10 @@ cases <- function(expr, ...) {
             stop(paste0("Unexpected pattern call to ", match_expr[[1]])) # nocov
         )
 
-        match <- test_pattern_(expr, test_expr, eval_env)
-        if (!rlang::is_null(match)) {
-            return(rlang::eval_tidy(result_expr, data = match, env = eval_env))
+        match_env <- test_pattern_(expr, test_expr, eval_env)
+        if (!rlang::is_null(match_env)) {
+            match_mask <- rlang::new_data_mask(match_env)
+            return(rlang::eval_tidy(result_expr, match_mask, eval_env))
         }
     }
 
@@ -292,8 +293,8 @@ cases <- function(expr, ...) {
 make_match_expr <- function(expr, match_expr, continue) {
     assert_correctly_formed_pattern_expression(match_expr)
     pattern_test <-
-        rlang::expr(!rlang::is_null(
-            ..match_env <- pmatch::test_pattern(!!expr, !!match_expr[[3]])
+        rlang::expr(!is.null(
+            ..match_env <- test_pattern(!!expr, !!match_expr[[3]])
         ))
     eval_match <-
         rlang::expr(with(..match_env, !!match_expr[[2]]))

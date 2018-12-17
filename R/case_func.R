@@ -372,12 +372,3 @@ case_trfunc <- function(...) {
 }
 
 
-# I'm putting this here, since it is pattern matching C++ is likely to be used.
-
-#' @useDynLib pmatch c_check_const
-NULL
-
-#' @export
-check_const <- function(expr, const_name, val_expr) {
-    .Call(c_check_const, expr, const_name, substitute(val_expr), environment())
-}

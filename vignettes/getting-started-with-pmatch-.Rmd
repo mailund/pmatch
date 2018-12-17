@@ -113,13 +113,14 @@ a_list <- CONS(1, CONS(2, CONS(3, NIL)))
 a_list
 ```
 
-We can't use `is.null` to check if a list is `NIL`, but instead we can use the function `cases`. It will match a value against a pattern, find the first pattern that matches, and evaluate the expression it is associated with. For list lengths, we can implement a version that works with this definition of the type like this:
+We can't use `is.null` to check if a list is `NIL`, but instead we can use the function `case_func`. It creates a function that will match a value against a pattern, find the first pattern that matches, and evaluate the expression it is associated with. For list lengths, we can implement a version that works with this definition of the type like this:
 
 ```{r}
-list_length <- function(the_list)
-    cases(the_list,
-          NIL -> 0,
-          CONS(car, cdr) -> 1 + list_length(cdr))
+list_length <- case_func(
+    the_list,
+    NIL -> 0,
+    CONS(car, cdr) -> 1 + list_length(cdr)
+)
 
 list_length(a_list)
 ```
@@ -129,10 +130,11 @@ When we pattern-match like this, we also bind variables. In the `CONS(car, cdr)`
 We can also see this in another example where we sum all the elements in a list:
 
 ```{r}
-list_sum <- function(the_list)
-    cases(the_list,
-          NIL -> 0,
-          CONS(car, cdr) -> car + list_sum(cdr))
+list_sum <- case_func(
+    the_list,
+    NIL -> 0,
+    CONS(car, cdr) -> car + list_sum(cdr)
+)
 
 list_sum(a_list)
 ```
@@ -169,12 +171,12 @@ for recursive data structures.
 When you match on patterns you can match on constants or more complicated constructions. Variables in a pattern will be bound and can be used in the expression that a pattern match function will evaluate.
 
 ```{r}
-f <- function(tree) {
-    cases(tree,
-          Leaf -> "leaf",
-          Tree(left, 0, right) -> "zero",
-          Tree(left, v, right) -> v)
-}
+f <- case_func(
+    tree,
+    Leaf -> "leaf",
+    Tree(left, 0, right) -> "zero",
+    Tree(left, v, right) -> v
+)
 f(Leaf)
 f(Tree(Leaf,0,Leaf))
 f(Tree(Tree(Leaf,0,Leaf), 42, Tree(Leaf, 1, Leaf)))
@@ -185,13 +187,14 @@ All variables that appear in a pattern and do not refer to a constructor will be
 
 ```{r}
 important <- 42
-f <- function(tree) {
-    cases(tree,
-          Leaf -> "leaf",
-          Tree(left, 0, right) -> "zero",
-          Tree(left, !!important, right) -> "The meaning of life!",
-          Tree(left, v, right) -> v)
-}
+f <- case_func(
+    tree,
+    Leaf -> "leaf",
+    Tree(left, 0, right) -> "zero",
+    Tree(left, !!important, right) -> "The meaning of life!",
+    Tree(left, v, right) -> v
+)
+
 f(Leaf)
 f(Tree(Leaf,0,Leaf))
 f(Tree(Tree(Leaf,0,Leaf), 42, Tree(Leaf, 1, Leaf)))

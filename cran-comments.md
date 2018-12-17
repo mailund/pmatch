@@ -1,13 +1,12 @@
 
 
 
-# Update to 0.1.4
+# Update to 0.1.5
 
  * New constructor code. This gives an substantial speedup when generating objects.
  * Added `case_func` as a much faster replacement for using the `cases` function. 
+ * Removed `cases` (now that the faster `case_func` provides the same functionality).
  * Suggests `ggraph` and `tidygraph` for vignettes
- * Pattern matching on multiple patterns and values using
-   `..` notation.
  * Fixed a rewrite bug when using qualified names.
  * Uses `foolbox` for a safer rewrite function.
 

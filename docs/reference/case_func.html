@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Define a new data type from a sequence of constructors. — := • pmatch</title>
+<title>Creates a pattern matching function. — case_func • pmatch</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,12 +30,12 @@
 
 
 
-<meta property="og:title" content="Define a new data type from a sequence of constructors. — :=" />
+<meta property="og:title" content="Creates a pattern matching function. — case_func" />
 
-<meta property="og:description" content="This assignment operator introduces a domain-specific language for specifying
-new types. Types are defined by the ways they can be constructed. This is
-provided as a sequence of |-separated constructors, where a
-constructor is either a constant, i.e., a bare symbol, or a function." />
+<meta property="og:description" content="Creates a function that can contain expressions of a type defined by the
+:= operator. The first argument of the generated function
+will be matched against patterns provided in the ... parameter of
+this function." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -132,80 +132,73 @@ constructor is either a constant, i.e., a bare symbol, or a function." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Define a new data type from a sequence of constructors.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mailund/pmatch/blob/master/R/constructors.R'><code>R/constructors.R</code></a></small>
-    <div class="hidden name"><code>colon-equals.Rd</code></div>
+    <h1>Creates a pattern matching function.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mailund/pmatch/blob/master/R/case_func.R'><code>R/case_func.R</code></a></small>
+    <div class="hidden name"><code>case_func.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This assignment operator introduces a domain-specific language for specifying
-new types. Types are defined by the ways they can be constructed. This is
-provided as a sequence of <code>|</code>-separated constructors, where a
-constructor is either a constant, i.e., a bare symbol, or a function.</p>
+    <p>Creates a function that can contain expressions of a type defined by the
+<code><a href='colon-equals.html'>:=</a></code> operator. The first argument of the generated function
+will be matched against patterns provided in the <code>...</code> parameter of
+this function.</p>
     
     </div>
 
-    <pre class="usage"><span class='st'>":="</span>(<span class='no'>data_type</span>, <span class='no'>constructors</span>)</pre>
+    <pre class="usage"><span class='fu'>case_func</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data_type</th>
-      <td><p>The name of the new data type. Should be given as a bare
-symbol.</p></td>
-    </tr>
-    <tr>
-      <th>constructors</th>
-      <td><p>A list of <code>|</code>-separated constructor specifications.</p></td>
+      <th>...</th>
+      <td><p>A list of variables for the function in addition
+the data to be matched against which will automatically added
+plus <code>pattern -&gt; expression</code> statements.</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A function that can pattern match</p>
+    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>We can construct an enumeration like this:</p>
-<p><code> numbers := ONE | TWO | THREE </code></p>
-<p>This will create the type <code>numbers</code> and three constants, <code>ONE</code>,
-<code>TWO</code>, and <code>THREE</code> that can be matched against using the
-<code>cases</code> function</p>
-<p><code> x &lt;- TWO cases(x, ONE -&gt; 1, TWO -&gt; 2, THREE -&gt; 3) </code></p>
-<p>Evaluating the <code>cases</code> function will compare the value in
-<code>x</code> against the three patterns and recognize that <code>x</code> holds the
-constant <code>TWO</code> and it will then return <code>2</code>.</p>
-<p>With function constructors we can create more interesting data types. For
-example, we can create a linked list like this</p>
-<p><code>linked_list := NIL | CONS(car, cdr : linked_list)</code></p>
-<p>This expression defines constant <code>NIL</code> and function <code>CONS</code>. The
-function takes two arguments, <code>car</code> and <code>cdr</code>, and requires that
-<code>cdr</code> has type <code>linked_list</code>. We can create a list with three
-elements, 1, 2, and 3, by writing</p>
-<p><code>CONS(1, CONS(2, CONS(3, NIL)))</code></p>
-<p>and we can, e.g., test if a list is empty using</p>
-<p><code>cases(lst, NIL -&gt; TRUE, CONS(car,cdr) -&gt; FALSE)</code></p>
-<p>A special pattern, <code>otherwise</code>,can be used to capture all patterns, so
-the emptiness test can also be written</p>
-<p><code>cases(lst, NIL -&gt; TRUE, otherwise -&gt; FALSE)</code></p>
-<p>Arguments to a constructor function can be typed. To specify typed variables,
-we use the <code>:</code>-operator. The syntax is then <code>var : type</code>. The type
-will be checked when you construct a value using the constructor.</p>
+    <p>When you call the generated function, and the first argument is matching
+a pattern, it evaluates the expression the
+pattern is associated with. During matching, any symbol that is not
+quasi-quoted will be considered a variable, and matching values will be bound
+to such variables and be available when an expression is evaluated.</p>
+<p>Functions created with <code>case_func</code> do not support the <code>..</code> operator,
+but you can always create constructors for fixed-number tuples, e.g.</p>
+<p><code><a href='colon-equals.html'>
+tuples := ..(first, second) | ...(first, second, third)
+</a></code></p>
+<p>Be careful not to use <code>.</code> here, if you use dot as a generic
+variable.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='colon-equals.html'>:=</a></code> <code>case_func</code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>linked_list</span> <span class='kw'>:=</span> <span class='no'>NIL</span> <span class='kw'>|</span> <span class='fu'>CONS</span>(<span class='no'>car</span>, <span class='no'>cdr</span> : <span class='no'>linked_list</span>)
 <span class='no'>lst</span> <span class='kw'>&lt;-</span> <span class='fu'>CONS</span>(<span class='fl'>1</span>, <span class='fu'>CONS</span>(<span class='fl'>2</span>, <span class='fu'>CONS</span>(<span class='fl'>3</span>, <span class='no'>NIL</span>)))
-<span class='no'>len</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>lst</span>, <span class='no'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>) {
-    <span class='fu'>cases</span>(<span class='no'>lst</span>,
-          <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
-          <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>len</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='fl'>1</span>))
-}
-<span class='fu'>len</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; <span class='error'>Error in cases(lst, acc &lt;- NIL, len(cdr, acc + 1) &lt;- CONS(car, cdr)): could not find function "cases"</span></div><div class='input'>
-<span class='no'>list_sum</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>lst</span>, <span class='no'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>) {
-    <span class='fu'>cases</span>(<span class='no'>lst</span>,
-          <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
-          <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>list_sum</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='no'>car</span>))
-}
-<span class='fu'>list_sum</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; <span class='error'>Error in cases(lst, acc &lt;- NIL, list_sum(cdr, acc + car) &lt;- CONS(car,     cdr)): could not find function "cases"</span></div><div class='input'>
+<span class='no'>len</span> <span class='kw'>&lt;-</span> <span class='fu'>case_func</span>(<span class='kw'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+   <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
+   <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>len</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='fl'>1</span>)
+)
+<span class='fu'>len</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
+<span class='no'>list_sum</span> <span class='kw'>&lt;-</span> <span class='fu'>case_func</span>(<span class='kw'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+   <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
+   <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>list_sum</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='no'>car</span>)
+)
+<span class='fu'>list_sum</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; [1] 6</div><div class='input'>
+<span class='no'>tuples</span> <span class='kw'>:=</span> <span class='fu'>..</span>(<span class='no'>first</span>, <span class='no'>second</span>) <span class='kw'>|</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/dots'>...</a></span>(<span class='no'>first</span>, <span class='no'>second</span>, <span class='no'>third</span>)
+<span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'>case_func</span>(<span class='fu'>..</span>(<span class='no'>.</span>,<span class='no'>.</span>) <span class='kw'>-&gt;</span> <span class='fl'>2</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/dots'>...</a></span>(<span class='no'>.</span>,<span class='no'>.</span>,<span class='no'>.</span>) <span class='kw'>-&gt;</span> <span class='fl'>3</span>)
+<span class='fu'>f</span>(<span class='fu'>..</span>(<span class='fl'>1</span>, <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fu'>f</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/dots'>...</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>3</span>))</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -213,7 +206,11 @@ will be checked when you construct a value using the constructor.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#details">Details</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

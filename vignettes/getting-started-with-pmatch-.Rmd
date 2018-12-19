@@ -117,7 +117,6 @@ We can't use `is.null` to check if a list is `NIL`, but instead we can use the f
 
 ```{r}
 list_length <- case_func(
-    the_list,
     NIL -> 0,
     CONS(car, cdr) -> 1 + list_length(cdr)
 )
@@ -131,7 +130,6 @@ We can also see this in another example where we sum all the elements in a list:
 
 ```{r}
 list_sum <- case_func(
-    the_list,
     NIL -> 0,
     CONS(car, cdr) -> car + list_sum(cdr)
 )
@@ -172,7 +170,6 @@ When you match on patterns you can match on constants or more complicated constr
 
 ```{r}
 f <- case_func(
-    tree,
     Leaf -> "leaf",
     Tree(left, 0, right) -> "zero",
     Tree(left, v, right) -> v
@@ -188,7 +185,6 @@ All variables that appear in a pattern and do not refer to a constructor will be
 ```{r}
 important <- 42
 f <- case_func(
-    tree,
     Leaf -> "leaf",
     Tree(left, 0, right) -> "zero",
     Tree(left, !!important, right) -> "The meaning of life!",

@@ -19,7 +19,7 @@ suppressPackageStartupMessages(library(pmatch, quietly = TRUE))
 # Haskell-like pattern matching in R
 
 [![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![lifecycle](http://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![lifecycle](http://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-green.svg)](/commits/master)
 [![packageversion](https://img.shields.io/badge/Package%20version-0.1.4.9000-orange.svg?style=flat-square)](commits/master)
@@ -50,29 +50,33 @@ TWO
 THREE
 ```
 
-The interesting feature is that we can match against these constructor-constants. Using the `cases` function we can pick a pattern that matches a value.
+The interesting feature is that we can match against these constructor-constants. Using the `case_func` function we can declare functions where we can pick a pattern that matches a value.
 
 ```{r}
 elements <- list(ONE, TWO, THREE)
+match <- case_func(
+    ONE -> 1,
+    TWO -> 2,
+    THREE -> 3
+)
 for (elm in elements) {
-    value <- cases(elm,
-                   ONE -> 1,
-                   TWO -> 2,
-                   THREE -> 3)
+    value <- match(elm)
     cat("Element", toString(elm), "maps to value", toString(value), "\n")
 }
 ```
 
-The `cases` function works by matching its first element--which should be a value constructed as a type we have defined with `:=`--against a list of patterns and what `cases` should return if a pattern matches. The pattern arguments are on the form `pattern -> expression`. The value is matched against the patterns in turn and the first pattern that matches will be chosen. The expression to the right of the arrow is then evaluated and the result is returned.
+The `case_func` function works by matching its first element--which should be a value constructed as a type we have defined with `:=`--against a list of patterns. The pattern arguments are on the form `pattern -> expression`. The value is matched against the patterns in turn and the first pattern that matches will be chosen. The expression to the right of the arrow is then evaluated and the result is returned.
 
 The patterns do not need to be literal constants. You can also use variables. These will be bound to the matching value and the expression that is evaluated will see such variables bound.
 
 ```{r}
 elements <- list(ONE, TWO, THREE)
+match <- case_func(
+    ONE -> 1,
+    v -> v
+)
 for (elm in elements) {
-    value <- cases(elm,
-                   ONE -> 1,
-                   v -> v)
+    value <- match(elm)
     cat("Element", toString(elm), "maps to value", toString(value), "\n")
 }
 ```
@@ -91,16 +95,15 @@ TWO(1,2)
 THREE(1,2,3)
 ```
 
-When we use `cases` to match against such patterns, we can bind variables to the values they contain.
+When we use `case_func` to match against such patterns, we can bind variables to the values they contain.
 
 ```{r}
-f <- function(v) {
-    cases(v,
-          ZERO         -> 0,
-          ONE(x)       -> x,
-          TWO(x,y)     -> x + y,
-          THREE(x,y,z) -> x + y + z)
-}
+f <- case_func(
+    ZERO         -> 0,
+    ONE(x)       -> x,
+    TWO(x,y)     -> x + y,
+    THREE(x,y,z) -> x + y + z
+)
 
 f(ZERO)
 f(ONE(1))
@@ -111,24 +114,7 @@ f(THREE(1,2,3))
 You can nest these patterns to match on more complex values
 
 ```{r}
-f <- function(v) {
-    cases(v,
-          ZERO               -> 0,
-          ONE(x)             -> x,
-          TWO(ONE(x),ONE(y)) -> x + y + 42,
-          TWO(x,y)           -> x + y,
-          THREE(x,y,z)       -> x + y + z)
-}
-
-f(TWO(ONE(10),ONE(-10)))
-```
-
-You have to be careful with the order of expressions, though. If we flipped the two `TWO` patterns, the first one, `TWO(x,y)` would match first and we would be trying to add together `ONE(10)` and `ONE(-10)`, which would result in an error since we do not have an addition operator defined on these types.
-
-The `cases` function can match any pattern since it has a generic algorithm for this. This makes the function slow. Intead of using `cases` you can create a function that only checks the patterns you provide it at creating time. For this, you use the `case_func` function.
-
-```{r}
-g <- case_func(
+f <- case_func(
     ZERO               -> 0,
     ONE(x)             -> x,
     TWO(ONE(x),ONE(y)) -> x + y + 42,
@@ -136,16 +122,18 @@ g <- case_func(
     THREE(x,y,z)       -> x + y + z
 )
 
-microbenchmark::microbenchmark(
-    f(TWO(ONE(10),ONE(-10))),
-    g(TWO(ONE(10),ONE(-10)))
-)
+f(TWO(ONE(10),ONE(-10)))
 ```
+
+You have to be careful with the order of expressions, though. If we flipped the two `TWO` patterns, the first one, `TWO(x,y)` would match first and we would be trying to add together `ONE(10)` and `ONE(-10)`, which would result in an error since we do not have an addition operator defined on these types.
 
 A variable will match any pattern, so you can use one as a default case. I prefer to use the `.` variable.
 
 ```{r}
-cases(42, 1 -> 1, 13 -> 13, . -> 24)
+h <- case_func(
+    1 -> 1, 13 -> 13, . -> 24
+)
+h(42)
 ```
 
 When you define function constructors, you can give the arguments types. You do this by adding `:` and a type name to the argument. For example, we could define
@@ -188,7 +176,7 @@ a
 b
 ```
 
-With the `bind` object, you can match against patterns, as with the `cases` function, and matched variables will be added to the namespace where you invoke subscripting on `bind`:
+With the `bind` object, you can match against patterns, as with the `case_func` function, and matched variables will be added to the namespace where you invoke subscripting on `bind`:
 
 ```{r}
 x
@@ -199,25 +187,7 @@ right
 
 ### Testing more than one pattern
 
-If you want to test more than one pattern at a time, you can use the `..` function:
-
-```{r}
-f <- function(t1,t2) 
-    cases(..(t1, t2),
-          ..(L(.),L(.)) -> "Both leaves",
-          ..(L(.),.)    -> "Left leaf",
-          ..(.,L(.))    -> "Right leaf",
-          ..(.,.)       -> "None are leaves")
-
-f(L(0), L(2))
-f(L(0), x)
-f(x, L(42))
-f(x, x)
-```
-
-This will not work with functions created with `case_func`. Handling an arbitrary number of patterns requires checks are runtime, and `case_func` creates a function with specialised pattern checking at creation time.
-
-You can easily define data types to get similar behaviour, though:
+If you want to test more than one pattern at a time you can create a data type for tuples, e.g.
 
 ```{r}
 tuples := ..(first, second) | ...(first, second, third)
@@ -226,72 +196,6 @@ f(..(1, 2))
 f(...(1, 2, 3))
 ```
 
-### Function transformations
-
-Since this package provides its functionality through a DSL, you *can* get into trouble when other parts of R tries to make sense of it.
-
-Consider this function:
-
-```{r}
-is_leaf <- function(tree) {
-    cases(tree,
-          L(x) -> TRUE,
-          otherwise -> FALSE)
-}
-is_leaf(L(1))
-is_leaf(T(L(1),L(2)))
-```
-
-It works as intended, but if you try to byte-compile it, you get an error:
-
-```{r, error=TRUE}
-compiler::cmpfun(is_leaf)
-```
-
-This is because the byte-compiler tries to make meaning out of the `-> TRUE` and `-> FALSE` assignments (it sees them as `TRUE <-` and `FALSE <-` because that is what the parser actually returns).
-
-There are two ways around this problem; one is easy and just requires a different syntax in the call to `cases`, the other is *almost* as easy, but requires that we transform the function.
-
-First, we can get around the issue using a formula syntax instead of an assignment syntax. Instead of the `is_leaf` above, we can define
-
-```{r}
-other_is_leaf <- function(tree) {
-    cases(tree,
-          L(x) ~ TRUE,
-          otherwise ~ FALSE)
-}
-```
-
-This function, you can byte compile
-
-```{r}
-compiler::cmpfun(other_is_leaf)
-```
-
-The `pmatch` package makes no distinction betwen the `~` or the `->` syntax; you can use them interchangeable. 
-
-Alternatively, we can transform the body of functions that calls `cases` to replace the DSL with `if`-statements.
-
-```{r}
-is_leaf_tr <- transform_cases_function(is_leaf)
-is_leaf_tr
-```
-
-After the transformation, the byte-compiler is happy.
-
-```{r, error=TRUE}
-is_leaf_tr_bc <- compiler::cmpfun(is_leaf_tr)
-is_leaf_tr_bc(L(1))
-is_leaf_tr_bc(T(L(1),L(2)))
-```
-
-Transformation has the added benefit of slightly speeding up the function. And, of course, being able to byte-compile can add a bit more to the performance.
-
-```{r}
-microbenchmark::microbenchmark(
-    is_leaf(L(1)), is_leaf_tr(L(1)), is_leaf_tr_bc(L(1))
-)
-```
 
 
 For more examples, see below.

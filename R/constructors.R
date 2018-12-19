@@ -193,11 +193,15 @@ construction_printer <- function(x, ...) {
 #'
 #' This will create the type \code{numbers} and three constants, \code{ONE},
 #' \code{TWO}, and \code{THREE} that can be matched against using the
-#' \code{\link{cases}} function
+#' \code{\link{case_func}} function.
 #'
-#' \code{ x <- TWO cases(x, ONE -> 1, TWO -> 2, THREE -> 3) }
+#' \code{
+#' f <- case_func(ONE -> 1, TWO -> 2, THREE -> 3)
+#' x <- TWO
+#' f(x)
+#' }
 #'
-#' Evaluating the \code{\link{cases}} function will compare the value in
+#' Evaluating functions declared using the \code{\link{case_func}} function will compare the value in
 #' \code{x} against the three patterns and recognize that \code{x} holds the
 #' constant \code{TWO} and it will then return \code{2}.
 #'
@@ -216,12 +220,18 @@ construction_printer <- function(x, ...) {
 #' and we can, e.g., test if a list is empty using
 #'
 #'
-#' \code{cases(lst, NIL -> TRUE, CONS(car,cdr) -> FALSE)}
+#' \code{
+#'   f <- case_func(NIL -> TRUE, CONS(car,cdr) -> FALSE)
+#'   f(lst)
+#' }
 #'
-#' A special pattern, \code{otherwise},can be used to capture all patterns, so
-#' the emptiness test can also be written
+#' A variable will be bound to any value, and you can exploit this to
+#' get a default return value. I prefer to use `.`
 #'
-#' \code{cases(lst, NIL -> TRUE, otherwise -> FALSE)}
+#' \code{
+#'   f <- case_func(NIL -> TRUE, . -> FALSE)
+#'   f(lst)
+#' }
 #'
 #' Arguments to a constructor function can be typed. To specify typed variables,
 #' we use the \code{:}-operator. The syntax is then \code{var : type}. The type
@@ -234,18 +244,16 @@ construction_printer <- function(x, ...) {
 #' @examples
 #' linked_list := NIL | CONS(car, cdr : linked_list)
 #' lst <- CONS(1, CONS(2, CONS(3, NIL)))
-#' len <- function(lst, acc = 0) {
-#'     cases(lst,
+#' len <- case_func(acc = 0,
 #'           NIL -> acc,
-#'           CONS(car,cdr) -> len(cdr, acc + 1))
-#' }
+#'           CONS(car,cdr) -> len(cdr, acc + 1)
+#' )
 #' len(lst)
 #'
-#' list_sum <- function(lst, acc = 0) {
-#'     cases(lst,
+#' list_sum <- case_func(acc = 0,
 #'           NIL -> acc,
-#'           CONS(car,cdr) -> list_sum(cdr, acc + car))
-#' }
+#'           CONS(car,cdr) -> list_sum(cdr, acc + car)
+#' )
 #' list_sum(lst)
 #'
 #' @export

@@ -185,4 +185,18 @@ test_that("We can add arguments to a case_func", {
     expect_equal(f("foo", "bar"), "bar")
 })
 
+test_that("We get the additional arguments in the right order in case_func", {
+    f <- case_trfunc(
+        a, b, c,
+        . -> 42
+    )
+    expect_equal(
+        c(".match_expr", "a", "b", "c"),
+        names(formals(f)),
+    )
+})
+
+
+
+
 

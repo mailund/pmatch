@@ -36,56 +36,38 @@ try <- function(expr) {
 }
 ```
 
-With this function the control flow when we want to compute something that might go wrong can be made a bit simpler. We no longer need a callback error handler; instead we can inspect the value returned by `try` in a `cases` call:
+With this function the control flow when we want to compute something that might go wrong can be made a bit simpler. We no longer need a callback error handler; instead we can inspect the value returned by `try` in a `case_func` call:
 
 ```{r}
-cases(try(42),
-      VALUE(val) -> val,
-      ERROR(err) -> err,
-      NONE -> "NOTHING")
+unpack <- case_func(
+    VALUE(val) -> val,
+    ERROR(err) -> err,
+)
+unpack(try(42))
 ```
 
 ```{r}
-cases(try(x + 42), # x isn't defined...
-      VALUE(val) -> val,
-      ERROR(err) -> err,
-      NONE -> "NOTHING")
+unpack(try(x + 42)) # x isn't defined...
 ```
 
-To extract the value of an expression after we have computed on optional values we can define this function:
-
-```{r, error=TRUE}
-value <- function(x) {
-    quoted_x <- rlang::enexpr(x)
-    cases(x,
-          VALUE(val) -> val,
-          . -> stop(simpleError(
-                paste(deparse(quoted_x), " is not a value."), 
-              call = quoted_x
-        )))
-}
-    
-
-value(try(42))
-value(try(42 + x))
-```
 
 ## Computing with optional values
 
 Computing on optional values is more interesting if we can make it relatively transparent that this is what we are doing. For arithmetic expressions we can do this by defining operations on these types. A sensible way is to return errors if we see those, then `NONE` if we see one of those, and otherwise use `VALUE`:
 
 ```{r}
-Ops.OPT <- function(e1, e2) {
-    cases(..(e1, e2),
-          ..(ERROR(err), .)        -> ERROR(err),
-          ..(., ERROR(err))        -> ERROR(err),
-          ..(NONE, .)              -> NONE,
-          ..(., NONE)              -> NONE,
-          ..(VALUE(v1), VALUE(v2)) -> VALUE(do.call(.Generic, list(v1, v2))),
-          ..(VALUE(v1), v2)        -> VALUE(do.call(.Generic, list(v1, v2))),
-          ..(v1, VALUE(v2))        -> VALUE(do.call(.Generic, list(v1, v2)))
-    )
-}
+pair := ..(first, second)
+wrap <- case_func(
+        .Generic, # underlying generic
+        ..(ERROR(err), .)        -> ERROR(err),
+        ..(., ERROR(err))        -> ERROR(err),
+        ..(NONE, .)              -> NONE,
+        ..(., NONE)              -> NONE,
+        ..(VALUE(v1), VALUE(v2)) -> VALUE(do.call(.Generic, list(v1, v2))),
+        ..(VALUE(v1), v2)        -> VALUE(do.call(.Generic, list(v1, v2))),
+        ..(v1, VALUE(v2))        -> VALUE(do.call(.Generic, list(v1, v2)))
+)
+Ops.OPT <- function(x, y) wrap(..(x, y), .Generic)
 ```
 
 The last two cases here handles when we combine an optional value with a value from the underlying type. Because of the last two cases we do not need to explicitly translate a value into a `VALUE()`. With this group function defined we can use optional values in expressions.
@@ -104,14 +86,12 @@ VALUE(12) + 12
 For mathematical functions, such as `log` or `exp`, we can also define versions for optional types:
 
 ```{r}
-Math.OPT <- function(x, ...) {
-    cases(x,
-          ERROR(err) -> ERROR(err),
-          NONE       -> NONE,
-          VALUE(v)   -> do.call(.Generic, list(x)),
-          v          -> do.call(.Generic, list(x))
-    )
-}
+Math.OPT <- case_func(
+    ERROR(err) -> ERROR(err),
+    NONE       -> NONE,
+    VALUE(v)   -> do.call(.Generic, list(x)),
+    v          -> do.call(.Generic, list(x))
+)
 ```
 
 ```{r}
@@ -124,6 +104,21 @@ exp(NONE)
 Arithmetic is one thing, but we are probably more likely to use optional values for more complex computations? We can wrap expressions in a function to propagate options:
 
 ```{r}
+to_val <- case_func(
+    escape,
+    ERROR(err) -> escape(ERROR(err)),
+    NONE       -> escape(NONE),
+    VALUE(val) -> val,
+    val        -> val
+)
+to_opt <- case_func(
+    escape,
+    ERROR(err) -> ERROR(err),
+    NONE       -> NONE,
+    VALUE(val) -> VALUE(val),
+    val        -> VALUE(val)
+)
+
 with_values <- function(...) {
     optionals <- rlang::enquos(...)
     n <- length(optionals)
@@ -137,25 +132,7 @@ with_values <- function(...) {
                  error = function(e) ERROR(e))
         )
     }
-    to_val <- function(opt, escape) {
-        cases(
-            opt,
-            ERROR(err) -> escape(ERROR(err)),
-            NONE       -> escape(NONE),
-            VALUE(val) -> val,
-            val        -> val
-        )
-    }
-    to_opt <- function(val) {
-        cases(
-            val,
-            ERROR(err) -> ERROR(err),
-            NONE       -> NONE,
-            VALUE(val) -> VALUE(val),
-            val        -> VALUE(val)
-        )
-    }
-    
+
     callCC(function(escape) {
         for (q in optionals) {
             if (rlang::quo_is_symbol(q)) {

@@ -8,9 +8,10 @@ func_constructor_test <- function(pattern_expr, nesting, eval_env) {
         constructor_vars <- names(formals(constructor))
 
         if (!rlang::is_null(constructor) && inherits(constructor, "constructor")) {
-            test_exprs <- rlang::expr(
-                !!name == attr(!!nesting, "constructor")
-            )
+            test_exprs <- rlang::expr({
+                .cons <- attr(!!nesting, "constructor")
+                !is.null(.cons) && .cons == !!name
+            })
 
             for (i in 2:length(pattern_expr)) {
                 var <- rlang::sym(constructor_vars[i - 1])
@@ -199,7 +200,7 @@ case_func <- function(...) {
             )
     }
 
-    func_args <- lapply(func_args, rlang::quo_squash)
+    func_args <- rev(lapply(func_args, rlang::quo_squash))
     func_args <- c(list(.match_expr = rlang::missing_arg()), func_args)
     rlang::new_function(
         func_args,
@@ -317,7 +318,7 @@ case_trfunc <- function(...) {
         )
     }
 
-    func_args <- lapply(func_args, rlang::quo_squash)
+    func_args <- rev(lapply(func_args, rlang::quo_squash))
     func_args <- c(list(.match_expr = rlang::missing_arg()), func_args)
 
     # used for translating Recall calls.

@@ -23,11 +23,20 @@ test_that("bindings work with pattern matching", {
     expect_equal(first_2, 2)
 })
 
-test_that("pattern matching provide good error messages", {
+test_that("pattern matching provide acceptable error messages", {
     llist := NIL | CONS(car, cdr:llist)
 
     expect_error(
         bind[CONS(head, rest)] <- NIL,
         "The pattern .* does not match its value."
     )
+})
+
+test_that("pattern matching handles .. notation", {
+    llist := NIL | CONS(car, cdr:llist)
+    pair := ..(left, right)
+
+    bind[..(CONS(car, .), CONS(head, . ))] <- ..(CONS(1, NIL), CONS(2, NIL))
+
+    expect_equal(car + head, 1 + 2)
 })

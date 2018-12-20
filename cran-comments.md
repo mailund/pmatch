@@ -10,7 +10,8 @@
 * ubuntu 14.04 (on travis-ci), R 3.3, 3.4, 3.5
 * win-builder (devel and release)
 * RHub:
-  
+    - Ubuntu Linux 16.04 LTS, R-release, GCC
+    - Windows Server 2008 R2 SP1, R-devel, 32/64 bit
   
 ## R CMD check results
 

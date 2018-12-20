@@ -12,38 +12,6 @@
 #'   matching. If the pattern doesn't match, the function escapes through the
 #'   \code{escape} continuation.
 test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
-    if (rlang::is_call(test_expr) && rlang::call_name(test_expr) == "..") {
-        # trying to match more than one pattern.
-        if (!rlang::is_list(expr) || !inherits(expr, "..")) {
-            stop(simpleError(
-                glue::glue(
-                    "When matching against .. the expression ",
-                    "must be a list created using .. ",
-                    "of the same length as the ..-pattern."
-                ),
-                call = test_expr
-            ))
-        }
-        sub_expr <- rlang::call_args(test_expr)
-        if (length(expr) != length(sub_expr)) {
-            stop(simpleError(
-                glue::glue(
-                    "When matching against .. the expression ",
-                    "must be a ..-created list of the same length as the ",
-                    "..-pattern."
-                ),
-                call = test_expr
-            ))
-        }
-
-        for (i in seq_along(sub_expr)) {
-            test_pattern_rec(
-                escape, expr[[i]], sub_expr[[i]],
-                eval_env, match_env
-            )
-        }
-        return(match_env)
-    }
 
     # Is this a function-constructor?
     if (rlang::is_call(test_expr)) {

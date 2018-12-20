@@ -66,10 +66,9 @@ test_pattern_rec <- function(escape, expr, test_expr, eval_env, match_env) {
     if (rlang::is_symbol(test_expr)) {
         assign(rlang::as_string(test_expr), expr, match_env)
     } else {
-        value <- rlang::eval_tidy(test_expr, eval_env)
-        if (expr != value) {
-            escape(NULL)
-        }
+        stop(glue::glue(
+            "You cannot match against a constant in bind expressions ({deparse(expr)})"
+        ))
     }
 
     match_env
@@ -82,10 +81,6 @@ test_pattern_ <- function(expr, test_expr,
                           match_parent_env = rlang::caller_env()) {
     # Environment in which to store matched variables
     match_env <- rlang::child_env(.parent = match_parent_env)
-
-    if (test_expr == quote(otherwise)) {
-        return(match_env)
-    }
 
     # Test pattern
     tester <- function(escape) {
@@ -112,16 +107,15 @@ test_pattern_ <- function(expr, test_expr,
 #'   bound variables if it does.
 #'
 #' @examples
-#' type := ZERO | ONE(x) | TWO(x,y)
+#' type := ZERO | ONE(x) | TWO(x, y)
 #' zero <- ZERO
 #' one <- ONE(1)
-#' two <- TWO(1,2)
+#' two <- TWO(1, 2)
 #'
 #' as.list(test_pattern(zero, ZERO)) # returns an empty binding
 #' test_pattern_(one, quote(ZERO)) # returns NULL
 #' as.list(test_pattern_(one, quote(ONE(v)))) # returns a binding for v
-#' as.list(test_pattern(two, TWO(v,w))) # returns a binding for v and w
-#'
+#' as.list(test_pattern(two, TWO(v, w))) # returns a binding for v and w
 #' @describeIn test_pattern Version that quotes \code{test_expr} itself.
 #' @export
 test_pattern <- function(expr, test_expr,
@@ -158,16 +152,15 @@ bind <- structure(NA, class = "pmatch_bind")
 #' @param value Actual values to assign
 #'
 #' @examples
-#' bind[x, y] <- c(2,4)
+#' bind[x, y] <- c(2, 4)
 #' x == 2
 #' y == 4
 #'
-#' llist := NIL | CONS(car, cdr : llist)
+#' llist := NIL | CONS(car, cdr:llist)
 #' L <- CONS(1, CONS(2, CONS(3, NIL)))
 #' bind[CONS(first, CONS(second, rest))] <- L
 #' first == 1
 #' second == 2
-#'
 #' @export
 `[<-.pmatch_bind` <- function(dummy, ..., value) {
     force(value)

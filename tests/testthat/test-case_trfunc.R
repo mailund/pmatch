@@ -33,7 +33,6 @@ test_that("We can create match on function constructors", {
     expect_equal(f(CONS(1, CONS(2, NIL))), 2)
     expect_equal(f(CONS(1, CONS(2, CONS(3, NIL)))), 3)
     expect_equal(f(CONS(1, CONS(2, CONS(3, CONS(4, NIL))))), 42)
-
 })
 
 test_that("We can formula as well as assignment syntax", {
@@ -201,7 +200,7 @@ test_that("We get the additional arguments in the right order in case_func", {
 
 
 test_that("We handle recursion", {
-    llist := NIL | CONS(car, cdr : llist)
+    llist := NIL | CONS(car, cdr:llist)
 
     lst <- CONS(1, CONS(2, CONS(3, NIL)))
 
@@ -233,5 +232,4 @@ test_that("We handle recursion", {
     )
     expect_equal(llength(lst), 3)
     expect_equal(lsum(lst), 6)
-
 })

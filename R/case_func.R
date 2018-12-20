@@ -133,25 +133,26 @@ transform_match <- function(pattern_expr, nesting, eval_env) {
 #' @seealso \code{\link{:=}} \code{\link{case_func}}
 #'
 #' @examples
-#' linked_list := NIL | CONS(car, cdr : linked_list)
+#' linked_list := NIL | CONS(car, cdr:linked_list)
 #' lst <- CONS(1, CONS(2, CONS(3, NIL)))
-#' len <- case_func(acc = 0,
-#'    NIL -> acc,
-#'    CONS(car,cdr) -> len(cdr, acc + 1)
+#' len <- case_func(
+#'     acc = 0,
+#'     NIL -> acc,
+#'     CONS(car, cdr) -> len(cdr, acc + 1)
 #' )
 #' len(lst)
-#'
-#' list_sum <- case_func(acc = 0,
-#'    NIL -> acc,
-#'    CONS(car,cdr) -> list_sum(cdr, acc + car)
+#' 
+#' list_sum <- case_func(
+#'     acc = 0,
+#'     NIL -> acc,
+#'     CONS(car, cdr) -> list_sum(cdr, acc + car)
 #' )
 #' list_sum(lst)
-#'
+#' 
 #' tuples := ..(first, second) | ...(first, second, third)
-#' f <- case_func(..(.,.) -> 2, ...(.,.,.) -> 3)
+#' f <- case_func(..(., .) -> 2, ...(., ., .) -> 3)
 #' f(..(1, 2))
 #' f(...(1, 2, 3))
-#'
 #' @export
 case_func <- function(...) {
     matchings <- rlang::quos(...)
@@ -227,7 +228,9 @@ tr_transform_expr <- function(expr, dummy_func) {
         second
 
         assignments <- c(rlang::exprs(!!!first), rlang::exprs(!!!second))
-        rlang::expr({!!!assignments})
+        rlang::expr({
+            !!!assignments
+        })
     }
 }
 
@@ -263,21 +266,21 @@ tr_transform_expr <- function(expr, dummy_func) {
 #' @seealso \code{\link{:=}} \code{\link{case_func}}
 #'
 #' @examples
-#' linked_list := NIL | CONS(car, cdr : linked_list)
+#' linked_list := NIL | CONS(car, cdr:linked_list)
 #' lst <- CONS(1, CONS(2, CONS(3, NIL)))
-#' len <- case_trfunc(acc = 0,
-#'    NIL -> acc,
-#'    CONS(car,cdr) -> Recall(cdr, acc + 1)
+#' len <- case_trfunc(
+#'     acc = 0,
+#'     NIL -> acc,
+#'     CONS(car, cdr) -> Recall(cdr, acc + 1)
 #' )
 #' len(lst)
-#'
-#' list_sum <- case_trfunc(acc = 0,
-#'    NIL -> acc,
-#'    CONS(car,cdr) -> Recall(cdr, acc + car)
+#' 
+#' list_sum <- case_trfunc(
+#'     acc = 0,
+#'     NIL -> acc,
+#'     CONS(car, cdr) -> Recall(cdr, acc + car)
 #' )
 #' list_sum(lst)
-#'
-#'
 #' @export
 case_trfunc <- function(...) {
     matchings <- rlang::quos(...)
@@ -300,16 +303,16 @@ case_trfunc <- function(...) {
         # the order of test and result depend on the syntax... for `->` the
         # R parser will switch the two; for `~` it will not.
         switch(as.character(match_expr[[1]]),
-               "<-" = {
-                   next
-               },
-               "~" = {
-                   next
-               }, {
-                   # not a pattern, make it an argument
-                   func_args <- c(func_args, matchings[i])
-                   next # not a pattern
-               }
+            "<-" = {
+                next
+            },
+            "~" = {
+                next
+            }, {
+                # not a pattern, make it an argument
+                func_args <- c(func_args, matchings[i])
+                next # not a pattern
+            }
         )
     }
 
@@ -334,17 +337,17 @@ case_trfunc <- function(...) {
         # the order of test and result depend on the syntax... for `->` the
         # R parser will switch the two; for `~` it will not.
         switch(as.character(match_expr[[1]]),
-               "<-" = {
-                   pattern_expr <- match_expr[[3]]
-                   eval_expr <- match_expr[[2]]
-               },
-               "~" = {
-                   pattern_expr <- match_expr[[2]]
-                   eval_expr <- match_expr[[3]]
-               }, {
-                   # not a pattern, make it an argument
-                   next # not a pattern
-               }
+            "<-" = {
+                pattern_expr <- match_expr[[3]]
+                eval_expr <- match_expr[[2]]
+            },
+            "~" = {
+                pattern_expr <- match_expr[[2]]
+                eval_expr <- match_expr[[3]]
+            }, {
+                # not a pattern, make it an argument
+                next # not a pattern
+            }
         )
 
         match_cases <-
@@ -357,7 +360,9 @@ case_trfunc <- function(...) {
     }
 
     body <- rlang::expr(
-        repeat { !!match_cases }
+        repeat {
+            !!match_cases
+        }
     )
 
     rlang::new_function(
@@ -366,5 +371,3 @@ case_trfunc <- function(...) {
         eval_env
     )
 }
-
-

@@ -30,13 +30,18 @@ test_that("pattern matching provide acceptable error messages", {
         bind[CONS(head, rest)] <- NIL,
         "The pattern .* does not match its value."
     )
+
+    expect_error(
+        bind[1] <- 1,
+        "You cannot match against a constant in bind expressions (.*)"
+    )
 })
 
 test_that("pattern matching handles .. notation", {
     llist := NIL | CONS(car, cdr:llist)
     pair := ..(left, right)
 
-    bind[..(CONS(car, .), CONS(head, . ))] <- ..(CONS(1, NIL), CONS(2, NIL))
+    bind[..(CONS(car, .), CONS(head, .))] <- ..(CONS(1, NIL), CONS(2, NIL))
 
     expect_equal(car + head, 1 + 2)
 })

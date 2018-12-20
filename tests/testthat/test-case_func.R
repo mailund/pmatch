@@ -36,7 +36,7 @@ test_that("We can create match on function constructors", {
 
 })
 
-test_that("We can formula as well as assignment syntax", {
+test_that("We can use formula as well as assignment syntax", {
     type := ONE | TWO | THREE
     f <- case_func(ONE ~ 1, TWO ~ 2, THREE ~ 3)
     expect_equal(f(ONE), 1)
@@ -195,6 +195,40 @@ test_that("We get the additional arguments in the right order in case_func", {
         c(".match_expr", "a", "b", "c"),
         names(formals(f)),
     )
+})
+
+
+test_that("We handle recursion", {
+    llist := NIL | CONS(car, cdr : llist)
+
+    lst <- CONS(1, CONS(2, CONS(3, NIL)))
+
+    llength <- case_func(
+        NIL -> 0,
+        CONS(., cdr) -> 1 + llength(cdr)
+    )
+
+    lsum <- case_func(
+        NIL -> 0,
+        CONS(car, cdr) -> car + lsum(cdr)
+    )
+    expect_equal(llength(lst), 3)
+    expect_equal(lsum(lst), 6)
+
+    # tail recursive
+    llength <- case_func(
+        acc = 0,
+        NIL -> acc,
+        CONS(., cdr) -> llength(cdr, acc + 1)
+    )
+
+    lsum <- case_func(
+        acc = 0,
+        NIL -> acc,
+        CONS(car, cdr) -> lsum(cdr, acc + car)
+    )
+    expect_equal(llength(lst), 3)
+    expect_equal(lsum(lst), 6)
 })
 
 

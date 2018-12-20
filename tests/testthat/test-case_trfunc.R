@@ -200,3 +200,38 @@ test_that("We get the additional arguments in the right order in case_func", {
 
 
 
+test_that("We handle recursion", {
+    llist := NIL | CONS(car, cdr : llist)
+
+    lst <- CONS(1, CONS(2, CONS(3, NIL)))
+
+    # tail recursive
+    llength <- case_trfunc(
+        acc = 0,
+        NIL -> acc,
+        CONS(., cdr) -> Recall(cdr, acc + 1)
+    )
+
+    lsum <- case_trfunc(
+        acc = 0,
+        NIL -> acc,
+        CONS(car, cdr) -> Recall(cdr, acc + car)
+    )
+    expect_equal(llength(lst), 3)
+    expect_equal(lsum(lst), 6)
+
+    # not tail recursive -- these still work, they just do not have
+    # the optimisation
+    llength <- case_trfunc(
+        NIL -> 0,
+        CONS(., cdr) -> 1 + Recall(cdr)
+    )
+
+    lsum <- case_trfunc(
+        NIL -> 0,
+        CONS(car, cdr) -> car + Recall(cdr)
+    )
+    expect_equal(llength(lst), 3)
+    expect_equal(lsum(lst), 6)
+
+})

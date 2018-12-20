@@ -246,19 +246,14 @@ tr_transform_expr <- function(expr, dummy_func) {
 #' quasi-quoted will be considered a variable, and matching values will be bound
 #' to such variables and be available when an expression is evaluated.
 #'
-#' Unlike the \code{\link{case_func}} function, you cannot use this function
-#' to define pattern matching functions that are not tail recursive. Furthermore,
-#' you must use \code{\link{Recall}} for recursive calls.
+#' This function works like \code{\link{case_func}} but implements the "tail-recursion
+#' optimisation", which means that it replaces tail-recursive calls with reassignment
+#' to local variables and looping. Since the scoping rules are different between
+#' recursive calls and loops, you cannot use closures with this transformation
+#' unless you take special care to bind all local values explicitly.
 #'
-#' Functions created with \code{case_trfunc} do not support the `..` operator,
-#' but you can always create constructors for fixed-number tuples, e.g.
-#'
-#' \code{
-#' tuples := ..(first, second) | ...(first, second, third)
-#' }
-#'
-#' Be careful not to use \code{.} here, if you use dot as a generic
-#' variable.
+#' This function cannot know which name you will assign the generated function
+#' so you must use \code{\link{Recall}} for recursive calls.
 #'
 #' @param ...  A list of variables for the function in addition
 #'  the data to be matched against which will automatically added
@@ -272,13 +267,13 @@ tr_transform_expr <- function(expr, dummy_func) {
 #' lst <- CONS(1, CONS(2, CONS(3, NIL)))
 #' len <- case_trfunc(acc = 0,
 #'    NIL -> acc,
-#'    CONS(car,cdr) -> len(cdr, acc + 1)
+#'    CONS(car,cdr) -> Recall(cdr, acc + 1)
 #' )
 #' len(lst)
 #'
 #' list_sum <- case_trfunc(acc = 0,
 #'    NIL -> acc,
-#'    CONS(car,cdr) -> list_sum(cdr, acc + car)
+#'    CONS(car,cdr) -> Recall(cdr, acc + car)
 #' )
 #' list_sum(lst)
 #'

@@ -1,7 +1,7 @@
 Type: Package
 Package: pmatch
 Title: Pattern Matching
-Version: 0.1.5
+Version: 0.1.5.9000
 Authors@R: person("Thomas", "Mailund", 
                   email = "mailund@birc.au.dk", 
                   role = c("aut", "cre"))
@@ -16,7 +16,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Language: en-GB
 Depends:
-    R (>= 3.2)
+    R (>= 3.3)
 Imports:
     dplyr,
     purrr,

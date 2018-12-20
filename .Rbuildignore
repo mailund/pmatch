@@ -1,3 +1,4 @@
+^CRAN-RELEASE$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^cleanup.R$
@@ -17,6 +18,5 @@
 ^CODE_OF_CONDUCT\.md$
 ^.imdone$
 ^revdep$
-
 ^_pkgdown.yml$
 ^docs$

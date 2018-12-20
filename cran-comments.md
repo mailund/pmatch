@@ -1,35 +1,17 @@
 
-
-
 # Update to 0.1.5
 
- * New constructor code. This gives an substantial speedup when generating objects.
- * Added `case_func` as a much faster replacement for using the `cases` function. 
- * Removed `cases` (now that the faster `case_func` provides the same functionality).
- * Suggests `ggraph` and `tidygraph` for vignettes
- * Fixed a rewrite bug when using qualified names.
- * Uses `foolbox` for a safer rewrite function.
+ * Compatibility with rlang 0.3.0.
+ * Removed `cases` function (`case_func` and `case_trfunc` replace it).
 
 ## Test environments
 
 * local OS X (Mojave) install, R 3.5.1
 * ubuntu 14.04 (on travis-ci), R 3.3, 3.4, 3.5
-* win-builder (devel)
+* win-builder (devel and release)
 * RHub:
   
-  -	Windows Server 2008 R2 SP1, R-devel, 32/64 bit
-  - Windows Server 2008 R2 SP1, R-release, 32/64 bit
-  - CentOS 6, stock R from EPEL
-  - Ubuntu Linux 16.04 LTS, R-release, GCC
-  - Fedora Linux, R-devel, clang, gfortran
-  - Fedora Linux, R-devel, GCC
-  - Debian Linux, R-release, GCC
-  - macOS 10.11 El Capitan, R-release (experimental)
   
-  On Windows and Fedora, I get a Pandoc warning because 
-  it cannot find the README badges. Other than that, the 
-  checks pass.
-
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes

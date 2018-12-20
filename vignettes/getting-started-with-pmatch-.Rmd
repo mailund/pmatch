@@ -104,7 +104,7 @@ To define a linked list type we want to specify what the basic instances look li
 linked_list := NIL | CONS(car, cdr : linked_list)
 ```
 
-Here, I have used `car` for the head of a list and `cdr` for the tail. These are traditional names inherited from the [lisp programming language that in turn inherited them from IBM 704](https://en.wikipedia.org/wiki/CAR_and_CDR). I have chosen these names so we do not class with the R functions `head` and `tail`. This expression defines the type `linked_list`, specify that we can create objects of the type using one of the two constructores `NIL` or `CONS()`, where the former takes no arguments and the second two, of which the second argument must be another linked list.
+Here, I have used `car` for the head of a list and `cdr` for the tail. These are traditional names inherited from the [lisp programming language that in turn inherited them from IBM 704](https://en.wikipedia.org/wiki/CAR_and_CDR). I have chosen these names so we do not class with the R functions `head` and `tail`. This expression defines the type `linked_list`, specify that we can create objects of the type using one of the two constructors `NIL` or `CONS()`, where the former takes no arguments and the second two, of which the second argument must be another linked list.
 
 We can create `a_list` using these constructors like this:
 
@@ -124,7 +124,7 @@ list_length <- case_func(
 list_length(a_list)
 ```
 
-When we pattern-match like this, we also bind variables. In the `CONS(car, cdr)` pattern we didn't have to name the variables `car` and `cdr` just because we called them in the constructor. In the pattern matching they are just variables and they get set to the corresponding values in the structor of `the_list`. This is why we can use `cdr` in the expression we evaluate when we match the pattern—`cdr` will be bound to the tail of the list.
+When we pattern-match like this, we also bind variables. In the `CONS(car, cdr)` pattern we didn't have to name the variables `car` and `cdr` just because we called them in the constructor. In the pattern matching they are just variables and they get set to the corresponding values in the structure of `the_list`. This is why we can use `cdr` in the expression we evaluate when we match the pattern—`cdr` will be bound to the tail of the list.
 
 We can also see this in another example where we sum all the elements in a list:
 

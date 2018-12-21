@@ -2,6 +2,7 @@
 
  * Compatibility with rlang 0.3.0
  * Removed `cases` function (use `case_func` instead, it is much faster).
+ * Removed `tailr` dependency.
 
 # pmatch 0.1.4
 

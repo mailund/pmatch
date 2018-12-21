@@ -10,13 +10,14 @@
 |collate  |en_US.UTF-8                  |
 |ctype    |en_US.UTF-8                  |
 |tz       |Europe/Copenhagen            |
-|date     |2018-12-15                   |
+|date     |2018-12-21                   |
 
 # Dependencies
 
 |package |old   |new   |Δ  |
 |:-------|:-----|:-----|:--|
 |pmatch  |0.1.4 |0.1.5 |*  |
+|pillar  |NA    |1.3.1 |*  |
 
 # Revdeps
 
@@ -24,5 +25,5 @@
 
 |package |version |error |warning |note |
 |:-------|:-------|:-----|:-------|:----|
-|tailr   |0.1.2   |      |        |     |
+|tailr   |0.1.3   |      |        |     |
 

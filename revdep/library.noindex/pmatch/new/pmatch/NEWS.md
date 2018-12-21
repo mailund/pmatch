@@ -1,3 +1,8 @@
+# pmatch 0.1.5
+
+ * Compatibility with rlang 0.3.0
+ * Removed `cases` function (use `case_func` instead, it is much faster).
+
 # pmatch 0.1.4
 
  * New constructor code. This gives an substantial speedup when generating objects.
@@ -11,7 +16,7 @@
 # pmatch 0.1.3
 
  * Formula syntax in cases as an alternative: cases(f(x), foo ~ bar, baz ~ qux).
-   This is easier to get to static code checkes such as lintr and through the
+   This is easier to get to static code checks such as lintr and through the
    byte compiler that can complain about "assignments" to literals.
  * bind[x,y,z] <- 1:3 syntax for binding variables.
  * transformation function transform_cases_function for modifying a function

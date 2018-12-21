@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.7.6)  15 DEC 2018 11:19
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.7.6)  21 DEC 2018 08:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -800,107 +800,61 @@ LaTeX Font Info:    Try loading font information for T1+phv on input line 38.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/psnfss/t1phv.fd
 File: t1phv.fd 2001/06/04 scalable font definitions for T1/phv.
-) (./Rd2.toc
-[1
-
-
-{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}])
+) (./Rd2.toc)
 \tf@toc=\write5
 \openout5 = `Rd2.toc'.
 
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-) [2]
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-LaTeX Font Info:    Try loading font information for TS1+ptm on input line 132.
+) [1
 
+
+{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
+)
+LaTeX Font Info:    Try loading font information for TS1+ptm on input line 92.
 
 (/usr/local/texlive/2017/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 143.
- [3]
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-) [4]
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-) [5]
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-) [6]
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-) [7]
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-) [8]
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-)
-(/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
-File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
-) [9]
+(Font)              scaled to size 9.0pt on input line 100.
+ [2]
 (/usr/local/texlive/2017/texmf-dist/tex/latex/base/utf8.def
 File: utf8.def 2017/01/28 v1.1t UTF-8 support for inputenc
 ) (./Rd2.ind
-[10]
+[3]
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 8.
+(Font)              using `T1/zi4/m/n' instead on input line 7.
 
-LaTeX Font Info:    Font shape `T1/zi4/m/it' will be
-(Font)              scaled to size 10.0pt on input line 10.
-[11
+[4
 
 
 ])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 510.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 510.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 141.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 141.
  (./Rd2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 510.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 510.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 141.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 141.
 Package rerunfilecheck Info: File `Rd2.out' has not changed.
-(rerunfilecheck)             Checksum: 3830D56D49F1F0D393771A96D492CE7F;1561.
+(rerunfilecheck)             Checksum: 0EA164BDD7540498BD516352D385A1F7;294.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 510.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 141.
  ) 
 Here is how much of TeX's memory you used:
- 6740 strings out of 492990
- 98009 string characters out of 6132637
- 174748 words of memory out of 5000000
- 10045 multiletter control sequences out of 15000+600000
+ 6606 strings out of 492990
+ 94178 string characters out of 6132637
+ 173748 words of memory out of 5000000
+ 10031 multiletter control sequences out of 15000+600000
  38185 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,6n,36p,253b,633s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,5n,36p,189b,633s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{Rfn.transform} has been referenced but does not e
 xist, replaced by a fixed one
 
@@ -912,10 +866,10 @@ ive/2017/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2017/t
 exmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2017/texmf-dist/
 fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2017/texmf-dist/fonts/type
 1/urw/times/utmri8a.pfb>
-Output written on Rd2.pdf (11 pages, 93418 bytes).
+Output written on Rd2.pdf (4 pages, 76817 bytes).
 PDF statistics:
- 314 PDF objects out of 1000 (max. 8388607)
- 292 compressed objects within 3 object streams
- 120 named destinations out of 1000 (max. 500000)
- 145 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 104 PDF objects out of 1000 (max. 8388607)
+ 91 compressed objects within 1 object stream
+ 28 named destinations out of 1000 (max. 500000)
+ 33 words of extra memory for PDF output out of 10000 (max. 10000000)
 

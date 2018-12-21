@@ -1,17 +1,11 @@
 %>%	pipe
-..	dotdot
 :=	colon-equals
-assert_correctly_formed_pattern_expression	assert_correctly_formed_pattern_expression
 bind	bind
-cases	cases
-cases_expr	cases_expr
-cases_expr_	cases_expr
 case_func	case_func
 case_trfunc	case_trfunc
 construction_printer	construction_printer
 copy_env	copy_env
 deparse_construction	deparse_construction
-make_match_expr	make_match_expr
 process_alternatives	process_alternatives
 process_arg	process_arg
 process_arguments	process_arguments
@@ -21,6 +15,4 @@ process_constructor_function	process_constructor_function
 test_pattern	test_pattern
 test_pattern_	test_pattern
 test_pattern_rec	test_pattern_rec
-transform_cases_call	transform_cases_call
-transform_cases_function	transform_cases_function
 [<-.pmatch_bind	subset-.pmatch_bind

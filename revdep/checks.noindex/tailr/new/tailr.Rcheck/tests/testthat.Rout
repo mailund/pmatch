@@ -17,11 +17,12 @@ Type 'q()' to quit R.
 
 > library(testthat)
 > library(tailr)
+Loading required package: foolbox
 > 
 > test_check("tailr")
-══ testthat results  ════════════════════════════════════════════════════
-OK: 71 SKIPPED: 0 FAILED: 0
+══ testthat results  ═════════════════════════════════════════════════
+OK: 59 SKIPPED: 0 FAILED: 0
 > 
 > proc.time()
    user  system elapsed 
-  1.456   0.108   1.672 
+  0.726   0.068   0.814 

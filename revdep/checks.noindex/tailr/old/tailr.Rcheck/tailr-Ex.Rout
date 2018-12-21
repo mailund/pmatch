@@ -21,6 +21,7 @@ Type 'q()' to quit R.
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
 > library('tailr')
+Loading required package: foolbox
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
@@ -30,9 +31,9 @@ Type 'q()' to quit R.
 > 
 > flush(stderr()); flush(stdout())
 > 
-> ### Name: can_loop_transform_body
+> ### Name: can_loop_transform_
 > ### Title: Tests if a function, provided by its name, can be transformed.
-> ### Aliases: can_loop_transform_body can_loop_transform_ can_loop_transform
+> ### Aliases: can_loop_transform_ can_loop_transform
 > 
 > ### ** Examples
 > 
@@ -41,18 +42,17 @@ Type 'q()' to quit R.
 > factorial_acc <- function(n, acc = 1)
 +     if (n <= 1) acc else factorial_acc(n - 1, n * acc)
 > 
-> can_loop_transform(factorial)     # FALSE -- and prints a warning
+> can_loop_transform(factorial) # FALSE -- and prints a warning
 Warning: The function cannot be transformed since it contains a recursive call inside a call.
 [1] FALSE
 > can_loop_transform(factorial_acc) # TRUE
 [1] TRUE
 > 
-> can_loop_transform_(rlang::quo(factorial))     # FALSE -- and prints a warning
+> can_loop_transform_(rlang::quo(factorial)) # FALSE -- and prints a warning
 Warning: The function cannot be transformed since it contains a recursive call inside a call.
 [1] FALSE
 > can_loop_transform_(rlang::quo(factorial_acc)) # TRUE
 [1] TRUE
-> 
 > 
 > 
 > 
@@ -61,7 +61,7 @@ Warning: The function cannot be transformed since it contains a recursive call i
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  0.138 0.011 0.152 0 0 
+Time elapsed:  0.149 0.014 0.171 0 0 
 > grDevices::dev.off()
 null device 
           1 

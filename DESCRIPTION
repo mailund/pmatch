@@ -23,9 +23,7 @@ Imports:
     rlang (>= 0.3.0),
     tibble,
     glue,
-    foolbox,
-    magrittr,
-    Rcpp
+    magrittr
 Suggests:
     shiny,
     DT,

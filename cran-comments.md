@@ -8,7 +8,7 @@
 ## Test environments
 
 * local OS X (Mojave) install, R 3.5.1
-* ubuntu 14.04 (on travis-ci), R 3.3, 3.4, 3.5
+* ubuntu 14.04 & macOS 10.13.3 (on travis-ci), R 3.3, 3.4, 3.5
 * win-builder (devel and release)
 * RHub:
     - Debian Linux, R-devel, GCC ASAN/UBSAN

@@ -8,7 +8,6 @@ apt_packages:
   - libudunits2-dev
 
 os:
-  - windows
   - linux
   - osx
 

@@ -19,14 +19,13 @@ The \code{bind} object itself doesn't do anything. It simply exists in order
 to define notation for binding variables using the sub-script operator.
 }
 \examples{
-bind[x, y] <- c(2,4)
+bind[x, y] <- c(2, 4)
 x == 2
 y == 4
 
-llist := NIL | CONS(car, cdr : llist)
+llist := NIL | CONS(car, cdr:llist)
 L <- CONS(1, CONS(2, CONS(3, NIL)))
 bind[CONS(first, CONS(second, rest))] <- L
 first == 1
 second == 2
-
 }

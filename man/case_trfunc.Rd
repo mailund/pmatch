@@ -37,21 +37,21 @@ This function cannot know which name you will assign the generated function
 so you must use \code{\link{Recall}} for recursive calls.
 }
 \examples{
-linked_list := NIL | CONS(car, cdr : linked_list)
+linked_list := NIL | CONS(car, cdr:linked_list)
 lst <- CONS(1, CONS(2, CONS(3, NIL)))
-len <- case_trfunc(acc = 0,
-   NIL -> acc,
-   CONS(car,cdr) -> Recall(cdr, acc + 1)
+len <- case_trfunc(
+    acc = 0,
+    NIL -> acc,
+    CONS(car, cdr) -> Recall(cdr, acc + 1)
 )
 len(lst)
 
-list_sum <- case_trfunc(acc = 0,
-   NIL -> acc,
-   CONS(car,cdr) -> Recall(cdr, acc + car)
+list_sum <- case_trfunc(
+    acc = 0,
+    NIL -> acc,
+    CONS(car, cdr) -> Recall(cdr, acc + car)
 )
 list_sum(lst)
-
-
 }
 \seealso{
 \code{\link{:=}} \code{\link{case_func}}

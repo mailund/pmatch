@@ -168,9 +168,13 @@ symbol.</p></td>
 <p><code> numbers := ONE | TWO | THREE </code></p>
 <p>This will create the type <code>numbers</code> and three constants, <code>ONE</code>,
 <code>TWO</code>, and <code>THREE</code> that can be matched against using the
-<code>cases</code> function</p>
-<p><code> x &lt;- TWO cases(x, ONE -&gt; 1, TWO -&gt; 2, THREE -&gt; 3) </code></p>
-<p>Evaluating the <code>cases</code> function will compare the value in
+<code><a href='case_func.html'>case_func</a></code> function.</p>
+<p><code>
+f &lt;- case_func(ONE -&gt; 1, TWO -&gt; 2, THREE -&gt; 3)
+x &lt;- TWO
+f(x)
+</code></p>
+<p>Evaluating functions declared using the <code><a href='case_func.html'>case_func</a></code> function will compare the value in
 <code>x</code> against the three patterns and recognize that <code>x</code> holds the
 constant <code>TWO</code> and it will then return <code>2</code>.</p>
 <p>With function constructors we can create more interesting data types. For
@@ -182,10 +186,16 @@ function takes two arguments, <code>car</code> and <code>cdr</code>, and require
 elements, 1, 2, and 3, by writing</p>
 <p><code>CONS(1, CONS(2, CONS(3, NIL)))</code></p>
 <p>and we can, e.g., test if a list is empty using</p>
-<p><code>cases(lst, NIL -&gt; TRUE, CONS(car,cdr) -&gt; FALSE)</code></p>
-<p>A special pattern, <code>otherwise</code>,can be used to capture all patterns, so
-the emptiness test can also be written</p>
-<p><code>cases(lst, NIL -&gt; TRUE, otherwise -&gt; FALSE)</code></p>
+<p><code>
+  f &lt;- case_func(NIL -&gt; TRUE, CONS(car,cdr) -&gt; FALSE)
+  f(lst)
+</code></p>
+<p>A variable will be bound to any value, and you can exploit this to
+get a default return value. I prefer to use <code>.</code></p>
+<p><code>
+  f &lt;- case_func(NIL -&gt; TRUE, . -&gt; FALSE)
+  f(lst)
+</code></p>
 <p>Arguments to a constructor function can be typed. To specify typed variables,
 we use the <code>:</code>-operator. The syntax is then <code>var : type</code>. The type
 will be checked when you construct a value using the constructor.</p>
@@ -194,18 +204,16 @@ will be checked when you construct a value using the constructor.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>linked_list</span> <span class='kw'>:=</span> <span class='no'>NIL</span> <span class='kw'>|</span> <span class='fu'>CONS</span>(<span class='no'>car</span>, <span class='no'>cdr</span> : <span class='no'>linked_list</span>)
 <span class='no'>lst</span> <span class='kw'>&lt;-</span> <span class='fu'>CONS</span>(<span class='fl'>1</span>, <span class='fu'>CONS</span>(<span class='fl'>2</span>, <span class='fu'>CONS</span>(<span class='fl'>3</span>, <span class='no'>NIL</span>)))
-<span class='no'>len</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>lst</span>, <span class='no'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>) {
-    <span class='fu'>cases</span>(<span class='no'>lst</span>,
+<span class='no'>len</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='case_func.html'>case_func</a></span>(<span class='kw'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>,
           <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
-          <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>len</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='fl'>1</span>))
-}
-<span class='fu'>len</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; <span class='error'>Error in cases(lst, acc &lt;- NIL, len(cdr, acc + 1) &lt;- CONS(car, cdr)): could not find function "cases"</span></div><div class='input'>
-<span class='no'>list_sum</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>lst</span>, <span class='no'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>) {
-    <span class='fu'>cases</span>(<span class='no'>lst</span>,
+          <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>len</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='fl'>1</span>)
+)
+<span class='fu'>len</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
+<span class='no'>list_sum</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='case_func.html'>case_func</a></span>(<span class='kw'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>,
           <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
-          <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>list_sum</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='no'>car</span>))
-}
-<span class='fu'>list_sum</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; <span class='error'>Error in cases(lst, acc &lt;- NIL, list_sum(cdr, acc + car) &lt;- CONS(car,     cdr)): could not find function "cases"</span></div><div class='input'>
+          <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>list_sum</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='no'>car</span>)
+)
+<span class='fu'>list_sum</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; [1] 6</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

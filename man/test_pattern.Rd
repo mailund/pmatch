@@ -40,14 +40,13 @@ function expects a bare expression and will quote it itself.
 }}
 
 \examples{
-type := ZERO | ONE(x) | TWO(x,y)
+type := ZERO | ONE(x) | TWO(x, y)
 zero <- ZERO
 one <- ONE(1)
-two <- TWO(1,2)
+two <- TWO(1, 2)
 
 as.list(test_pattern(zero, ZERO)) # returns an empty binding
 test_pattern_(one, quote(ZERO)) # returns NULL
 as.list(test_pattern_(one, quote(ONE(v)))) # returns a binding for v
-as.list(test_pattern(two, TWO(v,w))) # returns a binding for v and w
-
+as.list(test_pattern(two, TWO(v, w))) # returns a binding for v and w
 }

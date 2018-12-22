@@ -98,7 +98,7 @@
       <h1>“Optional” Types with pmatch</h1>
                         <h4 class="author">Thomas Mailund</h4>
             
-            <h4 class="date">2018-12-19</h4>
+            <h4 class="date">2018-12-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mailund/pmatch/blob/master/vignettes/optional-types-with-pmatch.Rmd"><code>vignettes/optional-types-with-pmatch.Rmd</code></a></small>
       <div class="hidden name"><code>optional-types-with-pmatch.Rmd</code></div>
@@ -238,20 +238,7 @@
 <a class="sourceLine" id="cb9-63" data-line-number="63">    w &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span>y <span class="op">+</span><span class="st"> </span>z,</a>
 <a class="sourceLine" id="cb9-64" data-line-number="64">    (w <span class="op">-</span><span class="st"> </span>x <span class="op">-</span><span class="st"> </span>y) <span class="op">/</span><span class="st"> </span>z</a>
 <a class="sourceLine" id="cb9-65" data-line-number="65">)</a>
-<a class="sourceLine" id="cb9-66" data-line-number="66"><span class="co">#&gt; Warning: Passing an environment as data mask is deprecated.</span></a>
-<a class="sourceLine" id="cb9-67" data-line-number="67"><span class="co">#&gt; Please use `new_data_mask()` to transform your environment to a mask.</span></a>
-<a class="sourceLine" id="cb9-68" data-line-number="68"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb9-69" data-line-number="69"><span class="co">#&gt;   env &lt;- env(foo = "bar")</span></a>
-<a class="sourceLine" id="cb9-70" data-line-number="70"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb9-71" data-line-number="71"><span class="co">#&gt;   # Bad:</span></a>
-<a class="sourceLine" id="cb9-72" data-line-number="72"><span class="co">#&gt;   as_data_mask(env)</span></a>
-<a class="sourceLine" id="cb9-73" data-line-number="73"><span class="co">#&gt;   eval_tidy(expr, env)</span></a>
-<a class="sourceLine" id="cb9-74" data-line-number="74"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb9-75" data-line-number="75"><span class="co">#&gt;   # Good:</span></a>
-<a class="sourceLine" id="cb9-76" data-line-number="76"><span class="co">#&gt;   mask &lt;- new_data_mask(env)</span></a>
-<a class="sourceLine" id="cb9-77" data-line-number="77"><span class="co">#&gt;   eval_tidy(expr, mask)</span></a>
-<a class="sourceLine" id="cb9-78" data-line-number="78"><span class="co">#&gt; This warning is displayed once per session.</span></a>
-<a class="sourceLine" id="cb9-79" data-line-number="79"><span class="co">#&gt; VALUE(val = 1)</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-66" data-line-number="66"><span class="co">#&gt; VALUE(val = 1)</span></a></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">with_values</span>(</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">    f &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/connections">file</a></span>(<span class="st">"no such file"</span>, <span class="st">"r"</span>),</a>
 <a class="sourceLine" id="cb10-3" data-line-number="3">    <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/readLines">readLines</a></span>(f)</a>

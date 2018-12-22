@@ -38,25 +38,26 @@ Be careful not to use \code{.} here, if you use dot as a generic
 variable.
 }
 \examples{
-linked_list := NIL | CONS(car, cdr : linked_list)
+linked_list := NIL | CONS(car, cdr:linked_list)
 lst <- CONS(1, CONS(2, CONS(3, NIL)))
-len <- case_func(acc = 0,
-   NIL -> acc,
-   CONS(car,cdr) -> len(cdr, acc + 1)
+len <- case_func(
+    acc = 0,
+    NIL -> acc,
+    CONS(car, cdr) -> len(cdr, acc + 1)
 )
 len(lst)
 
-list_sum <- case_func(acc = 0,
-   NIL -> acc,
-   CONS(car,cdr) -> list_sum(cdr, acc + car)
+list_sum <- case_func(
+    acc = 0,
+    NIL -> acc,
+    CONS(car, cdr) -> list_sum(cdr, acc + car)
 )
 list_sum(lst)
 
 tuples := ..(first, second) | ...(first, second, third)
-f <- case_func(..(.,.) -> 2, ...(.,.,.) -> 3)
+f <- case_func(..(., .) -> 2, ...(., ., .) -> 3)
 f(..(1, 2))
 f(...(1, 2, 3))
-
 }
 \seealso{
 \code{\link{:=}} \code{\link{case_func}}

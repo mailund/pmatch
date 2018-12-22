@@ -170,16 +170,13 @@ a pattern, it evaluates the expression the
 pattern is associated with. During matching, any symbol that is not
 quasi-quoted will be considered a variable, and matching values will be bound
 to such variables and be available when an expression is evaluated.</p>
-<p>Unlike the <code><a href='case_func.html'>case_func</a></code> function, you cannot use this function
-to define pattern matching functions that are not tail recursive. Furthermore,
-you must use <code><a href='https://www.rdocumentation.org/packages/base/topics/Recall'>Recall</a></code> for recursive calls.</p>
-<p>Functions created with <code>case_trfunc</code> do not support the <code>..</code> operator,
-but you can always create constructors for fixed-number tuples, e.g.</p>
-<p><code><a href='colon-equals.html'>
-tuples := ..(first, second) | ...(first, second, third)
-</a></code></p>
-<p>Be careful not to use <code>.</code> here, if you use dot as a generic
-variable.</p>
+<p>This function works like <code><a href='case_func.html'>case_func</a></code> but implements the "tail-recursion
+optimisation", which means that it replaces tail-recursive calls with reassignment
+to local variables and looping. Since the scoping rules are different between
+recursive calls and loops, you cannot use closures with this transformation
+unless you take special care to bind all local values explicitly.</p>
+<p>This function cannot know which name you will assign the generated function
+so you must use <code><a href='https://www.rdocumentation.org/packages/base/topics/Recall'>Recall</a></code> for recursive calls.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -191,12 +188,12 @@ variable.</p>
 <span class='no'>lst</span> <span class='kw'>&lt;-</span> <span class='fu'>CONS</span>(<span class='fl'>1</span>, <span class='fu'>CONS</span>(<span class='fl'>2</span>, <span class='fu'>CONS</span>(<span class='fl'>3</span>, <span class='no'>NIL</span>)))
 <span class='no'>len</span> <span class='kw'>&lt;-</span> <span class='fu'>case_trfunc</span>(<span class='kw'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>,
    <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
-   <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>len</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='fl'>1</span>)
+   <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Recall'>Recall</a></span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='fl'>1</span>)
 )
 <span class='fu'>len</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
 <span class='no'>list_sum</span> <span class='kw'>&lt;-</span> <span class='fu'>case_trfunc</span>(<span class='kw'>acc</span> <span class='kw'>=</span> <span class='fl'>0</span>,
    <span class='no'>NIL</span> <span class='kw'>-&gt;</span> <span class='no'>acc</span>,
-   <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'>list_sum</span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='no'>car</span>)
+   <span class='fu'>CONS</span>(<span class='no'>car</span>,<span class='no'>cdr</span>) <span class='kw'>-&gt;</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Recall'>Recall</a></span>(<span class='no'>cdr</span>, <span class='no'>acc</span> + <span class='no'>car</span>)
 )
 <span class='fu'>list_sum</span>(<span class='no'>lst</span>)</div><div class='output co'>#&gt; [1] 6</div><div class='input'>
 

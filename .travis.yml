@@ -7,10 +7,19 @@ cache: packages
 apt_packages:
   - libudunits2-dev
 
+os:
+  - linux
+  - osx
+
 r:
 - 3.3
 - 3.4
 - 3.5
+
+matrix:
+    exclude:
+        - os: osx
+          r: 3.3
 
 after_success:
   - Rscript -e 'covr::codecov()'

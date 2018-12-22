@@ -69,18 +69,19 @@ we use the \code{:}-operator. The syntax is then \code{var : type}. The type
 will be checked when you construct a value using the constructor.
 }
 \examples{
-linked_list := NIL | CONS(car, cdr : linked_list)
+linked_list := NIL | CONS(car, cdr:linked_list)
 lst <- CONS(1, CONS(2, CONS(3, NIL)))
-len <- case_func(acc = 0,
-          NIL -> acc,
-          CONS(car,cdr) -> len(cdr, acc + 1)
+len <- case_func(
+    acc = 0,
+    NIL -> acc,
+    CONS(car, cdr) -> len(cdr, acc + 1)
 )
 len(lst)
 
-list_sum <- case_func(acc = 0,
-          NIL -> acc,
-          CONS(car,cdr) -> list_sum(cdr, acc + car)
+list_sum <- case_func(
+    acc = 0,
+    NIL -> acc,
+    CONS(car, cdr) -> list_sum(cdr, acc + car)
 )
 list_sum(lst)
-
 }

@@ -23,9 +23,7 @@ Imports:
     rlang (>= 0.3.0),
     tibble,
     glue,
-    foolbox,
-    magrittr,
-    Rcpp
+    magrittr
 Suggests:
     shiny,
     DT,
@@ -37,8 +35,7 @@ Suggests:
     rmarkdown,
     microbenchmark,
     ggraph,
-    tidygraph,
-    tailr
+    tidygraph
 URL: https://github.com/mailund/pmatch
 BugReports: https://github.com/mailund/pmatch/issues
 VignetteBuilder: knitr

@@ -5,11 +5,19 @@
 \alias{test_pattern}
 \title{Test if a pattern matches an expression}
 \usage{
-test_pattern_(expr, test_expr, eval_env = rlang::caller_env(),
-  match_parent_env = rlang::caller_env())
+test_pattern_(
+  expr,
+  test_expr,
+  eval_env = rlang::caller_env(),
+  match_parent_env = rlang::caller_env()
+)
 
-test_pattern(expr, test_expr, eval_env = rlang::caller_env(),
-  match_parent_env = rlang::caller_env())
+test_pattern(
+  expr,
+  test_expr,
+  eval_env = rlang::caller_env(),
+  match_parent_env = rlang::caller_env()
+)
 }
 \arguments{
 \item{expr}{A value created using constructors.}

@@ -4,7 +4,7 @@
 \alias{:=}
 \title{Define a new data type from a sequence of constructors.}
 \usage{
-":="(data_type, constructors)
+`:=`(data_type, constructors)
 }
 \arguments{
 \item{data_type}{The name of the new data type. Should be given as a bare

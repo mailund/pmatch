@@ -11,7 +11,7 @@ process_arg <- function(argument) {
         "The expression {deparse(argument)} should either be ",
         "a bare symbol or on the form 'variable : type'."
     )
-    if (rlang::is_lang(argument)) {
+    if (rlang::is_call(argument)) {
         if (argument[[1]] != ":") {
             stop(simpleError(error_msg, call = argument))
         }
@@ -116,7 +116,7 @@ process_constructor_constant <- function(constructor, data_type_name, env) {
 #' @param data_type_name The type the constructor should generate
 #' @param env The environment where we define the constructor
 process_constructor <- function(constructor, data_type_name, env) {
-    if (rlang::is_lang(constructor)) {
+    if (rlang::is_call(constructor)) {
         process_constructor_function(constructor, data_type_name, env)
     } else if (rlang::is_symbol(constructor)) {
         process_constructor_constant(constructor, data_type_name, env)
@@ -136,7 +136,7 @@ process_constructor <- function(constructor, data_type_name, env) {
 #' @param data_type_name The type the constructor should generate
 #' @param env The environment where we define the constructor
 process_alternatives <- function(constructors, data_type_name, env) {
-    if (rlang::is_lang(constructors) && constructors[[1]] == "|") {
+    if (rlang::is_call(constructors) && constructors[[1]] == "|") {
         process_alternatives(constructors[[2]], data_type_name, env)
         process_alternatives(constructors[[3]], data_type_name, env)
     } else {
@@ -158,7 +158,7 @@ deparse_construction <- function(x, ...) {
 
     if (rlang::is_list(x)) {
         components <- names(x)
-        values <- purrr::map(rlang::as_list(x), deparse_construction)
+        values <- purrr::map(vctrs::vec_cast(x, to = list()), deparse_construction)
 
         print_args <- vector("character", length = length(components))
         for (i in seq_along(components)) {
@@ -250,7 +250,7 @@ construction_printer <- function(x, ...) {
 #'     CONS(car, cdr) -> len(cdr, acc + 1)
 #' )
 #' len(lst)
-#' 
+#'
 #' list_sum <- case_func(
 #'     acc = 0,
 #'     NIL -> acc,
@@ -264,7 +264,7 @@ construction_printer <- function(x, ...) {
 
     if (!rlang::quo_is_symbol(data_type)) {
         error_msg <- glue::glue(
-            "Incorrect type specification: {rlang::quo_expr(data_type)}. ",
+            "Incorrect type specification: {rlang::quo_squash(data_type)}. ",
             "The type must be a bare symbol."
         )
         stop(simpleError(error_msg, call = match.call()))

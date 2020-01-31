@@ -141,14 +141,14 @@ transform_match <- function(pattern_expr, nesting, eval_env) {
 #'     CONS(car, cdr) -> len(cdr, acc + 1)
 #' )
 #' len(lst)
-#' 
+#'
 #' list_sum <- case_func(
 #'     acc = 0,
 #'     NIL -> acc,
 #'     CONS(car, cdr) -> list_sum(cdr, acc + car)
 #' )
 #' list_sum(lst)
-#' 
+#'
 #' tuples := ..(first, second) | ...(first, second, third)
 #' f <- case_func(..(., .) -> 2, ...(., ., .) -> 3)
 #' f(..(1, 2))
@@ -163,7 +163,7 @@ case_func <- function(...) {
         stop("None of the patterns match.")
     })
     for (i in rev(seq_along(matchings))) {
-        match_expr <- rlang::quo_expr(matchings[[i]])
+        match_expr <- rlang::quo_squash(matchings[[i]])
         if (rlang::is_symbol(match_expr)) {
             if (names(matchings[i]) == "") {
                 x <- list(rlang::missing_arg())
@@ -274,7 +274,7 @@ tr_transform_expr <- function(expr, dummy_func) {
 #'     CONS(car, cdr) -> Recall(cdr, acc + 1)
 #' )
 #' len(lst)
-#' 
+#'
 #' list_sum <- case_trfunc(
 #'     acc = 0,
 #'     NIL -> acc,
@@ -288,7 +288,7 @@ case_trfunc <- function(...) {
     eval_env <- rlang::caller_env()
 
     for (i in rev(seq_along(matchings))) {
-        match_expr <- rlang::quo_expr(matchings[[i]])
+        match_expr <- rlang::quo_squash(matchings[[i]])
         if (rlang::is_symbol(match_expr)) {
             if (names(matchings[i]) == "") {
                 x <- list(rlang::missing_arg())
@@ -330,7 +330,7 @@ case_trfunc <- function(...) {
         stop("None of the patterns match.")
     })
     for (i in rev(seq_along(matchings))) {
-        match_expr <- rlang::quo_expr(matchings[[i]])
+        match_expr <- rlang::quo_squash(matchings[[i]])
         if (rlang::is_symbol(match_expr)) {
             next
         }
